@@ -1,0 +1,77 @@
+/*
+Override default #poststuff
+*/
+.membpress #poststuff {
+   margin-top:0px;
+   padding-top:0px !important;	
+}
+.membpress #poststuff h2 {
+	font-size:1.7em;	
+}
+/*
+remove the move cursor from the handle
+*/
+.membpress .hndle {
+	cursor:pointer !important;	
+}
+
+/* Increase the left margin of radio boxes in welcome login group */
+.membpress .membpress_welcome_login_group input[type=radio] {
+	margin-left:20px;
+	margin-bottom:5px;
+}
+.membpress .membpress_welcome_login_group input[type=radio]:first-child {
+	margin-left:0;
+}
+
+/*
+ Collapse expand all meta boxes in membpress
+*/
+.membpress .membpress_settings_collapse_expand {
+	line-height:29px;
+	margin-top:20px;
+	font-size:0.95em;		
+}
+.membpress .membpress_settings_collapse_expand .dashicons {
+	margin-top:5px;	
+}
+
+/*
+Updated message bar close button on right
+*/
+.membpress .membpress_updated_close {
+	float:right;	
+}
+
+/*
+CSS responsive fix for the expand/collapse buttons
+*/
+@media all and (max-width: 780px) {
+.membpress_settings_collapse_expand, .membpress_settings_heading {
+	float:none !important;	
+}
+.membpress_settings_collapse_expand {
+	margin-top:0 !important;
+	margin-bottom:5px;	
+}
+.membpress_settings_heading {
+	margin-bottom:0 !important;	
+}
+}
+
+
+/*
+Miscellaneous
+*/
+.membpress_pull-right {
+   float: right;	
+}
+.membpress_pull-left {
+   float: left;	
+}
+.membpress_clear {
+	clear:both;	
+}
+.membpress_hidden {
+	display:none;	
+}
