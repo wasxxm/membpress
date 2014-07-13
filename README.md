@@ -1,8 +1,8 @@
 MembPress Wordpress Membership Plugin
 -------------------------------------
-Version: 1.0 (Beta)
-Author: Waseem Khan
-Project Started: 1st July 2014
+Version: 1.0 (Beta)<br>
+Author: Waseem Khan<br>
+Project Started: 1st July 2014<br>
 Project home: membpress.com
 
 MembPress Wordpress Membership plugin is the all-in-one solution for making any wordpress web site into a fully featured
