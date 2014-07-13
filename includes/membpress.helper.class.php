@@ -430,6 +430,58 @@ class MembPress_Helper
    }
    
    
+   
+   /*
+   @ Function to check the $query object for the query variables and return the post/page with their IDs
+   @ The $query object returns different query object, based on whether the permalink is enabled or not
+   @ $query is the query object passed for checking
+   */
+   public function membpress_query_object_check($query = false)
+   {
+      if (!$query) return;
+	  
+	  // get the query object from main query
+	  $q = $query->query;
+	  
+	  // check if permalink is enabled
+	  if (trim(get_option('permalink_structure')) != '') 
+	  {
+		  // check if this is a page
+		  if ($query->is_page)
+		  {
+			 // get the post ID using the slug
+			 $page_id = query_posts('name='.$q['pagename'] . '&post_type=page');
+			 $page_id = $page_id[0]; 
+			 return array('page_id' => $page_id->ID);  
+		  }
+		  // not a post, may be post or custom post
+		  else
+		  {
+			 // get the post ID using the slug
+			 $post_id = query_posts('name='.$q['name']);
+			 $post_id = $post_id[0]; 
+			 return array('p' => $post_id->ID);
+		  }
+	  }
+	  // if the permalink is not defined
+	  else
+	  {
+		 if (isset($q['page_id'])) // if page ID is set
+		 {
+			return array('page_id' => $q['page_id']);
+		 }
+		 else if (isset($q['p']))
+		 {
+			return array('p' => $q['p']); // else if post ID is set 
+		 }
+	  }
+	  
+	  return;
+   }
+   
+   
+   
+   
    /*
    @ Function used to redirect login welcome page/post if accessed with out the required member level
    @ The redirection will be towards Membership Options Page (if set). In case membership options page is not
@@ -438,12 +490,13 @@ class MembPress_Helper
    @ param ($query): is the query object for the current query
    */
    public function membpress_manage_login_welcome_access($query)
-   {
-	   $q = $query->query; // query object
-	   
-	   // see if it is the main query of the page/post
+   {   
+	   // see if it is the main query requested by the user
 	   if ($query->is_main_query())
 	   {
+		  
+		  $q = $this->membpress_query_object_check($query);
+		  
 		  // get the membpress login redirect settings vars
 		  $mp_login_redirect_vars = $this->membpress_get_login_redirect_setting_vars();
 		  // membpress membership options page set in the membpress settings
@@ -501,7 +554,7 @@ class MembPress_Helper
 			  }
 		  }
 		  else if ($mp_login_redirect_vars['login_redirect_scope'] == 'individual') // login redirect is to individual membership levels
-		  {
+		  {  
 			  // iterate through the array of membership levels
 			  $login_redirect_types = $mp_login_redirect_vars['login_redirect_type'];
 			  $login_redirect_ids = $mp_login_redirect_vars['login_redirect_id'];
@@ -513,11 +566,9 @@ class MembPress_Helper
 				 // if login redirect is set to a page
 				 if ($login_redirect_types[$i] == 'page') 
 				 {
-					
 					// check if current page ID matches global login redirect page ID
 					if (isset($q['page_id']) && $q['page_id'] == $login_redirect_ids[$i])
 					{
-					   
 					   // if there is no restriction for current page, return
 					   if ((bool)$login_redirect_restrict_flags[$i])
 					   {
