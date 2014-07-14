@@ -205,6 +205,19 @@ class MembPress_Main
 		// see if the restrict option was for post
 		if (isset($_POST['membpress_restrict_post_level']))
 		{
+		   /**
+		   Only continue with the restrict option, if the post is not set as
+		   login welcome redirect. There is no point of checking for membership options page, since post
+		   cannot be set as membership options page
+		   */
+		   // check if the current post is set as login welcome redirect
+		   $mp_login_welcome_check = $this->mp_helper->membpress_check_if_login_welcome_redirect($post_id, 'post');
+		   if ($mp_login_welcome_check)// this means, the current post is indeed set as login welcome redirect
+		   {
+			   // return the function without continuing
+			   return;     
+		   }
+		   
 		   // check if the value of restrict level is  empty
 		   if (trim($_POST['membpress_restrict_post_level']) == '')
 		   {
@@ -218,6 +231,24 @@ class MembPress_Main
 		// else check if it is set for page
 		else if(isset($_POST['membpress_restrict_page_level']))
 		{
+		   /**
+		   Only continue with the restrict option, if the page is not set as
+		   login welcome redirect. Also check for membership options page
+		   */
+		   // check if the current page is set as login welcome redirect
+		   if ($this->mp_helper->membpress_check_if_login_welcome_redirect($post_id, 'page'))
+		   // this means, the current page is indeed set as login welcome redirect
+		   {
+			   // return the function without continuing
+			   return;     
+		   }
+		   // check if current page is set as membership options page
+		   if ($this->mp_helper->membpress_check_if_membership_options_page($post_id))
+		   {
+			   // page is set as membership options page, do not continue
+			   return;   
+		   }
+		   
 		   // check if the value of restrict level is  empty
 		   if (trim($_POST['membpress_restrict_page_level']) == '')
 		   {

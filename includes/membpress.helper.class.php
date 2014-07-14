@@ -491,6 +491,9 @@ class MembPress_Helper
    */
    public function membpress_manage_login_welcome_access($query)
    {   
+       // do not continue if this is in the admin area
+	   if ($query->is_admin) return;
+   
 	   // see if it is the main query requested by the user
 	   if ($query->is_main_query())
 	   {
@@ -773,6 +776,85 @@ class MembPress_Helper
 		$wp_roles->role_names[$role_name] = $role_display_name;
 		update_option($wp_roles->role_key, $wp_roles->roles);   
    }
+   
+   /**
+   @Function to check if the post/page is set as login welcome redirect, either globally or individual
+   @ Param ($ID) is the ID of the post/page to be checked
+   @ Param ($type) is the type, either post or page to be checked
+   
+   The function return the 'scope' and 'level' of the post/page assigned as login welcome redirect, if any
+   Sample returns: array('scope' => 'global', 'level' => 'all'), array('scope' => 'individual', 'level' => 'membpress_level_1')
+   If, not found, returns false
+   */
+   public function membpress_check_if_login_welcome_redirect($ID, $type = 'post')
+   {
+	   // check if types are set correctly, else return
+	   if ($type != 'post' && $type != 'page')
+	   {
+		   return false;   
+	   }
+	   
+	   // get the settings for login welcome redirect
+	   $redirect_vars = $this->membpress_get_login_redirect_setting_vars();
+	   
+	   // if the login redirect is set globally
+	   if ($redirect_vars['login_redirect_scope'] == 'global')
+	   {
+		   // if the passed ID and type matches the one set globally for login welcome redirect
+		   if ($redirect_vars['login_redirect_type'] == $type && $redirect_vars['login_redirect_id'] == $ID)
+		   {
+			   return array('scope' => 'global', 'level' => 'all');   
+		   }
+	   }
+	   // if login welcome redirect is set individually
+	   else
+	   {
+		   // get login welcome redirect IDs, types, levels
+		   $login_redirect_ids = $redirect_vars['login_redirect_id'];
+		   $login_redirect_types = $redirect_vars['login_redirect_type'];
+		   $login_redirect_levels = $redirect_vars['login_redirect_levels'];
+		   
+		   // iterate through the IDs set
+		   for($i = 0; $i < count($login_redirect_ids); $i++)
+		   {
+		      // if the current level ID and type matches, return them
+			  if ($login_redirect_types[$i] == $type && $login_redirect_ids[$i] == $ID)
+			  {
+				  return array('scope' => 'individual', 'level' => $login_redirect_levels[$i]);  
+			  }
+		   }
+	   }
+	   
+	   return false;     
+   }
+   
+   
+   
+   /**
+   @ This function will determine if the page ID passed as parameter, is set as
+    the membership options page or not.
+   @ Param ($page_id) is the page ID passed as parameter to be checked
+   
+   It returns boolean true if found else returns false
+   */
+   public function membpress_check_if_membership_options_page($page_id = 0)
+   {
+	   // make sure $page_id is valid
+	   if ($page_id <= 0) return false;
+	   
+	   // get membership options page ID
+	   $mp_membership_option_page = get_option('membpress_settings_membership_option_page');
+	   
+	   // check if membership options page matches the passed page ID
+	   if ($mp_membership_option_page > 0 && $mp_membership_option_page == $page_id)
+	   {
+		   return true;   
+	   }
+	   
+	   // does not match, return false
+	   return false;
+   }
+   
    
    /*
    @ Function to show different update notices based on the section updated
