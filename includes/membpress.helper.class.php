@@ -897,6 +897,22 @@ class MembPress_Helper
    }
    
    
+   
+   
+   /**
+   Function to exit script and show a message when a restricted script is access directly from browser
+   */
+   public function membpress_permission_denied_notice()
+   {
+	   header('Status: 403 Forbidden');
+	   header('HTTP/1.1 403 Forbidden');
+	   echo '<h2>' . _x('You do not have permission to view this page / perform this action.', 'general', 'membpress') . '</h2>';
+	   exit();	   
+   }
+   
+   
+   
+   
    /*
    @ Function get the core membpress membership levels, as well as the free subscriber level
    */

@@ -47,7 +47,7 @@ Tags: membpress, membership, subscription, paid, wordpress, levels, users, restr
 if (!function_exists ('add_action')) {
 		header('Status: 403 Forbidden');
 		header('HTTP/1.1 403 Forbidden');
-		echo _x('You do not have permission to view this page / perform this action.', 'general', 'membpress');
+		echo '<h2>' . _x('You do not have permission to view this page / perform this action.', 'general', 'membpress') . '</h2>';
 		exit();
 }
 
@@ -67,7 +67,7 @@ else
 {
 	header('Status: 403 Forbidden');
 	header('HTTP/1.1 403 Forbidden');
-	echo sprintf(_x('Membpress cannot be installed/run. Please make sure you have at least PHP version %s and Wordpress version %s or later installed.', 'general', 'membpress'), MEMBPRESS_MIN_PHP_VERSION, MEMBPRESS_MIN_WP_VERSION);
+	echo '<h2>' . sprintf(_x('Membpress cannot be installed/run. Please make sure you have at least PHP version %s and Wordpress version %s or later installed.', 'general', 'membpress'), MEMBPRESS_MIN_PHP_VERSION, MEMBPRESS_MIN_WP_VERSION) . '</h2>';
 	exit();	
 }
 	

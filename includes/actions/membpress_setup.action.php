@@ -19,10 +19,8 @@ require_once '../../../../../wp-load.php';
 // proceed only if the user is logged in and have necessary capability to manage options
 if (!is_user_logged_in() || !current_user_can( 'manage_options' ))
 {
-	header('Status: 403 Forbidden');
-	header('HTTP/1.1 403 Forbidden');
-	echo _x('You do not have permission to view this page / perform this action.', 'general', 'membpress');
-	exit();	
+	// show the no permission notice
+	$membpress->mp_helper->membpress_permission_denied_notice();
 }
 
 // Check if our nonce is set.
@@ -114,6 +112,12 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	}
 	
 	wp_redirect(admin_url() . 'admin.php?page=membpress_setup_page&updated=1&section=' . urlencode($section) . $notice_error_q . '&n_vars=' . urlencode($notice_vars) . '#section=#'.urlencode($section));
+}
+else
+{
+  // request is not valid
+  // show the no permission notice
+  $membpress->mp_helper->membpress_permission_denied_notice();	
 }
 
 ?>
