@@ -60,12 +60,12 @@ if (isset($_GET['section']) && $_GET['section'] == 'membpress_settings_membershi
 endif;
 ?>      
         <!-- Membership Restriction Options section starts below -->
-        <div id="membpress_settings_membership_options_page" class="postbox<?php if(!isset($_COOKIE['membpress_settings_membership_options_page']) || !$_COOKIE['membpress_settings_membership_options_page']): ?> closed<?php endif; ?>">
+        <div id="membpress_restrict_posts" class="postbox<?php if(!isset($_COOKIE['membpress_restrict_posts']) || !$_COOKIE['membpress_restrict_posts']): ?> closed<?php endif; ?>">
           <div class="handlediv" title="Click to toggle"><br>
           </div>
-          <h3 class="hndle"><span><?php echo _x('Membership Options Page', 'general', 'membpress'); ?></span></h3>
+          <h3 class="hndle"><span><?php echo _x('Restrict Posts', 'general', 'membpress'); ?></span></h3>
           <div class="inside">
-            <p> <?php echo _x('Membship Options page is the page where you list your MembPress Membership Levels with payment buttons for subscription. Please create a page with a title like: "Membership Signup" and include all the membership levels available for subscription with payment methods. This will be the page where users will get redirected to, if they access any restricted page like "Welcome Page after Login" or any other restricted page/post/section (of course the users with the relevant membership level will not be redirected).', 'membpress_setup', 'membpress'); ?> </p>
+            <p> <?php echo _x('MembPress lets you restrict any number of posts by binding them to different membership levels. You can enter the IDs of the posts (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those posts restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').', 'membpress_restrict', 'membpress'); ?> </p>
             <p>
               <label for="membpress_settings_membership_option_page"><?php echo _x('Select Membership Options Page:', 'membpress_setup', 'membpress'); ?></label>
               <select name="membpress_settings_membership_option_page" id="membpress_settings_membership_option_page" class="membpress_settings_membership_option_page">

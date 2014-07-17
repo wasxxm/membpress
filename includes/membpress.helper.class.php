@@ -898,9 +898,9 @@ class MembPress_Helper
    
    
    /*
-   @ Function get all the membpress membership levels, as well as the free subscriber level
+   @ Function get the core membpress membership levels, as well as the free subscriber level
    */
-   public function membpress_get_membership_levels()
+   public function membpress_get_core_membership_levels()
    {
 	   	 // define an array containg the roles, to be returned
 		 $mp_roles = array();
@@ -913,13 +913,34 @@ class MembPress_Helper
 		 }
 		 
 		 // include the subscriber level and the 4 core membpress level
-		 $mp_roles['subscriber'] = $wp_roles->role_names['subscriber'];
-		 $mp_roles['membpress_level_1'] = $wp_roles->role_names['membpress_level_1'];
-		 $mp_roles['membpress_level_2'] = $wp_roles->role_names['membpress_level_2'];
-		 $mp_roles['membpress_level_3'] = $wp_roles->role_names['membpress_level_3'];
-		 $mp_roles['membpress_level_4'] = $wp_roles->role_names['membpress_level_4'];
+		 $mp_roles['subscriber'] = array('display_name' => $wp_roles->role_names['subscriber'], 'level_no' => 0);
+		 $mp_roles['membpress_level_1'] = array('display_name' => $wp_roles->role_names['membpress_level_1'], 'level_no' => 1);
+		 $mp_roles['membpress_level_2'] = array('display_name' => $wp_roles->role_names['membpress_level_2'], 'level_no' => 2);
+		 $mp_roles['membpress_level_3'] = array('display_name' => $wp_roles->role_names['membpress_level_3'], 'level_no' => 3);
+		 $mp_roles['membpress_level_4'] = array('display_name' => $wp_roles->role_names['membpress_level_4'], 'level_no' => 4);
 		 
 		 return $mp_roles;   
+   }
+   
+   /*
+   @ Function to get all the membership levels, including the subscriber level, the core levels
+   @ and the user defined membpress level
+   */
+   public function membpress_get_all_membership_levels()
+   {
+	   // get the core levels
+	   $mp_roles = $this->membpress_get_core_membership_levels();
+	   
+	   // start from 5, so if MEMBPRESS_LEVEL_COUNT is set to 4 or less than that,
+	   // it won't continue
+	   for($i = 5; $i <= MEMBPRESS_LEVEL_COUNT; $i++)
+	   {
+	      // check if the membership level name is empty, if yes then put 'Membership level #' as value
+	      $membership_level_name = (trim(get_option('membpress_membership_name_level_'.$i)) == '' ? _x('Membership Level', 'general', 'membpress'). " $i" : trim(get_option('membpress_membership_name_level_'.$i)));
+		  $mp_roles['membpress_level_'.$i] = array('display_name' => $membership_level_name, 'level_no' => $i);
+	   }
+	   
+	   return $mp_roles;
    }
 };
 ?>
