@@ -24,27 +24,26 @@ endif;
           <h3 class="hndle"><span><?php echo _x('Restrict Posts', 'general', 'membpress'); ?></span></h3>
           <div class="inside">
             <p> <?php echo _x('MembPress lets you restrict any number of posts by binding them to different membership levels. You can enter the IDs of the posts (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those posts restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').', 'membpress_restrict', 'membpress'); ?> </p>
+            <?php
+            // iterate through all membpress membership levels
+			// and show the post restrict option for each of them
+			foreach ($mp_levels as $mp_level):
+			
+			// get the list of posts restricted by the current membership level
+			$mp_restrict_posts_by_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
+			$mp_restrict_posts_by_curr_level = implode(',', (array)$mp_restrict_posts_by_curr_level);
+			
+			?>
             <p>
-              <label for="membpress_settings_membership_option_page"><?php echo _x('Select Membership Options Page:', 'membpress_setup', 'membpress'); ?></label>
-              <select name="membpress_settings_membership_option_page" id="membpress_settings_membership_option_page" class="membpress_settings_membership_option_page">
-                <option value="">-- <?php echo _x('Select a Page', 'general', 'membpress'); ?> --</option>
-                <?php  
-      foreach ( $pages as $page )
-	  {
-		$option = '<option value="' . $page->ID . '"';
-		if ($membpress_settings_membership_option_page == $page->ID)
-		{
-		   $option .= ' selected ';	
-		}
-		$option .= '>';
-        $option .= $page->post_title;
-        $option .= '</option>';
-        echo $option;
-      }
-     ?>
-              </select>
+            <strong><?php echo sprintf(_x('Restrict Posts by Membership Level %s (%s):', 'membpress_restrict', 'membpress'), $mp_level['level_no'], $mp_level['display_name']); ?></strong>
             </p>
+            <p>
+            <label for="membpress_restrict_posts_level_<?php echo $mp_level['level_no']; ?>"><?php echo _x('Provide the Post IDs, separated by a comma(,):', 'membpress_restrict', 'membpress'); ?></label><br><input type="text" name="membpress_restrict_posts_level_<?php echo $mp_level['level_no']; ?>" value="<?php echo $mp_restrict_posts_by_curr_level; ?>" style="width:100%" id="membpress_restrict_posts_level_<?php echo $mp_level['level_no']; ?>">
+            </p>
+            <?php
+            endforeach;
+			?>
             <hr>
-            <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_settings_submit" name="membpress_settings_submit-membpress_settings_membership_options_page">
+            <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_restrict_submit-membpress_restrict_post_section" name="membpress_restrict_submit-membpress_restrict_post_section">
           </div>
         </div>

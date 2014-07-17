@@ -19,7 +19,6 @@
           <h3 class="hndle"><span><?php echo _x('Welcome Page after Login', 'general', 'membpress'); ?></span></h3>
           <div class="inside">
             <p> <?php echo _x('Specify the welcome page after a successful login by the user. This can be any page or post of your choice. However, you cannot set a page or post which is always publicly visible as the welcome screen, like Home Page, Home Blog Post. MembPress will automatically set the welcome page/post as restricted (not publicly viewable) and will only be visible once a user is logged in (configurable). Any such restricted post/page will redirect to the', 'membpress_setup', 'membpress'); ?> <a href="javascript:;" rel="#membpress_settings_membership_options_page" class="membpress_goto_section"><?php echo _x('Membership Options Page', 'membpress_setup', 'membpress'); ?></a><?php echo _x(', if accessed publicly or the user does not have the required membership level.', 'membpress_setup', 'membpress'); ?>
-              <?php wp_nonce_field( 'membpress_settings_page', 'membpress_settings_page_nonce' ); ?>
             </p>
             <div id="mempress_welcome_login_group_all" <?php if($membpress_settings_welcome_login_individual == 1): ?>class="membpress_hidden"<?php endif; ?>>
               <p> <strong><?php echo _x('The setting below applies to all user roles/levels, including all the MembPress membership levels. Only exception is Administrator.', 'membpress_setup', 'membpress'); ?></strong> </p>
