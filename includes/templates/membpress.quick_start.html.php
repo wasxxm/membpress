@@ -14,5 +14,5 @@
 */
 ?>
 <div class="wrap">
-<h2><?php echo _x('MembPress Quick-Start Guide', 'membpress_quickstart', 'membpress'); ?></h2>
+<h2><?php echo _x('MembPress Quick-Start Guide', 'general', 'membpress'); ?></h2>
 </div>

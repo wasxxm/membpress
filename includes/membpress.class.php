@@ -91,6 +91,7 @@ class MembPress_Main
 	   // call membpress register sub-menu pages
 	   $this->register_membpress_submenu_pages();
 	   // call membpress menu manage function
+	   // for rearranging, renaming menus ect
 	   $this->membpress_admin_menu_manage();	
 	}
 	
@@ -610,7 +611,8 @@ class MembPress_Main
 		 'manage_options',
 		 'membpress_page_quick_start',
 		 array($this, 'membpress_page_quick_start'),
-		 plugins_url( 'membpress/resources/images/icon.png' ), 99.1251221851919 // 1251221851919 = membpress
+		 plugins_url( 'membpress/resources/images/icon.png' ),
+		 99.1251221851919 // 1251221851919 = membpress
 	   );
     }
     
@@ -627,15 +629,25 @@ class MembPress_Main
 	@ Contains all the sub-menu pages hooks
 	*/
     public function register_membpress_submenu_pages()
-	{ 
-	   // add membpress setup page
+	{  
+	   // add membpress setup page menu
 	   $hook = add_submenu_page(
 		 'membpress_page_quick_start',
-		 'Membpress Basic Setup/Settings',
-		 'Basic Setup',
+		 _x('Membpress Basic Setup/Settings', 'general', 'membpress'),
+		 _x('Basic Setup', 'general', 'membpress'),
 		 'manage_options',
 		 'membpress_setup_page',
 		 array($this, 'membpress_setup_page')
+	   );
+	   
+	   // add membpress restriction options page menu
+	   $hook2 = add_submenu_page(
+		 'membpress_page_quick_start',
+		 _x('Membpress Restriction Options', 'general', 'membpress'),
+		 _x('Restriction Options', 'general', 'membpress'),
+		 'manage_options',
+		 'membpress_restrict_options_page',
+		 array($this, 'membpress_restrict_options_page')
 	   ); 
 	}
 	
@@ -647,6 +659,15 @@ class MembPress_Main
 	{
 	   // include the template file for membpress setup page
 	   include_once 'templates/membpress.members_setup.html.php';	
+	}
+	
+	/*
+	@ Template for the membpress restrictio options page
+	*/
+	public function membpress_restrict_options_page()
+	{
+	   // include the template file for membpress restriction options page
+	   include_once 'templates/membpress.members_restriction_options.html.php';	
 	}
 	
 	
