@@ -22,7 +22,11 @@ if (!defined('MEMBPRESS_LOADED'))
 /*
 @ Handle the action of Membpress Levels section
 */
-$mp_restrict_post_level = explode(',', $_POST['membpress_restrict_posts_level_0']);
-update_option('membpress_restrict_posts_level_0', $mp_restrict_post_level);
+$mp_all_membership_levels = $membpress->mp_helper->membpress_get_all_membership_levels();
+foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
+{
+   $mp_restrict_post_level = explode(',', $_POST['membpress_restrict_posts_level_'.$mp_level_val['level_no']]);
+   update_option('membpress_restrict_posts_level_'.$mp_level_val['level_no'], $mp_restrict_post_level);
+}
 
 ?>
