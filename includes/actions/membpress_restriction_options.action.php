@@ -34,7 +34,7 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	$membpress_error_id = 1;
 	
 	$section = 'all'; // section all means that the update message should appear at top
-	$notice = 1; // default notice ID
+	$notice = 6; // default notice ID
 	$error = false; // error is set to false by default
 	$notice_vars = '';
 	

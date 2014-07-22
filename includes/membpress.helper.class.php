@@ -36,7 +36,8 @@ class MembPress_Helper
 		  2 => _x('Membpress Membership Options page cannot be set to a page used as the login welcome redirection.<br>Please specify a page other than the login welcome redirect page. The login welcome redirect feature won\'t work until you fix it.', 'membpress_notices', 'membpress'),
 		  3 => _x('Please provide a valid Post ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'),
 		  4 => sprintf(_x('The Post ID: %s is not valid. Please provide a valid post ID to be used as the login welcome redirect for membpress level: %s', 'membpress_notices', 'membpress'), @$str[0], @$str[1]),
-		  5 => _x('Please provide a valid Page ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'), 	
+		  5 => _x('Please provide a valid Page ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'),
+		  6 => _x('Membpress Restriction Options successfully updated', 'membpress_notices', 'membpress') 	
        );
 	   
 	   if ($notice_id > 0 && isset($notice_ids[$notice_id]))
