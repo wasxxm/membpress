@@ -76,8 +76,8 @@ Miscellaneous
 	display:none;	
 }
 /*
-Fix the width of the post ID column in edit post screen
+Fix the width of the post/page ID column in edit post screen
 */
-.fixed .column-post_ID {
+.fixed .column-post_ID, .fixed .column-page_ID {
     width: 5%;
 }

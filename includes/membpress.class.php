@@ -54,6 +54,10 @@ class MembPress_Main
 	   add_filter('manage_posts_columns', array($this, 'membpress_manage_posts_columns'), 10, 2);
 	   // filter used in conjunction with manage_posts_columns filter
 	   add_action('manage_posts_custom_column', array($this, 'membpress_manage_posts_custom_column'), 10, 2);
+	   // filter for manage edit page columns
+	   add_filter('manage_pages_columns', array($this, 'membpress_manage_pages_columns'), 10, 2);
+	   // filter used in conjunction with manage_pages_columns filter
+	   add_action('manage_pages_custom_column', array($this, 'membpress_manage_pages_custom_column'), 10, 2);
 	   
 	   // initialize membpress helper class object
 	   $this->mp_helper = new Membpress_Helper();
@@ -137,6 +141,27 @@ class MembPress_Main
 	}
 	
 	/**
+	@ Function for callback to manage page columns edit
+	*/
+	public function membpress_manage_pages_columns($page_columns)
+	{
+	   // add page ID column to the edit page screen, after the checkbbox and before title
+	   $page_columns = $this->membpress_add_page_ID_column($page_columns);
+	   
+	   return $page_columns;  	
+	}
+	
+	/**
+	@ Filter function called for managing the custom columns added to edit page screen
+	*/
+	public function membpress_manage_pages_custom_column($column_name, $page_id)
+	{
+        // call the function to manage the page ID column content
+		$this->membpress_manage_page_ID_column($column_name, $page_id);
+	}
+	
+	
+	/**
 	@ Function to add post ID to the edit post screen
 	*/
 	public function membpress_add_post_ID_column($posts_columns, $post_type)
@@ -147,6 +172,17 @@ class MembPress_Main
 	   return $posts_columns;	
 	}
 	
+    /**
+	@ Function to add post ID to the edit post screen
+	*/
+	public function membpress_add_page_ID_column($page_columns)
+	{
+	   // we want to add the post ID before the Title column and after the checkbox
+       $page_columns = array_slice($page_columns, 0, 1, true) + array("page_ID" => "ID") + array_slice($page_columns, 1, count($page_columns) - 1, true);
+	   
+	   return $page_columns;	
+	}
+	
 	/**
 	@ Function to manage the contents of the post ID column
 	*/
@@ -155,6 +191,17 @@ class MembPress_Main
 	  if ('post_ID' == $column_name)
 	  {
 		  echo "<strong>$post_id</strong>";
+	  }	
+	}
+	
+	/**
+	@ Function to manage the contents of the page ID column
+	*/
+	public function membpress_manage_page_ID_column($column_name, $page_id)
+	{
+	  if ('page_ID' == $column_name)
+	  {
+		  echo "<strong>$page_id</strong>";
 	  }	
 	}
 	
