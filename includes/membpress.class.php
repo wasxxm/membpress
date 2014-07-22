@@ -50,6 +50,11 @@ class MembPress_Main
 	   // add action on save post 
 	   add_action( 'save_post', array($this, 'membpress_save_meta_box'));
 	   
+	   // filter for the manage posts columns
+	   add_filter('manage_posts_columns', array($this, 'membpress_manage_posts_columns'), 10, 2);
+	   // filter used in conjunction with manage_posts_columns filter
+	   add_action('manage_posts_custom_column', array($this, 'membpress_manage_posts_custom_column'), 10, 2);
+	   
 	   // initialize membpress helper class object
 	   $this->mp_helper = new Membpress_Helper();
 	}
@@ -110,6 +115,50 @@ class MembPress_Main
 		
 		// generate admin notices if required.
 	}
+	
+	/**
+	@ Function used as a callback for the Wordpress Manage Posts Columns filter
+	*/
+	public function membpress_manage_posts_columns($posts_columns, $post_type)
+	{
+	   // add post ID column to the edit post screen, after the checkbbox and before title
+	   $posts_columns = $this->membpress_add_post_ID_column($posts_columns, $post_type);
+	   
+	   return $posts_columns;	
+	}
+	
+    /**
+	@ Filter function called for managing the custom columns added to edit post screen
+	*/
+	public function membpress_manage_posts_custom_column($column_name, $post_id)
+	{
+        // call the function to manage the post ID column content
+		$this->membpress_manage_post_ID_column($column_name, $post_id);
+	}
+	
+	/**
+	@ Function to add post ID to the edit post screen
+	*/
+	public function membpress_add_post_ID_column($posts_columns, $post_type)
+	{
+	   // we want to add the post ID before the Title column and after the checkbox
+       $posts_columns = array_slice($posts_columns, 0, 1, true) + array("post_ID" => "ID") + array_slice($posts_columns, 1, count($posts_columns) - 1, true);
+	   
+	   return $posts_columns;	
+	}
+	
+	/**
+	@ Function to manage the contents of the post ID column
+	*/
+	public function membpress_manage_post_ID_column($column_name, $post_id)
+	{
+	  if ('post_ID' == $column_name)
+	  {
+		  echo "<strong>$post_id</strong>";
+	  }	
+	}
+	
+	
 	
 	/*
 	@ Function hooked to the add_meta_boxes hook

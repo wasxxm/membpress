@@ -60,7 +60,7 @@ CSS responsive fix for the expand/collapse buttons
 }
 
 
-/*
+/**
 Miscellaneous
 */
 .membpress_pull-right {
@@ -74,4 +74,10 @@ Miscellaneous
 }
 .membpress_hidden {
 	display:none;	
+}
+/*
+Fix the width of the post ID column in edit post screen
+*/
+.fixed .column-post_ID {
+    width: 5%;
 }
