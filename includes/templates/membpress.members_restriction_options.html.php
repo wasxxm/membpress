@@ -46,6 +46,8 @@ $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
 ?>
 
 <div class="membpress">
+<div class="membpress_header">
+  <img src="<?php echo plugins_url(); ?>/membpress/resources/images/logo2.png"  alt="<?php echo _x('MembPress', 'general', 'membpress'); ?>"/></div>
   <div class="wrap" id="poststuff">
     <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_restriction_options.action.php" enctype="multipart/form-data">
     
@@ -60,14 +62,21 @@ $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
 	   ?>
        
       <div class="meta-box-sortables">     
-       <!-- Membership Restriction Options section starts below -->
+       <!-- Membership Post Restriction Options section starts below -->
        <?php
 	   // include the restrict posts section
 	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_posts.html.php';
 	   ?>
-       <!-- Membership Restriction Options section ends above -->  
+       <!-- Membership Post Restriction Options section ends above -->
+       
+       
+       <!-- Membership Page Restriction Options section starts below -->
+       <?php
+	   // include the restrict pages section
+	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_pages.html.php';
+	   ?>
+       <!-- Membership Page Restriction Options section ends above -->  
       </div>
-      <hr>
       <p>
         <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_restriction_options_submit" name="membpress_restriction_options_submit">
       </p>

@@ -62,6 +62,8 @@ $mp_setup_sections_dir = 'membpress_setup_sections';
 ?>
 
 <div class="membpress">
+<div class="membpress_header">
+  <img src="<?php echo plugins_url(); ?>/membpress/resources/images/logo2.png"  alt="<?php echo _x('MembPress', 'general', 'membpress'); ?>"/></div>
   <div class="wrap" id="poststuff">
     <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_setup.action.php" enctype="multipart/form-data">
     
@@ -95,7 +97,6 @@ $mp_setup_sections_dir = 'membpress_setup_sections';
 	   ?>
         <!-- Membership levels section ends above --> 
       </div>
-      <hr>
       <p>
         <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_settings_submit" name="membpress_settings_submit">
       </p>

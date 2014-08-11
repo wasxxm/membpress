@@ -13,6 +13,10 @@
 * @since 1.0
 */
 ?>
-<div class="wrap">
-<h2><?php echo _x('MembPress Quick-Start Guide', 'general', 'membpress'); ?></h2>
+
+<div class="membpress">
+  <div class="wrap" id="poststuff">
+    <div class="membpress_header"> <img src="<?php echo plugins_url(); ?>/membpress/resources/images/logo2.png"  alt="<?php echo _x('MembPress', 'general', 'membpress'); ?>"/></div>
+    <h2><?php echo _x('MembPress Quick-Start Guide', 'general', 'membpress'); ?></h2>
+  </div>
 </div>

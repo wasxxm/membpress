@@ -1,6 +1,24 @@
 /*
 Override default #poststuff
 */
+.membpress {
+	background-color:#045580;
+	color:#FFF;
+	padding-left:15px;
+	padding-bottom:15px;
+}
+.membpress h2, .membpress .membpress_settings_collapse_expand a{
+	color:#FFF !important;	
+}
+.membpress .meta-box-sortables {
+	color:#2C2C2C !important;
+}
+.membpress .postbox {
+   	background-color:#E2F2FA !important;	
+}
+.membpress .postbox .inside p {
+	line-height:1.65em !important;	
+}
 .membpress #poststuff {
    margin-top:0px;
    padding-top:0px !important;	
@@ -8,11 +26,20 @@ Override default #poststuff
 .membpress #poststuff h2 {
 	font-size:1.7em;	
 }
+.membpress_header {
+	text-align:center;	
+}
+.membpress_header img {
+	width:25%;
+	padding-top:15px;
+}
 /*
 remove the move cursor from the handle
 */
 .membpress .hndle {
-	cursor:pointer !important;	
+	cursor:pointer !important;
+	background-color:#f5fafc;
+	border-bottom-color:#bfdae7;
 }
 
 /* Increase the left margin of radio boxes in welcome login group */
