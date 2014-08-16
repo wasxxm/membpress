@@ -69,6 +69,9 @@ Updated message bar close button on right
 .membpress .membpress_updated_close {
 	float:right;	
 }
+.membpress .updated {
+	color:#272727;	
+}
 
 /*
 CSS responsive fix for the expand/collapse buttons

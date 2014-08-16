@@ -23,25 +23,25 @@ endif;
           </div>
           <h3 class="hndle"><span><?php echo _x('Restrict Pages', 'general', 'membpress'); ?></span></h3>
           <div class="inside">
-            <p> <?php echo _x('MembPress lets you restrict any number of posts by binding them to different membership levels. You can enter the IDs of the posts (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those posts restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').', 'membpress_restrict', 'membpress'); ?> </p>
+            <p> <?php echo _x('MembPress lets you restrict any number of pages by binding them to different membership levels. You can enter the IDs of the pages (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those pages restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').', 'membpress_restrict', 'membpress'); ?> </p>
             <p>
-            <?php echo _x('Please note that any post which is set as a login welcome redirect post for any membership level (Basic Setup -> Welcome Page after Login) cannot be restricted below. Such post(s) will work as a login welcome redirect post only.', 'membpress_restrict', 'membpress'); ?>
+            <?php echo _x('Please note that any page which is set as a login welcome redirect post for any membership level (Basic Setup -> Welcome Page after Login) cannot be restricted below. Such page(s) will work as a login welcome redirect page only.', 'membpress_restrict', 'membpress'); ?>
             </p>
             <?php
             // iterate through all membpress membership levels
 			// and show the post restrict option for each of them
 			foreach ($mp_levels as $mp_level):
 			
-			// get the list of posts restricted by the current membership level
-			$mp_restrict_posts_by_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
-			$mp_restrict_posts_by_curr_level = implode(',', (array)$mp_restrict_posts_by_curr_level);
+			// get the list of pages restricted by the current membership level
+			$mp_restrict_pages_by_curr_level = get_option('membpress_restrict_pages_level_' . $mp_level['level_no']);
+			$mp_restrict_pages_by_curr_level = implode(',', (array)$mp_restrict_pages_by_curr_level);
 			
 			?>
             <p>
-            <strong><?php echo sprintf(_x('Restrict Posts by Membership Level %s (%s):', 'membpress_restrict', 'membpress'), $mp_level['level_no'], $mp_level['display_name']); ?></strong>
+            <strong><?php echo sprintf(_x('Restrict Pages by Membership Level %s (%s):', 'membpress_restrict', 'membpress'), $mp_level['level_no'], $mp_level['display_name']); ?></strong>
             </p>
             <p>
-            <label for="membpress_restrict_posts_level_<?php echo $mp_level['level_no']; ?>"><?php echo _x('Provide the Post IDs, separated by a comma(,):', 'membpress_restrict', 'membpress'); ?></label><br><input type="text" name="membpress_restrict_posts_level_<?php echo $mp_level['level_no']; ?>" value="<?php echo $mp_restrict_posts_by_curr_level; ?>" style="width:100%" id="membpress_restrict_posts_level_<?php echo $mp_level['level_no']; ?>">
+            <label for="membpress_restrict_pages_level_<?php echo $mp_level['level_no']; ?>"><?php echo _x('Provide the Page IDs, separated by a comma(,):', 'membpress_restrict', 'membpress'); ?></label><br><input type="text" name="membpress_restrict_pages_level_<?php echo $mp_level['level_no']; ?>" value="<?php echo $mp_restrict_pages_by_curr_level; ?>" style="width:100%" id="membpress_restrict_pages_level_<?php echo $mp_level['level_no']; ?>">
             </p>
             <?php
             endforeach;

@@ -19,6 +19,7 @@ if (!defined('MEMBPRESS_LOADED'))
    exit;	
 }
 
+
 /**
 @ Handle the action of Membpress Levels section
 */
@@ -47,6 +48,9 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
 {
    // explode it comma vise and turn it into array
    $mp_restrict_posts_level = explode(',', $_POST['membpress_restrict_posts_level_'.$mp_level_val['level_no']]);
+   
+   // make the post IDs unique
+   $mp_restrict_posts_level = array_unique($mp_restrict_posts_level);
    
    // we need to update the relevant meta data of the post
    // iterate through all the post IDs of the current level
