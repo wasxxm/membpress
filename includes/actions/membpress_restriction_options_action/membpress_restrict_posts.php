@@ -57,7 +57,9 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
    foreach ($mp_restrict_posts_level as $mp_restrict_post_level_key => $mp_restrict_post_level_val)
    { 
 	  // check if the post ID is valid
-	  if (trim($mp_restrict_post_level_val) != "" && $mp_restrict_post_level_val > 0)
+	  $mp_restrict_post_level_val = trim($mp_restrict_post_level_val);
+	  
+	  if (is_numeric($mp_restrict_post_level_val) && $mp_restrict_post_level_val > 0)
 	  {
 		 update_post_meta($mp_restrict_post_level_val, 'membpress_post_restricted_by_level', $mp_level_name);
 	  }

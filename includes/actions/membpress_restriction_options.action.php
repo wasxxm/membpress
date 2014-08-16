@@ -57,6 +57,14 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	
 	/*
 	**************************************************
+	@ Include the Restrict Pages section action, submit
+	**************************************************
+	*/
+	include_once 'membpress_restriction_options_action/membpress_restrict_pages.php';
+	
+	
+	/*
+	**************************************************
 	@ Check which section triggered the action and act accordingly
 	*/
 	
@@ -64,6 +72,11 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	if (isset($_POST['membpress_restrict_submit-membpress_restrict_post_section']))
 	{
 	   $section = 'all';
+	}
+	
+	if (isset($_POST['membpress_restrict_submit-membpress_restrict_page_section']))
+	{
+	   $section = 'membpress_restrict_pages';	
 	}
 	
 	// see if there was an error

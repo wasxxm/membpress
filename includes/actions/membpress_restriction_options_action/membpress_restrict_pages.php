@@ -37,7 +37,7 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
    // clear the page restrict meta for each ID
    foreach ($mp_restrict_pages_level as $mp_restrict_page_level_key => $mp_restrict_page_level_val)
    {
-	   update_page_meta($mp_restrict_page_level_val, 'membpress_page_restricted_by_level', '');   
+	   update_post_meta($mp_restrict_page_level_val, 'membpress_page_restricted_by_level', '');   
    }
    
    // clear the Restrict Posts option
@@ -57,9 +57,11 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
    foreach ($mp_restrict_pages_level as $mp_restrict_page_level_key => $mp_restrict_page_level_val)
    { 
 	  // check if the page ID is valid
-	  if (trim($mp_restrict_page_level_val) != "" && $mp_restrict_page_level_val > 0)
+	  $mp_restrict_page_level_val = trim($mp_restrict_page_level_val);
+	  
+	  if (is_numeric($mp_restrict_page_level_val) && $mp_restrict_page_level_val > 0)
 	  {
-		 update_page_meta($mp_restrict_page_level_val, 'membpress_page_restricted_by_level', $mp_level_name);
+		 update_post_meta($mp_restrict_page_level_val, 'membpress_page_restricted_by_level', $mp_level_name);
 	  }
 	  else
 	  {

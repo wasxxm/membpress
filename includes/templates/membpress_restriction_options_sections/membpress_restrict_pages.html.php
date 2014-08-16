@@ -47,6 +47,6 @@ endif;
             endforeach;
 			?>
             <hr>
-            <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_restrict_submit-membpress_restrict_post_section" name="membpress_restrict_submit-membpress_restrict_post_section">
+            <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_restrict_submit-membpress_restrict_page_section" name="membpress_restrict_submit-membpress_restrict_page_section">
           </div>
         </div>
