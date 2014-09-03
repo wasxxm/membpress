@@ -115,10 +115,10 @@ if (isset($_POST['membpress_settings_welcome_login_individual']))
 	   if ($mp_login_redirect_types[$i] == 'post')
 	   {
 		   $mp_welcome_login_post = get_post($mp_login_redirect_ids[$i]);
-		   if ($mp_welcome_login_post->post_type != 'page' && $mp_welcome_login_post->post_status == 'publish')
+		   if ($mp_welcome_login_post->post_type != 'page')
 		   {
 		   }
-		   else
+		   else if ($mp_welcome_login_post->post_status == 'publish')
 		   {
 			  $membpress_error_flag = true;
 			  $membpress_error_section = 'all';

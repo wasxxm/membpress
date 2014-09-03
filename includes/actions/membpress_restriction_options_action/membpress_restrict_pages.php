@@ -40,9 +40,14 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
 	   update_post_meta($mp_restrict_page_level_val, 'membpress_page_restricted_by_level', '');   
    }
    
-   // clear the Restrict Posts option
+   // clear the Restrict Pages option
    update_option('membpress_restrict_pages_level_'.$mp_level_val['level_no'], '');
 }
+
+// reverse the membership levels so we can retain the post ID for higher levels and discard the lower levels
+$mp_all_membership_levels = array_reverse($mp_all_membership_levels);
+// array to hold the post IDs already assigned to higher membership levels
+$mp_higher_restricted_pages = array();
 
 foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
 {
@@ -51,6 +56,20 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
    
    // make the page IDs unique
    $mp_restrict_pages_level = array_unique($mp_restrict_pages_level);
+   
+   // remove all page IDs already inlcuded in some higher membership level
+   foreach ($mp_restrict_pages_level as $mp_restrict_page_level_key => $mp_restrict_page_level_val)
+   {
+	   if (in_array($mp_restrict_page_level_val, $mp_higher_restricted_pages))
+	   {
+		   unset($mp_restrict_pages_level[$mp_restrict_page_level_key]);   
+	   }
+	   else
+	   {
+	      // push the current higher page IDs to the array
+          array_push($mp_higher_restricted_pages, $mp_restrict_page_level_val);
+	   }
+   }
    
    // we need to update the relevant meta data of the page
    // iterate through all the page IDs of the current level

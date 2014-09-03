@@ -23,9 +23,9 @@ endif;
           </div>
           <h3 class="hndle"><span><?php echo _x('Restrict Pages', 'general', 'membpress'); ?></span></h3>
           <div class="inside">
-            <p> <?php echo _x('MembPress lets you restrict any number of pages by binding them to different membership levels. You can enter the IDs of the pages (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those pages restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').', 'membpress_restrict', 'membpress'); ?> </p>
+            <p> <?php echo _x('MembPress lets you restrict any number of pages by binding them to different membership levels. You can enter the IDs of the pages (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those pages restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').<br>A page restricted by a higher membership level will take precedence over all the lower membership levels. For example, Page ID 2 set for membership level 1 and membership level 4 will work for membership level 4, 3, 2, 1, 0.', 'membpress_restrict', 'membpress'); ?> </p>
             <p>
-            <?php echo _x('Please note that any page which is set as a login welcome redirect post for any membership level (Basic Setup -> Welcome Page after Login) cannot be restricted below. Such page(s) will work as a login welcome redirect page only.', 'membpress_restrict', 'membpress'); ?>
+            <?php echo _x('Please note that any page which is set as a login welcome redirect page for any membership level (Basic Setup -> Welcome Page after Login) cannot be restricted below. Such page(s) will work as a login welcome redirect page only. Same is true for Membership Options Page.', 'membpress_restrict', 'membpress'); ?>
             </p>
             <?php
             // iterate through all membpress membership levels

@@ -375,6 +375,10 @@ class MembPress_Helper
 					 {
 						 $login_redirect_id[] = $mp_login_page_id;
 					 }
+					 else
+					 {
+						$login_redirect_id[] = ''; 
+					 }
 				  }
 				  else if ($mp_login_type == 'post') // if redirect type is set to a post 
 				  {
@@ -384,6 +388,10 @@ class MembPress_Helper
 					 if (isset($mp_login_post_id) && $mp_login_post_id != '')
 					 {
 						 $login_redirect_id[] = $mp_login_post_id;
+					 }
+					 else
+					 {
+						$login_redirect_id[] = ''; 
 					 }
 				  }
 				  else if ($mp_login_type == 'url') // if redirect set to an absolute url
@@ -428,6 +436,213 @@ class MembPress_Helper
 	  } 
 	  
 	  return array('login_redirect_scope' => $login_redirect_scope, 'login_redirect_type' => $login_redirect_type, 'login_redirect_id' => $login_redirect_id, 'login_redirect_levels' => $login_redirect_levels, 'login_redirect_restrict_flags' => $login_redirect_restrict_flags);  
+   }
+   
+   
+   
+   /**
+   @ Function to check if a page ID is set as login welcome redirect for any/all membership level(s)
+   @ If the Page is set as login welcome redirect, it returns the level number, else it returns false
+   @ page_id is the page ID passed to be check
+   */
+   public function membpress_check_page_login_redirect_exists($page_id)
+   {
+	   // if page ID is not valid, return false
+	   if (!isset($page_id) || $page_id <= 0) return false;
+	   
+	   // get the login welcome redirect settings, set in MembPress -> Basic Setup -> Login Welcome Page
+	   $redirect_vars = $this->membpress_get_login_redirect_setting_vars(); 
+	   
+	   // if login scope is global, login redirect type is page and login redirect ID is same as the passed page ID, return the level all
+	   if ($redirect_vars['login_redirect_scope'] == 'global' && $redirect_vars['login_redirect_type'] == 'page' && $redirect_vars['login_redirect_id'] == $page_id)
+	   {
+		   return array('level_name' => 'all', 'level_no' => '');   
+	   }
+	   
+	   // Page ID was not found in the global login redirect at least
+	   // now check if the individual redirection is set
+	   
+	   // array to hold the membership level numbers and names for which the page is set as login welcome redirect
+	   $login_redirect_level_numbers = array();
+	   $login_redirect_level_names = array();
+	   
+	   // if login welcome redirect is set individually
+	   if ($redirect_vars['login_redirect_scope'] == 'individual')
+	   {
+	      // get the login redirect vars to be used in for loop
+		  $login_redirect_levels = $redirect_vars['login_redirect_levels'];
+		  $login_redirect_type = $redirect_vars['login_redirect_type'];
+		  $login_redirect_id = $redirect_vars['login_redirect_id'];
+		  
+		  for ($i = 0; $i < count($login_redirect_levels); $i++)
+		  {
+		      // if the login redirect type is page and the passed Page ID matches the login redirect ID in loop
+			  if ($login_redirect_type[$i] == 'page' && $login_redirect_id[$i] == $page_id)
+			  {
+			      // extract the level number, like 7 from membpress_level_7
+		          $level_no = $this->membpress_extract_level_no($login_redirect_levels[$i]);
+		          // get the level name
+		          $level_name = $this->membpress_get_membership_level_name($level_no);
+				  
+				  $login_redirect_level_numbers[] = $level_no;
+				  $login_redirect_level_names[] = $level_name;   
+			  }
+		  }
+	   }
+	   
+	   // only proceed if the Page ID was set for any level
+	   if (count($login_redirect_level_numbers) > 0)
+	   {
+		   // return the level names and numbers array
+		   return array('level_name' => $login_redirect_level_names, 'level_no' => $login_redirect_level_numbers);  
+	   }
+	   
+	   // the Page ID is not set as login welcome redirect for any level, for any scope
+	   // so return false
+	   return false;  
+   }
+   
+   
+   
+   /**
+   @ Function to check if a post ID is set as login welcome redirect for any/all membership level(s)
+   @ If the Post is set as login welcome redirect, it returns the level numbers, else it returns false
+   @ post_id is the post ID passed to be check
+   */
+   public function membpress_check_post_login_redirect_exists($post_id)
+   {
+	   // if post ID is not valid, return false
+	   if (!isset($post_id) || $post_id <= 0) return false;
+	   
+	   // get the login welcome redirect settings, set in MembPress -> Basic Setup -> Login Welcome Post
+	   $redirect_vars = $this->membpress_get_login_redirect_setting_vars(); 
+	   
+	   // if login scope is global, login redirect type is post and login redirect ID is same as the passed post ID, return the level all
+	   if ($redirect_vars['login_redirect_scope'] == 'global' && $redirect_vars['login_redirect_type'] == 'post' && $redirect_vars['login_redirect_id'] == $post_id)
+	   {
+		   return array('level_name' => 'all', 'level_no' => '');   
+	   }
+	   
+	   // Post ID was not found in the global login redirect at least
+	   // now check if the individual redirection is set
+	   
+	   // array to hold the membership level numbers and names for which the post is set as login welcome redirect
+	   $login_redirect_level_numbers = array();
+	   $login_redirect_level_names = array();
+	   
+	   // if login welcome redirect is set individually
+	   if ($redirect_vars['login_redirect_scope'] == 'individual')
+	   {
+	      // get the login redirect vars to be used in for loop
+		  $login_redirect_levels = $redirect_vars['login_redirect_levels'];
+		  $login_redirect_type = $redirect_vars['login_redirect_type'];
+		  $login_redirect_id = $redirect_vars['login_redirect_id'];
+		  
+		  for ($i = 0; $i < count($login_redirect_levels); $i++)
+		  {
+		      // if the login redirect type is post and the passed Post ID matches the login redirect ID in loop
+			  if ($login_redirect_type[$i] == 'post' && $login_redirect_id[$i] == $post_id)
+			  {
+			      // extract the level number, like 7 from membpress_level_7
+		          $level_no = $this->membpress_extract_level_no($login_redirect_levels[$i]);
+		          // get the level name
+		          $level_name = $this->membpress_get_membership_level_name($level_no);
+				  
+				  $login_redirect_level_numbers[] = $level_no;
+				  $login_redirect_level_names[] = $level_name;   
+			  }
+		  }
+	   }
+	   
+	   // only proceed if the Post ID was set for any level
+	   if (count($login_redirect_level_numbers) > 0)
+	   {
+		   // return the level names and numbers array
+		   return array('level_name' => $login_redirect_level_names, 'level_no' => $login_redirect_level_numbers);  
+	   }
+	   
+	   // the Post ID is not set as login welcome redirect for any level, for any scope
+	   // so return false
+	   return false;  
+   }
+   
+   
+   
+   /**
+   @ Function to check if the Page is restricted by any membership level
+   @ $page_id is the Page ID to be checked
+   @ It will return the highest membership level by which the Page is restricted
+   */
+   public function membpress_check_page_restricted_by_level($page_id)
+   {
+	   // make sure the $page_id is valid
+	   if (!isset($page_id) || $page_id <= 0) return false;
+	   
+	   // first, get all membership levels
+	   $mp_levels = $this->membpress_get_all_membership_levels();
+	   
+	   // flag to hold the highest membership level
+	   $mp_restrict_by_level = -1;
+	   
+	   foreach ($mp_levels as $mp_level)
+	   {
+	       // get the list of pages restricted by the current membership level
+		   $mp_restrict_pages_by_curr_level = get_option('membpress_restrict_pages_level_' . $mp_level['level_no']);
+		   // if the page ID is present in the list of restricted pages for current level, then store it
+		   if (in_array($page_id, $mp_restrict_pages_by_curr_level))
+		   {
+			   $mp_restrict_by_level = $mp_level['level_no'];   
+		   }
+	   }
+	   
+	   // check if the page is restricted by any level
+	   if ($mp_restrict_by_level >= 0)
+	   {
+		   return array('level_name' => $this->membpress_get_membership_level_name($mp_restrict_by_level), 'level_no' => $mp_restrict_by_level);   
+	   }
+	   
+	   // the page is not restricted by any level
+	   // return false
+	   return false;
+   }
+   
+   
+   /**
+   @ Function to check if the Post is restricted by any membership level
+   @ $post_id is the Post ID to be checked
+   @ It will return the highest membership level by which the Post is restricted
+   */
+   public function membpress_check_post_restricted_by_level($post_id)
+   {
+	   // make sure the $post_id is valid
+	   if (!isset($post_id) || $post_id <= 0) return false;
+	   
+	   // first, get all membership levels
+	   $mp_levels = $this->membpress_get_all_membership_levels();
+	   
+	   // flag to hold the highest membership level
+	   $mp_restrict_by_level = -1;
+	   
+	   foreach ($mp_levels as $mp_level)
+	   {
+	       // get the list of posts restricted by the current membership level
+		   $mp_restrict_posts_by_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
+		   // if the post ID is present in the list of restricted posts for current level, then store it
+		   if (in_array($post_id, $mp_restrict_posts_by_curr_level))
+		   {
+			   $mp_restrict_by_level = $mp_level['level_no'];   
+		   }
+	   }
+	   
+	   // check if the post is restricted by any level
+	   if ($mp_restrict_by_level >= 0)
+	   {
+		   return array('level_name' => $this->membpress_get_membership_level_name($mp_restrict_by_level), 'level_no' => $mp_restrict_by_level);   
+	   }
+	   
+	   // the post is not restricted by any level
+	   // return false
+	   return false;
    }
    
    
@@ -754,6 +969,255 @@ class MembPress_Helper
        }   
    }
    
+   
+   
+   
+   /**
+   Function to restrict pages/post/categories/content etc by a membership level. Any post/page accessed without the required membership level
+   will redirect the user to the membership options page
+   */
+   public function membpress_manage_restricted_access($query)
+   { 
+       // do not continue if this is in the admin area
+	   if ($query->is_admin) return;
+   
+	   // see if it is the main query requested by the user
+	   // also check if this page is not the front page
+	   if ($query->is_main_query() && !is_front_page())
+	   {  
+		  // get all the membership levels
+		  $mp_levels = $this->membpress_get_all_membership_levels();
+		  
+		  // membpress membership options page set in the membpress settings
+		  $mp_membership_option_page = get_option('membpress_settings_membership_option_page');
+		  // get permalink of the page ID set in membpress options page section
+		  $mp_membership_option_page_permalink = get_permalink($mp_membership_option_page);
+		  
+		  // get the main query object
+		  $q = $this->membpress_query_object_check($query);
+		  
+		  // if it is a post, call the post restriction function
+		  if (isset($q['p']) && $q['p'] > 0)
+		  {
+		     // call the function to manage post restriction access
+			 $this->membpress_manage_restricted_post_access($q['p'], $mp_levels, $mp_membership_option_page_permalink);
+		  }
+		  else if (isset($q['page_id']) && $q['page_id'] > 0)
+		  {
+			 // call the function to manage page restriction access
+			 $this->membpress_manage_restricted_page_access($q['page_id'], $mp_levels, $mp_membership_option_page_permalink);  
+		  }
+		  
+	   }
+   }
+   
+   
+   
+   /**
+   Function to manage restriction of posts by membership levels
+   $post_id is the post ID to be checked
+   $mp_levels is an array containing all membership levels
+   $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
+   */
+   
+   public function membpress_manage_restricted_post_access($post_id, $mp_levels, $mp_redirect_to)
+   {
+	   // check if this post is set as login welcome for any/all membership level(s)
+	   if ($this->membpress_check_post_login_redirect_exists($post_id))
+	   {
+		   // if yes, then do not continue however the restriction is applied by 
+		   // Restriction Options -> Restrict Posts
+		   return false;  
+	   }
+	   
+	   // this post is not set as login welcome redirect for any level
+	   // now see if it is restricted by any level
+	   
+	   // iterate through each level
+	   foreach ($mp_levels as $mp_level)
+	   {
+		   // append post ID and membership level info to the redirection url
+	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_p_id' => $post_id), $mp_redirect_to);
+		   
+		   // get the posts restricted by this level
+		   $posts_restricted_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
+		   
+		   // check if current post is present in the restricted posts of the current level
+		   if (in_array($post_id, $posts_restricted_curr_level))
+		   {
+			   // check if the user is logged in
+			   if (is_user_logged_in())
+			   {
+				   // check if the current user has the required membership level
+				   // greater or equal to required mp level number
+				   if (!$this->membpress_check_curr_user_level_meets($mp_level['level_no']))
+				   {
+						// required level is not found, redirect to membership options page
+						wp_redirect($mp_redirect_to);
+						exit;   
+				   }
+			   }
+			   else
+			   // user is not logged in
+			   {
+				  // since the user is not logged in we only need to check if this post is restricted by current membership level
+				  // this level is the highest level by which the post is restricted
+				 if (in_array($post_id, $posts_restricted_curr_level))
+				 {
+					 // post is restricted by this level, go to membership options sign-up page
+					 wp_redirect($mp_redirect_to);
+					 exit;  
+				 }
+			   }
+		   }
+	   }
+   }
+   
+   
+   /**
+   Function to manage restriction of posts by membership levels
+   $post_id is the post ID to be checked
+   $mp_levels is an array containing all membership levels
+   $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
+   */
+   
+   public function membpress_manage_restricted_page_access($page_id, $mp_levels, $mp_redirect_to)
+   {
+	   // check if this page is set as the membership options page
+	   if ($this->membpress_check_if_membership_options_page($page_id))
+	   {
+		   // page is set as membership options page
+		   return false;   
+	   }
+	   
+	   
+	   // check if this page is set as login welcome for any/all membership level(s)
+	   if ($this->membpress_check_page_login_redirect_exists($page_id))
+	   {
+		   // if yes, then do not continue however the restriction is applied by 
+		   // Restriction Options -> Restrict Pages
+		   return false;  
+	   }
+	   
+	   
+	   // this page is not set as login welcome redirect for any level
+	   // now see if it is restricted by any level
+	   
+	   // iterate through each level
+	   foreach ($mp_levels as $mp_level)
+	   {
+		   // append page ID and membership level info to the redirection url
+	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_page_id' => $page_id), $mp_redirect_to);
+		   
+		   // get the pages restricted by this level
+		   $pages_restricted_curr_level = get_option('membpress_restrict_pages_level_' . $mp_level['level_no']);
+		   
+		   // check if current page is present in the restricted pages of the current level
+		   if (in_array($page_id, $pages_restricted_curr_level))
+		   {
+			   
+			   // check if the user is logged in
+			   if (is_user_logged_in())
+			   {
+				   // check if the current user has the required membership level
+				   // greater or equal to required mp level number
+				   if (!$this->membpress_check_curr_user_level_meets($mp_level['level_no']))
+				   {
+						// required level is not found, redirect to membership options page
+						wp_redirect($mp_redirect_to);
+						exit;   
+				   }
+			   }
+			   else
+			   // user is not logged in
+			   {
+				  // since the user is not logged in we only need to check if this page is restricted by current membership level
+				  // this level is the highest level by which the page is restricted
+				 if (in_array($page_id, $pages_restricted_curr_level))
+				 {
+					 // page is restricted by this level, go to membership options sign-up page
+					 wp_redirect($mp_redirect_to);
+					 exit;  
+				 }
+			   }
+		   }
+	   }
+   }
+   
+   
+   
+   /**
+   Function to get current user role
+   */
+   public function membpress_get_current_user_roles()
+   {
+      // get current user object
+	  $current_user = wp_get_current_user();
+	 
+	  // check if the current user object an instance of WP_User class
+	  if ($current_user instanceof WP_User && is_array($current_user->roles))
+	  {
+		  // return user roles object
+		  return $current_user->roles;
+	  }
+	  
+	  return false;
+   }
+   
+   
+   /**
+   Function to check if the user meets the required membership level
+   */
+   public function membpress_check_curr_user_level_meets($required_level_no = 0)
+   {
+	  
+	  $roles = $this->membpress_get_current_user_roles();
+	  
+	  if (!$roles) return false;  
+	  
+	  foreach ($roles as $role)
+	  {
+		 // if the current user has role something like membpress_level_2
+		 if(stristr($role, 'membpress_level_') !== FALSE) 
+		 {
+		     // get the number of this membership level
+			 $curr_user_level_no = explode("_", $role);
+			 $curr_user_level_no = $curr_user_level_no[count($curr_user_level_no) - 1]; 
+			 
+			 // check if the current membership level is greater than or equal to required level number
+			 if ($curr_user_level_no >= $required_level_no)
+			 {
+				return true; // return true 
+			 }
+			 else
+			 {
+				// user does not have the required level 
+				return false; 
+			 }
+		 }
+		 // check if the user is a free member => subscriber
+		 else if ($role == 'subscriber')
+		 {
+			 // check if the require level is 0
+			 if ($required_level_no <= 0)
+			 {
+			    return true;
+			 }
+		 }
+		 else
+		 {
+		    // the user is not a subscriber, nor a membpress member.
+			// this means the user is administrator, editor etc
+			// return true so that the user meets the level
+			return true; 
+		 }
+	  }
+	  
+	  return false;
+   }
+   
+   
+   
    /*
    @ Function to update a role display name
    */
@@ -958,6 +1422,44 @@ class MembPress_Helper
 	   }
 	   
 	   return $mp_roles;
+   }
+   
+   /**
+   @ Function to get the name of the membership level no
+   @ mp_level_no is the level no passed
+   */
+   public function membpress_get_membership_level_name($mp_level_no)
+   {
+	   // make sure level no is valid
+	   if ($mp_level_no < 0) return '';
+	   
+	   // get all membership levels
+	   $mp_levels = $this->membpress_get_all_membership_levels();
+	   
+	   // itereate through all levels and return the matched level name
+	   foreach ($mp_levels as $mp_level)
+	   {
+		   if ($mp_level['level_no'] == $mp_level_no)
+		   {
+			   return $mp_level['display_name'];   
+		   }
+	   }
+	   
+	   return '';
+   }
+   
+   /**
+   @ Function to extract level number from a membership level like membpress_level_4
+   @ mp_level_no is the level number is the above format
+   */
+   public function membpress_extract_level_no($mp_level_no)
+   {
+	   // if level is a subscriber, it is 0 level
+	   if ($mp_level_no == 'subscriber') return 0;
+	      
+	   $mp_level_no = explode("_", $mp_level_no);
+	   $mp_level_no = $mp_level_no[count($mp_level_no) - 1];
+	   return $mp_level_no;     
    }
 };
 ?>

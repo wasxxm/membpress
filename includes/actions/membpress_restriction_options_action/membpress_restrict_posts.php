@@ -44,6 +44,11 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
    update_option('membpress_restrict_posts_level_'.$mp_level_val['level_no'], '');
 }
 
+// reverse the membership levels so we can retain the post ID for higher levels and discard the lower levels
+$mp_all_membership_levels = array_reverse($mp_all_membership_levels);
+// array to hold the post IDs already assigned to higher membership levels
+$mp_higher_restricted_posts = array();
+
 foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
 {
    // explode it comma vise and turn it into array
@@ -51,6 +56,20 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
    
    // make the post IDs unique
    $mp_restrict_posts_level = array_unique($mp_restrict_posts_level);
+   
+   // remove all post IDs already inlcuded in some higher membership level
+   foreach ($mp_restrict_posts_level as $mp_restrict_post_level_key => $mp_restrict_post_level_val)
+   {
+	   if (in_array($mp_restrict_post_level_val, $mp_higher_restricted_posts))
+	   {
+		   unset($mp_restrict_posts_level[$mp_restrict_post_level_key]);   
+	   }
+	   else
+	   {
+	      // push the current higher post IDs to the array
+          array_push($mp_higher_restricted_posts, $mp_restrict_post_level_val);
+	   }
+   }
    
    // we need to update the relevant meta data of the post
    // iterate through all the post IDs of the current level

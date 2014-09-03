@@ -128,6 +128,9 @@ class MembPress_Main
 	   // add post ID column to the edit post screen, after the checkbbox and before title
 	   $posts_columns = $this->membpress_add_post_ID_column($posts_columns, $post_type);
 	   
+	   // add post info column to the edit post screen, after the title
+	   $posts_columns = $this->membpress_add_post_info_column($posts_columns, $post_type);
+	   
 	   return $posts_columns;	
 	}
 	
@@ -138,6 +141,9 @@ class MembPress_Main
 	{
         // call the function to manage the post ID column content
 		$this->membpress_manage_post_ID_column($column_name, $post_id);
+		
+		// call the function to manage the post info column content
+		$this->membpress_manage_post_info_column($column_name, $post_id);
 	}
 	
 	/**
@@ -147,6 +153,9 @@ class MembPress_Main
 	{
 	   // add page ID column to the edit page screen, after the checkbbox and before title
 	   $page_columns = $this->membpress_add_page_ID_column($page_columns);
+	   
+	   // add page info column to the edit page screen, after the title
+	   $page_columns = $this->membpress_add_page_info_column($page_columns);
 	   
 	   return $page_columns;  	
 	}
@@ -158,6 +167,9 @@ class MembPress_Main
 	{
         // call the function to manage the page ID column content
 		$this->membpress_manage_page_ID_column($column_name, $page_id);
+		
+		// call function to add membpress info column
+		$this->membpress_manage_page_info_column($column_name, $page_id);
 	}
 	
 	
@@ -172,13 +184,35 @@ class MembPress_Main
 	   return $posts_columns;	
 	}
 	
+	/**
+	@ Function to add post info to the edit post screen
+	*/
+	public function membpress_add_post_info_column($posts_columns, $post_type)
+	{
+	   // we want to add the post info after the title
+       $posts_columns = array_slice($posts_columns, 0, 3, true) + array("post_info" => "MembPress") + array_slice($posts_columns, 1, count($posts_columns) - 1, true);
+	   
+	   return $posts_columns;	
+	}
+	
     /**
-	@ Function to add post ID to the edit post screen
+	@ Function to add page ID to the edit page screen
 	*/
 	public function membpress_add_page_ID_column($page_columns)
 	{
-	   // we want to add the post ID before the Title column and after the checkbox
+	   // we want to add the page ID before the Title column and after the checkbox
        $page_columns = array_slice($page_columns, 0, 1, true) + array("page_ID" => "ID") + array_slice($page_columns, 1, count($page_columns) - 1, true);
+	   
+	   return $page_columns;	
+	}
+	
+	/**
+	@ Function to add restriction info to the edit page screen
+	*/
+	public function membpress_add_page_info_column($page_columns)
+	{
+	   // we want to add the page info column after the title
+       $page_columns = array_slice($page_columns, 0, 3, true) + array("page_info" => "MembPress") + array_slice($page_columns, 1, count($page_columns) - 1, true);
 	   
 	   return $page_columns;	
 	}
@@ -202,6 +236,119 @@ class MembPress_Main
 	  if ('page_ID' == $column_name)
 	  {
 		  echo "<strong>$page_id</strong>";
+	  }	
+	}
+	
+	/**
+	@ Function to manage the contents of the page info column
+	*/
+	public function membpress_manage_page_info_column($column_name, $page_id)
+	{
+	  if ('page_info' == $column_name)
+	  {
+		  /**
+		  Check if the current page is set as membership options page
+		  */
+		  if ($this->mp_helper->membpress_check_if_membership_options_page($page_id))
+		  {
+		      echo "<strong>"._x("Membership Options Page", 'general', 'membpress')."</strong>";
+			  return; // return do not continue further  
+		  }
+		  
+		  /** this page is not set as membership options page, so check if it is set as login welcome */
+		  // redirect page for any level or for all levels (global)
+		  $login_redirect_level = $this->mp_helper->membpress_check_page_login_redirect_exists($page_id);
+		  
+		  // page is set for global welcome login
+		  if ($login_redirect_level['level_name'] == 'all')
+		  {
+		      echo "<strong>". _x("Global Login Welcome Page", 'general', 'membpress')."</strong>"; 
+			  return; // do not continue
+		  }
+		  else if (is_array($login_redirect_level) && count($login_redirect_level['level_no']))
+		  {
+			  echo "<strong>"._x("Login Welcome Page for", 'general', 'membpress') . '<br>';
+			  
+			  for ($i = 0; $i < count($login_redirect_level['level_no']); $i++)
+			  {
+			     $level_name = $login_redirect_level['level_name'];
+				 // page is set for some specific membership levels
+			     echo " <em>".$level_name[$i]."</em><br>";
+			  }
+			  
+			  echo "</strong>";
+			  return;  // do not continue 
+		  }
+		  
+		  /**
+		  This page is not set as membership options page, nor as login welcome redirect page
+		  Now check if it is restricted by any membership level
+		  */
+		  
+		  $page_restricted = $this->mp_helper->membpress_check_page_restricted_by_level($page_id);
+		  
+		  if ($page_restricted) // page is restricted by some level
+		  {
+		     echo "<strong>Restricted by <em>".$page_restricted['level_name']."<em></strong>";
+			 return;  
+		  }
+		  
+		  // if no link to membpress is found, echo something to fill space
+		  echo '- - -';
+		  
+	  }	
+	}
+	
+	
+	
+	/**
+	@ Function to manage the contents of the post info column
+	*/
+	public function membpress_manage_post_info_column($column_name, $post_id)
+	{
+	  if ('post_info' == $column_name)
+	  {  
+		  /** check if it is set as login welcome */
+		  // redirect post for any level or for all levels (global)
+		  $login_redirect_level = $this->mp_helper->membpress_check_post_login_redirect_exists($post_id);
+		  
+		  // post is set for global welcome login
+		  if ($login_redirect_level['level_name'] == 'all')
+		  {
+		      echo "<strong>". _x("Global Login Welcome Post", 'general', 'membpress')."</strong>"; 
+			  return; // do not continue
+		  }
+		  else if (is_array($login_redirect_level) && count($login_redirect_level['level_no']))
+		  {
+			  echo "<strong>"._x("Login Welcome Post for", 'general', 'membpress') . '<br>';
+			  
+			  for ($i = 0; $i < count($login_redirect_level['level_no']); $i++)
+			  {
+			     $level_name = $login_redirect_level['level_name'];
+				 // post is set for some specific membership levels
+			     echo " <em>".$level_name[$i]."</em><br>";
+			  }
+			  
+			  echo "</strong>";
+			  return;  // do not continue 
+		  }
+		  
+		  /**
+		  This post is not set as login welcome redirect post
+		  Now check if it is restricted by any membership level
+		  */
+		  
+		  $post_restricted = $this->mp_helper->membpress_check_post_restricted_by_level($post_id);
+		  
+		  if ($post_restricted) // post is restricted by some level
+		  {
+		     echo "<strong>Restricted by <em>".$post_restricted['level_name']."<em></strong>";
+			 return; 
+		  }
+		  
+		  // if no link to membpress is found, echo something to fill space
+		  echo '- - -';
+		  
 	  }	
 	}
 	
@@ -255,6 +402,7 @@ class MembPress_Main
 	*/
 	function membpress_save_restrict_metabox($post_id)
 	{
+		
 		/*
 		 * We need to verify this came from our screen and with proper authorization,
 		 * because the save_post action can be triggered at other times.
@@ -323,25 +471,33 @@ class MembPress_Main
 		   // clear any previous assignment of the current post to any membership level
 		   // get the current post resitricted level, this is before saving the new one
 		   $mp_post_prev_level = get_post_meta($post_id, 'membpress_post_restricted_by_level', true);
-		   // get the number the above level
+		   // get the number of the above level
 		   $mp_post_prev_level = explode('_', $mp_post_prev_level);
 		   $mp_post_prev_level = $mp_post_prev_level[count($mp_post_prev_level) - 1];
 		   
 		   if ($mp_post_prev_level == 'subscriber') $mp_post_prev_level = 0;
 		   
-		   // get the mempress restrict posts level option
-		   $mp_restrict_posts_by_curr_level = (array)get_option('membpress_restrict_posts_level_' . $mp_post_prev_level);
-		   // remove the current post from this level
-		   // there can be many post IDs, so iterate
-		   foreach($mp_restrict_posts_by_curr_level as $mp_restrict_post_by_curr_level_key => $mp_restrict_post_by_curr_level)
+		   // the post ID can be in more than one membership level, so remove it from all levels
+		   // first get all membership levels
+		   $mp_levels = $this->mp_helper->membpress_get_all_membership_levels();
+		   
+		   // iterate through each level
+		   foreach($mp_levels as $mp_level)
 		   {
-			   if ($mp_restrict_post_by_curr_level == $post_id)
+			   // get the mempress restrict posts level option
+			   $mp_restrict_posts_by_curr_level = (array)get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
+			   // remove the current post from this level
+			   // there can be many post IDs, so iterate
+			   foreach($mp_restrict_posts_by_curr_level as $mp_restrict_post_by_curr_level_key => $mp_restrict_post_by_curr_level)
 			   {
-				   unset($mp_restrict_posts_by_curr_level[$mp_restrict_post_by_curr_level_key]);   
+				   if ($mp_restrict_post_by_curr_level == $post_id)
+				   {
+					   unset($mp_restrict_posts_by_curr_level[$mp_restrict_post_by_curr_level_key]);   
+				   }
 			   }
+			   
+			   update_option('membpress_restrict_posts_level_' . $mp_level['level_no'], $mp_restrict_posts_by_curr_level);
 		   }
-
-		   update_option('membpress_restrict_posts_level_' . $mp_post_prev_level, $mp_restrict_posts_by_curr_level);
 		   	
 		   /*
 		   Now the current value of post is removed from the restrict posts level, we can continue further update
@@ -403,15 +559,80 @@ class MembPress_Main
 			   return;   
 		   }
 		   
+		   /**
+		   Update the list of pages in the membpress restrict_pages_level_{level_no} array option
+		   It can be configured also at: Membpress -> Restriction Options -> Retrict Pages
+		   */
+		   
+		   // clear any previous assignment of the current page to any membership level
+		   // get the current page resitricted level, this is before saving the new one
+		   $mp_page_prev_level = get_post_meta($post_id, 'membpress_page_restricted_by_level', true);
+		   // get the number of the above level
+		   $mp_page_prev_level = explode('_', $mp_page_prev_level);
+		   $mp_page_prev_level = $mp_page_prev_level[count($mp_page_prev_level) - 1];
+		   
+		   if ($mp_page_prev_level == 'subscriber') $mp_page_prev_level = 0;
+		   
+		   // the page ID can be in more than one membership level, so remove it from all levels
+		   // first get all membership levels
+		   $mp_levels = $this->mp_helper->membpress_get_all_membership_levels();
+		   
+		   // iterate through each level
+		   foreach($mp_levels as $mp_level)
+		   {
+			   // get the mempress restrict pages level option
+			   $mp_restrict_pages_by_curr_level = (array)get_option('membpress_restrict_pages_level_' . $mp_level['level_no']);
+			   // remove the current page from this level
+			   // there can be many page IDs, so iterate
+			   foreach($mp_restrict_pages_by_curr_level as $mp_restrict_page_by_curr_level_key => $mp_restrict_page_by_curr_level)
+			   {
+				   if ($mp_restrict_page_by_curr_level == $post_id)
+				   {
+					   unset($mp_restrict_pages_by_curr_level[$mp_restrict_page_by_curr_level_key]);   
+				   }
+			   }
+			   
+			   update_option('membpress_restrict_pages_level_' . $mp_level['level_no'], $mp_restrict_pages_by_curr_level);
+		   }
+		   	
+		   /*
+		   Now the current value of page is removed from the restrict pages level, we can continue further update
+		   */
+		   
+		   // get the page level number only currently submitted
+		   $mp_level_no = explode('_', $_POST['membpress_restrict_page_level']);
+		   $mp_level_no = $mp_level_no[count($mp_level_no) - 1];
+		   
+		   if ($mp_level_no == 'subscriber') $mp_level_no = 0;
+		   
+		   // new level for this post
+		   $mp_restrict_pages_by_new_level = (array)get_option('membpress_restrict_pages_level_' . $mp_level_no);
+		 
 		   // check if the value of restrict level is  empty
 		   if (trim($_POST['membpress_restrict_page_level']) == '')
 		   {
-			   update_post_meta($post_id, 'membpress_page_restricted_by_level', '');    
+			   update_post_meta($post_id, 'membpress_page_restricted_by_level', '');   
 		   }
 		   else // means the membership value is set, restriction is applied
 		   {
-			   update_post_meta($post_id, 'membpress_page_restricted_by_level', $_POST['membpress_restrict_page_level']);      
-		   }	
+			   update_post_meta($post_id, 'membpress_page_restricted_by_level', $_POST['membpress_restrict_page_level']);
+			   array_push($mp_restrict_pages_by_new_level, $post_id); 
+		   }
+		   
+		   // make the array unqiue to remove any duplicate values
+		   $mp_restrict_pages_by_new_level = array_unique($mp_restrict_pages_by_new_level);
+		   
+		   // remove empty IDs
+		   foreach($mp_restrict_pages_by_new_level as $mp_restrict_page_by_new_level_key => $mp_restrict_page_by_new_level)
+		   {
+			  if (trim($mp_restrict_page_by_new_level) == '')
+			  {
+				  unset($mp_restrict_pages_by_new_level[$mp_restrict_page_by_new_level_key]);  
+			  }
+		   }
+		  
+		   // update the restrict posts option
+		   update_option('membpress_restrict_pages_level_' . $mp_level_no, $mp_restrict_pages_by_new_level);	
 		}
     }
 	
@@ -451,7 +672,12 @@ class MembPress_Main
 	*/
 	public function membpress_pre_get_posts($query)
 	{
-	    $this->mp_helper->membpress_manage_login_welcome_access($query);	
+	    // call the function to manage the login welcome access of posts/pages/external url
+		$this->mp_helper->membpress_manage_login_welcome_access($query);	
+		
+		// call the function to manage the restriction imposed on posts/pages/categories/content etc
+		// based on membership levels
+		$this->mp_helper->membpress_manage_restricted_access($query);
 	}
 	
 	
