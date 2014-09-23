@@ -22,15 +22,17 @@ define('MEMBPRESS_SETTINGS_MAX_POSTS', 3);
 
 // define membership level counts, cannot be less than 4
 // This DOES NOT include the level 0
-define('MEMBPRESS_LEVEL_COUNT', 7);
+define('MEMBPRESS_LEVEL_COUNT', 4);
 
 // define Membpress Membership level names
 // if you have more than level 4 membership plans, you can add the names here
+// these names can however be changed in MembPress -> Basic Setup -> Membership Levels
 define('MEMBPRESS_LEVEL_0', _x('Free Member', 'general', 'membpress'));
 define('MEMBPRESS_LEVEL_1', _x('Basic Member', 'general', 'membpress'));
 define('MEMBPRESS_LEVEL_2', _x('Plus Member', 'general', 'membpress'));
 define('MEMBPRESS_LEVEL_3', _x('Standard Member', 'general', 'membpress'));
 define('MEMBPRESS_LEVEL_4', _x('Premium Member', 'general', 'membpress'));
+define('MEMBPRESS_LEVEL_5', _x('Ultra Premium Member', 'general', 'membpress'));
 
 // minimum php version to run membpress
 define('MEMBPRESS_MIN_PHP_VERSION', '5.2');

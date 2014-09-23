@@ -303,10 +303,26 @@ class MembPress_Helper
 	   // WP built-in 'subscriber' role will be treated as the free level, MembPress Level 0
 	   // each level will only have the read capability
 	   
-	   add_role( 'membpress_level_1', MEMBPRESS_LEVEL_1, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
-	   add_role( 'membpress_level_2', MEMBPRESS_LEVEL_2, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+	   // but also check if the MEMBPRESS_LEVEL_COUNT is more than 4 or not. If yes, create additional roles
+	   if (defined('MEMBPRESS_LEVEL_COUNT') && MEMBPRESS_LEVEL_COUNT > 4)
+	   {
+		   for($i = MEMBPRESS_LEVEL_COUNT; $i > 4; $i--)
+		   {
+			   if (defined('MEMBPRESS_LEVEL_'.$i) && trim(constant(MEMBPRESS_LEVEL_.$i)) != '')
+			   {
+			      add_role( 'membpress_level_'.$i, trim(constant(MEMBPRESS_LEVEL_.$i)), array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+			   }
+			   else
+			   {
+				  add_role( 'membpress_level_'.$i, 'Membership Level '.$i, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );   
+			   }
+		   }
+	   }
+
 	   add_role( 'membpress_level_4', MEMBPRESS_LEVEL_4, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
 	   add_role( 'membpress_level_3', MEMBPRESS_LEVEL_3, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+	   add_role( 'membpress_level_2', MEMBPRESS_LEVEL_2, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+	   add_role( 'membpress_level_1', MEMBPRESS_LEVEL_1, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
 
 	   
 	   // get the WP roles object
@@ -1416,8 +1432,26 @@ class MembPress_Helper
 	   // it won't continue
 	   for($i = 5; $i <= MEMBPRESS_LEVEL_COUNT; $i++)
 	   {
-	      // check if the membership level name is empty, if yes then put 'Membership level #' as value
-	      $membership_level_name = (trim(get_option('membpress_membership_name_level_'.$i)) == '' ? _x('Membership Level', 'general', 'membpress'). " $i" : trim(get_option('membpress_membership_name_level_'.$i)));
+	      // check if the membership level name is empty, if yes
+		  // then check if the config file has the level name defined
+		  // if no then put 'Membership level #' as value
+		  
+		  if (trim(get_option('membpress_membership_name_level_'.$i)) == '')
+		  {
+			  if (defined('MEMBPRESS_LEVEL_'.$i) && trim(constant(MEMBPRESS_LEVEL_.$i)) != '')
+			  {
+				  $membership_level_name = trim(constant(MEMBPRESS_LEVEL_.$i));   
+			  }
+			  else
+			  {
+				 $membership_level_name = _x('Membership Level', 'general', 'membpress'); 
+			  }
+		  }
+		  else
+		  {
+		      $membership_level_name = trim(get_option('membpress_membership_name_level_'.$i));	  
+		  }
+		  
 		  $mp_roles['membpress_level_'.$i] = array('display_name' => $membership_level_name, 'level_no' => $i);
 	   }
 	   
