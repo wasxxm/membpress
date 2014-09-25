@@ -50,14 +50,37 @@ class MembPress_Main
 	   // add action on save post 
 	   add_action( 'save_post', array($this, 'membpress_save_meta_box'));
 	   
-	   // filter for the manage posts columns
+	   /*
+	   Filter for modifying the columns in posts/pages/categories/tags screen
+	   */
+	   
+	   // filter for the manage edit posts columns
 	   add_filter('manage_posts_columns', array($this, 'membpress_manage_posts_columns'), 10, 2);
 	   // filter used in conjunction with manage_posts_columns filter
 	   add_action('manage_posts_custom_column', array($this, 'membpress_manage_posts_custom_column'), 10, 2);
+	   // filter for sorting the custom columns in edit posts screen
+	   add_filter('manage_edit-post_sortable_columns', array($this, 'membpress_sortable_columns'));
+	   
 	   // filter for manage edit page columns
 	   add_filter('manage_pages_columns', array($this, 'membpress_manage_pages_columns'), 10, 2);
 	   // filter used in conjunction with manage_pages_columns filter
 	   add_action('manage_pages_custom_column', array($this, 'membpress_manage_pages_custom_column'), 10, 2);
+	   // filter for sorting the custom columns in edit pages screen
+	   add_filter('manage_edit-page_sortable_columns', array($this, 'membpress_sortable_columns'));
+	   
+	   // filter for manage edit category columns
+	   add_filter('manage_edit-category_columns', array($this, 'membpress_manage_categories_columns'), 10, 2);
+	   // filter used in conjunction with manage_edit-category_columns filter
+       add_filter('manage_category_custom_column', array($this, 'membpress_manage_categories_custom_column'), 10, 3);
+	   // filter for sorting the custom columns in edit categories screen
+	   add_filter( 'manage_edit-category_sortable_columns', array($this, 'membpress_sortable_columns'));
+	   
+	   // filter for manage edit tags columns
+	   add_filter('manage_edit-post_tag_columns', array($this, 'membpress_manage_categories_columns'), 10, 2);
+	   // filter used in conjunction with manage_edit-category_columns filter
+       add_filter('manage_post_tag_custom_column', array($this, 'membpress_manage_categories_custom_column'), 10, 3);
+	   // filter for sorting the custom columns in edit tags screen
+	   add_filter( 'manage_edit-tag_sortable_columns', array($this, 'membpress_sortable_columns'));
 	   
 	   // initialize membpress helper class object
 	   $this->mp_helper = new Membpress_Helper();
@@ -173,6 +196,33 @@ class MembPress_Main
 	}
 	
 	
+    /**
+	@ Function for callback to manage category columns edit
+	*/
+	public function membpress_manage_categories_columns($category_columns)
+	{
+	   // add category ID column to the edit category screen, after the checkbbox and before title
+	   $category_columns = $this->membpress_add_category_ID_column($category_columns);
+	   
+	   // add category info column to the edit category screen, after the title
+	   $category_columns = $this->membpress_add_category_info_column($category_columns);
+	   
+	   return $category_columns;  	
+	}
+	
+	/**
+	@ Filter function called for managing the custom columns added to edit category screen
+	*/
+	public function membpress_manage_categories_custom_column($c, $column_name, $category_id)
+	{
+        // call the function to manage the category ID column content
+		$this->membpress_manage_category_ID_column($c, $column_name, $category_id);
+		
+	    // call the function to manage the post info column content
+		$this->membpress_manage_category_info_column($c, $column_name, $category_id);
+	}
+	
+	
 	/**
 	@ Function to add post ID to the edit post screen
 	*/
@@ -218,6 +268,30 @@ class MembPress_Main
 	}
 	
 	/**
+	@ Function to add category ID to the edit category screen
+	*/
+	public function membpress_add_category_ID_column($category_columns)
+	{
+	   // we want to add the page ID before the Title column and after the checkbox
+       $category_columns = array_slice($category_columns, 0, 1, true) + array("category_ID" => "ID") + array_slice($category_columns, 1, count($category_columns) - 1, true);
+	   
+	   return $category_columns;	
+	}
+	
+	
+    /**
+	@ Function to add restriction info to the edit category screen
+	*/
+	public function membpress_add_category_info_column($category_columns)
+	{
+	   // we want to add the category info column after the title
+       $category_columns = array_slice($category_columns, 0, 3, true) + array("category_info" => "MembPress") + array_slice($category_columns, 1, count($category_columns) - 1, true);
+	   
+	   return $category_columns;	
+	}
+	
+	
+	/**
 	@ Function to manage the contents of the post ID column
 	*/
 	public function membpress_manage_post_ID_column($column_name, $post_id)
@@ -239,6 +313,61 @@ class MembPress_Main
 	  }	
 	}
 	
+    /**
+	@ Function to manage the contents of the category ID column
+	*/
+	public function membpress_manage_category_ID_column($c, $column_name, $category_id)
+	{
+	  if ('category_ID' == $column_name)
+	  {
+		  echo "<strong>$category_id</strong>";
+	  }	
+	}
+	
+	/**
+	@ Function to manage the filter for sorting the customs columns
+	@ added in posts, pages, categories, tags
+	*/
+	public function membpress_sortable_columns($columns)
+	{	
+	    $columns['post_ID'] = 'id';
+	    $columns['page_ID'] = 'id';
+		$columns['category_ID'] = 'id';
+		$columns['tag_ID'] = 'id';
+		
+	    $columns['post_info'] = 'post_info';
+	    $columns['page_info'] = 'page_info';
+		$columns['category_info'] = 'category_info';
+		$columns['tag_info'] = 'tag_info';
+		
+		return $columns;	
+	}
+	
+	/**
+	@ Function to add sortable filter for the MembPress info column
+	@ on posts/pages/categories/tags screens
+	*/
+	
+	public function membpress_sortable_info_columns($query)
+	{
+		if( ! is_admin() )
+			return;
+	 
+		$orderby = $query->get( 'orderby');
+	 
+		if( 'post_info' == $orderby )
+		{
+			$query->set('meta_key', 'membpress_post_info');
+			$query->set('orderby', 'meta_value');
+		}
+		
+		if( 'page_info' == $orderby )
+		{
+			$query->set('meta_key', 'membpress_page_info');
+			$query->set('orderby', 'meta_value');
+		}
+	}
+	
 	/**
 	@ Function to manage the contents of the page info column
 	*/
@@ -251,7 +380,13 @@ class MembPress_Main
 		  */
 		  if ($this->mp_helper->membpress_check_if_membership_options_page($page_id))
 		  {
-		      echo "<strong>"._x("Membership Options Page", 'general', 'membpress')."</strong>";
+		      $ret = "<strong>"._x("Membership Options Page", 'general', 'membpress')."</strong>";
+			  
+			  // update page membpress info to be used in MembPress column sort
+			  update_post_meta($page_id, 'membpress_page_info', $ret);
+			  
+			  echo $ret;
+			  
 			  return; // return do not continue further  
 		  }
 		  
@@ -262,21 +397,33 @@ class MembPress_Main
 		  // page is set for global welcome login
 		  if ($login_redirect_level['level_name'] == 'all')
 		  {
-		      echo "<strong>". _x("Global Login Welcome Page", 'general', 'membpress')."</strong>"; 
+		      $ret = "<strong>". _x("Global Login Welcome Page", 'general', 'membpress')."</strong>"; 
+			  
+			  // update page membpress info to be used in MembPress column sort
+			  update_post_meta($page_id, 'membpress_page_info', $ret);
+			  
+			  echo $ret;
+			  
 			  return; // do not continue
 		  }
 		  else if (is_array($login_redirect_level) && count($login_redirect_level['level_no']))
 		  {
-			  echo "<strong>"._x("Login Welcome Page for", 'general', 'membpress') . '<br>';
+			  $ret = "<strong>"._x("Login Welcome Page for", 'general', 'membpress') . '<br>';
 			  
 			  for ($i = 0; $i < count($login_redirect_level['level_no']); $i++)
 			  {
 			     $level_name = $login_redirect_level['level_name'];
 				 // page is set for some specific membership levels
-			     echo " <em>".$level_name[$i]."</em><br>";
+			     $ret .= " <em>".$level_name[$i]."</em><br>";
 			  }
 			  
-			  echo "</strong>";
+			  $ret .= "</strong>";
+			  
+			  // update page membpress info to be used in MembPress column sort
+			  update_post_meta($page_id, 'membpress_page_info', $ret);
+			  
+			  echo $ret;
+			  
 			  return;  // do not continue 
 		  }
 		  
@@ -289,12 +436,21 @@ class MembPress_Main
 		  
 		  if ($page_restricted) // page is restricted by some level
 		  {
-		     echo "<strong>Restricted by <em>".$page_restricted['level_name']."<em></strong>";
+		     $ret = "<strong>Restricted by <em>".$page_restricted['level_name']."<em></strong>";
+			 
+			 // update page membpress info to be used in MembPress column sort
+			 update_post_meta($page_id, 'membpress_page_info', $ret);
+			  
+			 echo $ret;
+			 
 			 return;  
 		  }
 		  
 		  // if no link to membpress is found, echo something to fill space
 		  echo '- - -';
+		  
+		  // update page membpress info to be used in MembPress column sort
+		  update_post_meta($page_id, 'membpress_page_info', '');
 		  
 	  }	
 	}
@@ -315,21 +471,31 @@ class MembPress_Main
 		  // post is set for global welcome login
 		  if ($login_redirect_level['level_name'] == 'all')
 		  {
-		      echo "<strong>". _x("Global Login Welcome Post", 'general', 'membpress')."</strong>"; 
+		      $ret =  "<strong>". _x("Global Login Welcome Post", 'general', 'membpress')."</strong>";
+			  // update post membpress info to be used in MembPress column sort
+			  update_post_meta($post_id, 'membpress_post_info', $ret);
+			  
+			  echo $ret; 
 			  return; // do not continue
 		  }
 		  else if (is_array($login_redirect_level) && count($login_redirect_level['level_no']))
 		  {
-			  echo "<strong>"._x("Login Welcome Post for", 'general', 'membpress') . '<br>';
+			  $ret = "<strong>"._x("Login Welcome Post for", 'general', 'membpress') . '<br>';
 			  
 			  for ($i = 0; $i < count($login_redirect_level['level_no']); $i++)
 			  {
 			     $level_name = $login_redirect_level['level_name'];
 				 // post is set for some specific membership levels
-			     echo " <em>".$level_name[$i]."</em><br>";
+			     $ret .= " <em>".$level_name[$i]."</em><br>";
 			  }
 			  
-			  echo "</strong>";
+			  $ret .= "</strong>";
+			  
+			  // update post membpress info to be used in MembPress column sort
+			  update_post_meta($post_id, 'membpress_post_info', $ret);
+			  
+			  echo $ret;
+			  
 			  return;  // do not continue 
 		  }
 		  
@@ -342,9 +508,44 @@ class MembPress_Main
 		  
 		  if ($post_restricted) // post is restricted by some level
 		  {
+		      			 
+			  $ret = "<strong>Restricted by <em>".$post_restricted['level_name']."<em></strong>";
+			  
+			  // update post membpress info to be used in MembPress column sort
+			  update_post_meta($post_id, 'membpress_post_info', $ret);
+			  
+			  echo $ret;
+			  return; 
+		  }
+		  
+		  update_post_meta($post_id, 'membpress_post_info', '');
+		  
+		  // if no link to membpress is found, echo something to fill space
+		  echo '- - -';
+		  
+	  }	
+	}
+	
+	
+	/**
+	@ Function to manage the contents of the category info column
+	*/
+	public function membpress_manage_category_info_column($c, $column_name, $category_id)
+	{
+	  if ('category_info' == $column_name)
+	  {  
+		  /**
+		  Check if it is restricted by any membership level
+		  */
+		  /*
+		  $category_restricted = $this->mp_helper->membpress_check_post_restricted_by_level($post_id);
+		  
+		  if ($post_restricted) // post is restricted by some level
+		  {
 		     echo "<strong>Restricted by <em>".$post_restricted['level_name']."<em></strong>";
 			 return; 
 		  }
+		  */
 		  
 		  // if no link to membpress is found, echo something to fill space
 		  echo '- - -';
@@ -678,6 +879,9 @@ class MembPress_Main
 		// call the function to manage the restriction imposed on posts/pages/categories/content etc
 		// based on membership levels
 		$this->mp_helper->membpress_manage_restricted_access($query);
+		
+		// function to sort the MembPress info column on posts/pages/categories/tags etc
+		$this->membpress_sortable_info_columns($query);
 	}
 	
 	

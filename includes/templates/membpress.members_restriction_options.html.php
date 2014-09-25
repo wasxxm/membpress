@@ -75,7 +75,16 @@ $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
 	   // include the restrict pages section
 	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_pages.html.php';
 	   ?>
-       <!-- Membership Page Restriction Options section ends above -->  
+       <!-- Membership Page Restriction Options section ends above -->
+       
+       
+       <?php
+	   // include the restrict categories section
+	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_categories.html.php';
+	   ?>
+       <!-- Membership Page Restriction Options section ends above --> 
+       
+       
       </div>
       <p>
         <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_restriction_options_submit" name="membpress_restriction_options_submit">

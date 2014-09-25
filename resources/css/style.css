@@ -108,6 +108,9 @@ Miscellaneous
 /*
 Fix the width of the post/page ID column in edit post screen
 */
-.fixed .column-post_ID, .fixed .column-page_ID {
+.fixed .column-post_ID, .fixed .column-page_ID  {
     width: 5%;
+}
+.fixed .column-category_ID, .fixed .column-tag_ID  {
+	width:7%;	
 }
