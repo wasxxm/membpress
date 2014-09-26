@@ -453,7 +453,7 @@ class MembPress_Main
 		  
 		  if ($page_restricted) // page is restricted by some level
 		  {
-		     $ret = "<strong>Restricted by <em>".$page_restricted['level_name']."<em></strong>";
+		     $ret = _x('Restricted by', 'general', 'membpress')." <strong><em>".$page_restricted['level_name']."<em></strong>";
 			 
 			 // update page membpress info to be used in MembPress column sort
 			 update_post_meta($page_id, 'membpress_page_info', $ret);
@@ -526,8 +526,23 @@ class MembPress_Main
 		  if ($post_restricted) // post is restricted by some level
 		  {
 		      			 
-			  $ret = "<strong>"._x('Restricted by', 'general', 'membpress')." <em>".$post_restricted['level_name']."<em></strong>";
+			  $ret = ""._x('Restricted by', 'general', 'membpress')." <strong><em>".$post_restricted['level_name']."<em></strong>";
 			  
+			  // update post membpress info to be used in MembPress column sort
+			  update_post_meta($post_id, 'membpress_post_info', $ret);
+			  
+			  echo $ret;
+			  return; 
+		  }
+		  
+		  // post is not restricted directly by any means
+		  // now check if it is restricted by any category
+		  $post_restricted_by_cat = $this->mp_helper->membpress_get_post_category_restricted_level($post_id);
+		  
+		  if ($post_restricted_by_cat)
+		  {
+			  // post is restricted by some category
+			  $ret = _x('Restricted by category', 'general', 'membpress')." <br><strong><em>".$post_restricted_by_cat['category_name']."<em></strong>";
 			  // update post membpress info to be used in MembPress column sort
 			  update_post_meta($post_id, 'membpress_post_info', $ret);
 			  
@@ -558,7 +573,7 @@ class MembPress_Main
 		  
 		  if ($category_restricted) // category is restricted by some level
 		  {
-		     echo "<strong>"._x('Restricted by', 'general', 'membpress')." <em>".$category_restricted['level_name']."<em></strong>";
+		     echo ""._x('Restricted by', 'general', 'membpress')." <br><strong><em>".$category_restricted['level_name']."<em></strong>";
 			 
 			 return; 
 		  }
@@ -578,7 +593,7 @@ class MembPress_Main
 			 
 			 if ($parent_restricted_by_level)
 			 {
-				echo "<strong>"._x('Implicitly Restricted by', 'general', 'membpress')." <em>".$parent_restricted_by_level['level_name']."<em></strong>";
+				echo ""._x('Implicitly Restricted by', 'general', 'membpress')." <br><strong><em>".$parent_restricted_by_level['level_name']."<em></strong>";
 				return; 
 			 }
 		  }
@@ -1330,6 +1345,16 @@ class MembPress_Main
 			   echo '<option '.$selected.' value="'.$mp_get_membership_level_key.'">' . $mp_get_membership_level_val['display_name'] . '</option>';      
 		   }
 		   echo '</select></p>';
+		   
+		   // if the post is not restricted directly, check if it restricted by any category
+		   if (trim($mp_post_restricted_by_level) == '')
+		   {
+			   $mp_post_cat_restricted = $this->mp_helper->membpress_get_post_category_restricted_level($post->ID);
+			   if ($mp_post_cat_restricted)
+			   {
+				   echo '<p><strong>'. _x('This post is restricted by category', 'general', 'membpress') .' <br><em>'.$mp_post_cat_restricted['category_name'].'</em></strong></p>';   
+			   }
+		   }
 	   }
 	}
 	
