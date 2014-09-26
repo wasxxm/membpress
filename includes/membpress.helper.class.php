@@ -663,6 +663,46 @@ class MembPress_Helper
    
    
    
+   /**
+   @ Function to check if the Category is restricted by any membership level
+   @ $category_id is the Category ID to be checked
+   @ It will return the highest membership level by which the Category is restricted
+   */
+   public function membpress_check_category_restricted_by_level($category_id)
+   {
+	   // make sure the $category_id is valid
+	   if (!isset($category_id) || $category_id <= 0) return false;
+	   
+	   // first, get all membership levels
+	   $mp_levels = $this->membpress_get_all_membership_levels();
+	   
+	   // flag to hold the highest membership level
+	   $mp_restrict_by_level = -1;
+	   
+	   foreach ($mp_levels as $mp_level)
+	   {
+	       // get the list of categories restricted by the current membership level
+		   $mp_restrict_categories_by_curr_level = (array)get_option('membpress_restrict_categories_level_' . $mp_level['level_no']);
+		   // if the category ID is present in the list of restricted categories for current level, then store it
+		   if (in_array($category_id, $mp_restrict_categories_by_curr_level))
+		   {
+			   $mp_restrict_by_level = $mp_level['level_no'];   
+		   }
+	   }
+	   
+	   // check if the category is restricted by any level
+	   if ($mp_restrict_by_level >= 0)
+	   {
+		   return array('level_name' => $this->membpress_get_membership_level_name($mp_restrict_by_level), 'level_no' => $mp_restrict_by_level);   
+	   }
+	   
+	   // the category is not restricted by any level
+	   // return false
+	   return false;
+   }
+   
+   
+   
    /*
    @ Function to check the $query object for the query variables and return the post/page with their IDs
    @ The $query object returns different query object, based on whether the permalink is enabled or not

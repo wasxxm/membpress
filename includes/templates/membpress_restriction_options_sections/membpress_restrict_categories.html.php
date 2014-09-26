@@ -25,7 +25,7 @@ endif;
           <div class="inside">
             <p> <?php echo _x('MembPress lets you restrict categories (and sub-categories) by binding them to different membership levels. You can enter the IDs of the categories (or sub-categories) (in a comma separated way like 12,10,5) you want to restrict against each membership level. MembPress will make those categories restricted and only the user with the required membership level will be able to access them. Any such attempt without required membership level will redirect the user to MemberShip Options Page (can be configured in \'Basic Setup -> Membership Options Page\').<br>A category restricted by a higher membership level will take precedence over all the lower membership levels. For example, Category ID 2 set for membership level 1 and membership level 4 will be restricted by membership levels 4, 3, 2, 1, 0.', 'membpress_restrict', 'membpress'); ?> </p>
             <p>
-            <?php echo _x('Note that if a parent category is restricted, all the sub-categories will be restricted automatically by the same membership level.', 'membpress_restrict', 'membpress'); ?>
+            <?php echo _x('Note that if a parent category is restricted, all the sub-categories will be restricted automatically by the same membership level unless any sub-category is restricted explicitly.', 'membpress_restrict', 'membpress'); ?>
             </p>
             <?php
             // iterate through all membpress membership levels

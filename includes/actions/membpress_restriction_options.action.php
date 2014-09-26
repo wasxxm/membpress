@@ -63,6 +63,15 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	include_once 'membpress_restriction_options_action/membpress_restrict_pages.php';
 	
 	
+
+    /*
+	**************************************************
+	@ Include the Restrict Categories section action, submit
+	**************************************************
+	*/
+	include_once 'membpress_restriction_options_action/membpress_restrict_categories.php';
+	
+	
 	/*
 	**************************************************
 	@ Check which section triggered the action and act accordingly
