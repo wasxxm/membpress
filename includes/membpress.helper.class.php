@@ -1126,6 +1126,81 @@ class MembPress_Helper
 				 }
 			   }
 		   }
+		   else
+		   {
+			  // current post is not restricted by any level.
+			  // now check if the category of this post is restricted by any level
+			  // get post categories
+			  $post_category_ids = wp_get_post_categories($post_id);
+			  // keep track of the highest level restriction
+			  $category_highest_restricted_by_level = -1;
+			  // since a post can be assigned to multiple categories, we need to iterate through
+			  // the categories of this post
+			  foreach($post_category_ids as $post_category_id)
+			  {
+				  // check if this category is restricted by any level
+				  $category_restricted_by_level = $this->membpress_check_category_restricted_by_level($post_category_id);
+				  if ($category_restricted_by_level)
+				  {
+					  //this category is restricted by a level
+					  // compare with previous high level, and assign if this is greater
+					  if ($category_restricted_by_level['level_no'] > $category_highest_restricted_by_level)
+					  {
+					     $category_highest_restricted_by_level = $category_restricted_by_level['level_no'];
+					  }    
+				  }
+				  else
+				  {  
+					  // this category is not restricted explicitly
+					  // check if it is restricted implicitly by a parent
+					  // there can be muliple parents (ancestors)
+					  
+					  $parent_category = $post_category_id;
+					  while ($parent_category)
+					  {
+						 $parent_category = get_category($parent_category);
+						 $parent_category = $parent_category->parent;
+						
+						 if (!$parent_category) break 1;
+						 
+						 $parent_restricted_by_level = $this->membpress_check_category_restricted_by_level($parent_category);
+						 
+						 if ($parent_restricted_by_level)
+						 {
+							 // this parent is restricted by a level
+							 // so compare it to the highest recorded level and assign if greater
+							if ($parent_restricted_by_level['level_no'] > $category_highest_restricted_by_level)
+							{
+								 $category_highest_restricted_by_level = $parent_restricted_by_level['level_no'];
+							}  
+						 }
+					  }
+				  }
+			  }
+			  
+			  // if there was any restricted category assigned to this post, we should have it now
+			  if ($category_highest_restricted_by_level > -1)
+			  {
+				  // check if user is logged in 
+				  if (is_user_logged_in())
+				  {
+					 // check if the current user has the required membership level
+					 // greater or equal to required category_highest_restricted_by_level
+					 if (!$this->membpress_check_curr_user_level_meets($category_highest_restricted_by_level))
+					 {
+						  // required level is not found, redirect to membership options page
+						  wp_redirect($mp_redirect_to);
+						  exit;   
+					 }  
+				  }
+				  else
+				  {
+					  // user is not logged in, go directly to membership options page
+					  wp_redirect($mp_redirect_to);
+					  exit;   
+				  }
+			  }
+		   }
 	   }
    }
    

@@ -125,13 +125,18 @@ class MembPress_Main
 	*/
 	public function membpress_action_admin_menu()
 	{
-	   // call membpress register menu page function
-	   $this->register_membpress_menu_page();
-	   // call membpress register sub-menu pages
-	   $this->register_membpress_submenu_pages();
-	   // call membpress menu manage function
-	   // for rearranging, renaming menus ect
-	   $this->membpress_admin_menu_manage();	
+	   // we need to make sure that the current user has the
+	   // capability to update options
+	   if (current_user_can('manage_options'))
+	   {
+		   // call membpress register menu page function
+		   $this->register_membpress_menu_page();
+		   // call membpress register sub-menu pages
+		   $this->register_membpress_submenu_pages();
+		   // call membpress menu manage function
+		   // for rearranging, renaming menus ect
+		   $this->membpress_admin_menu_manage();
+	   }
 	}
 	
 	/*
@@ -598,7 +603,7 @@ class MembPress_Main
 	   $mp_get_membership_levels = $this->mp_helper->membpress_get_all_membership_levels();
 	   
 	   $mp_category_restricted_by_level = $this->mp_helper->membpress_check_category_restricted_by_level($tag_id);
-	   
+	
 	   echo '<tr class="form-field">
 			<th scope="row" valign="top"><label for="cat_restrict_options">'._x('Restrict this category', 'general', 'membpress').'</label></th>
 			<td>
@@ -609,7 +614,7 @@ class MembPress_Main
 	   {
 		   $selected = '';
 		   // check if this level is the same level to which the post is assigned restricted
-		   if ($mp_category_restricted_by_level['level_no'] == $mp_get_membership_level_val['level_no'])
+		   if ($mp_category_restricted_by_level && $mp_category_restricted_by_level['level_no'] == $mp_get_membership_level_val['level_no'])
 		   {
 			   $selected = 'selected="selected"';  // select the current level  
 		   }
