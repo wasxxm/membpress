@@ -89,8 +89,62 @@ class MembPress_Main
 	   add_filter( 'manage_edit-tag_sortable_columns', array($this, 'membpress_sortable_columns'));
 	   
 	   
+	   /*
+	   Add all the shortcodes with their callbacks here
+	   */
+	   add_shortcode('membpress', array($this, 'membpress_parse_shortcodes'));
+	   
+	   
 	   // initialize membpress helper class object
 	   $this->mp_helper = new Membpress_Helper();
+	}
+	
+	/**
+	@ Function to store an array of attributes for different shortcode parse
+	*/
+	public function membpress_get_shortcode_attrs($attr_key)
+	{
+	   $attrs = 
+	   array(
+	      'restrict_by' => 'restrict_by'       
+	   );
+	   
+	   return $attrs[$attr_key];
+	}
+	
+	/**
+	@ Function to parse membpress shortcodes
+	*/
+	public function membpress_parse_shortcodes($atts, $content = null)
+	{
+		foreach($atts as $att_key => $att_value)
+		{
+			if ($att_key == $this->membpress_get_shortcode_attrs('restrict_by'))
+			{
+		       echo $this->membpress_parse_restrict_by_level_shortcode($att_value, $content);    
+			} 
+		}
+	}
+	
+	/**
+	@ Function to parse the restrict by level shortcode
+	*/
+	public function membpress_parse_restrict_by_level_shortcode($att_value, $content)
+	{	
+		if (is_user_logged_in())
+	    {
+		   	$att_value = (int)$att_value;
+			if ($this->mp_helper->membpress_check_curr_user_level_meets($att_value))
+			{
+			   return $content;   	
+			}
+			
+			return '';
+		}	
+		else
+		{
+			return '';
+		}
 	}
 	
 	/*
