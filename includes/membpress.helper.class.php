@@ -703,6 +703,47 @@ class MembPress_Helper
    
    
    
+   /**
+   @ Function to check if the tag is restricted by any membership level
+   @ $tag_id is the tag ID to be checked
+   @ It will return the highest membership level by which the tag is restricted
+   */
+   public function membpress_check_tag_restricted_by_level($tag_id)
+   {
+	   // make sure the $tag_id is valid
+	   if (!isset($tag_id) || $tag_id <= 0) return false;
+	   
+	   // first, get all membership levels
+	   $mp_levels = $this->membpress_get_all_membership_levels();
+	   
+	   // flag to hold the highest membership level
+	   $mp_restrict_by_level = -1;
+	   
+	   foreach ($mp_levels as $mp_level)
+	   {
+	       // get the list of tags restricted by the current membership level
+		   $mp_restrict_tags_by_curr_level = (array)get_option('membpress_restrict_tags_level_' . $mp_level['level_no']);
+		   
+		   // if the tag ID is present in the list of restricted tags for current level, then store it
+		   if (in_array($tag_id, $mp_restrict_tags_by_curr_level))
+		   {
+			   $mp_restrict_by_level = $mp_level['level_no'];   
+		   }
+	   }
+	   
+	   // check if the tag is restricted by any level
+	   if ($mp_restrict_by_level >= 0)
+	   {
+		   return array('level_name' => $this->membpress_get_membership_level_name($mp_restrict_by_level), 'level_no' => $mp_restrict_by_level);   
+	   }
+	   
+	   // the tag is not restricted by any level
+	   // return false
+	   return false;
+   }
+   
+   
+   
    /*
    @ Function to check the $query object for the query variables and return the post/page with their IDs
    @ The $query object returns different query object, based on whether the permalink is enabled or not
@@ -1074,10 +1115,17 @@ class MembPress_Helper
    $post_id is the post ID to be checked
    $mp_levels is an array containing all membership levels
    $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
+   
+   This function will also look for posts restricted by some category, tag etc
+   Anything to which a post is related to
    */
    
    public function membpress_manage_restricted_post_access($post_id, $mp_levels, $mp_redirect_to)
    {
+	   /**
+		Code to check if the post is restricted directly by any means
+	   */
+	   
 	   // check if this post is set as login welcome for any/all membership level(s)
 	   if ($this->membpress_check_post_login_redirect_exists($post_id))
 	   {
@@ -1128,6 +1176,10 @@ class MembPress_Helper
 		   }
 	   }
 		
+		/**
+		Code to check if the post is restricted by any category
+		*/
+		
 		// current post is not restricted by any level.
 		// now check if the category of this post is restricted by any level
 		$category_highest_restricted_by_level = $this->membpress_get_post_category_restricted_level($post_id);
@@ -1155,6 +1207,42 @@ class MembPress_Helper
 				exit;   
 			}
 		}
+		
+		/**
+		Code to check if the post is restricted by some tag(s)
+		*/
+		
+		// post is not restricted directly, nor by any category
+		// so check if it is restricted by any tag
+	    $tag_highest_restricted_by_level = $this->membpress_get_post_tag_restricted_level($post_id);
+		$tag_highest_restricted_by_level = $tag_highest_restricted_by_level['level_no'];
+		
+	    // if there was any restricted tag assigned to this post, we should have it now
+		if ($tag_highest_restricted_by_level > -1)
+		{
+			// check if user is logged in 
+			if (is_user_logged_in())
+			{
+			   // check if the current user has the required membership level
+			   // greater or equal to required category_highest_restricted_by_level
+			   if (!$this->membpress_check_curr_user_level_meets($tag_highest_restricted_by_level))
+			   {
+					// required level is not found, redirect to membership options page
+					wp_redirect($mp_redirect_to);
+					exit;   
+			   }  
+			}
+			else
+			{
+				// user is not logged in, go directly to membership options page
+				wp_redirect($mp_redirect_to);
+				exit;   
+			}
+		}
+		
+		// this post is not restricted by any means
+		// let it display publicly
+		
    }
    
    /**
@@ -1225,8 +1313,65 @@ class MembPress_Helper
 	  
 	  $category_name_highest_restricted_by = get_cat_name($category_highest_restricted_by);
 	  
+	  if (!$category_name_highest_restricted_by) return false;
+	  
 	  return array('level_no' => $category_highest_restricted_by_level, 'category_id' => $category_highest_restricted_by, 'category_name' => $category_name_highest_restricted_by);   
    }
+   
+   
+   
+   /**
+   @ Function to get the highest membership level of any tag assigned to
+   @ the post ID, defined by param $post_id
+   @ It will return an array containing the level_no and the tag ID
+   */
+   
+   public function membpress_get_post_tag_restricted_level($post_id)
+   {
+	  // get post tags
+	  // See http://codex.wordpress.org/Function_Reference/wp_get_post_tags
+	  // for more info the below function
+	  $post_tags_ids = wp_get_post_tags($post_id);
+	  // keep track of the highest level restriction
+	  $tag_highest_restricted_by_level = -1;
+	  // keep track of the highest level category
+	  $tag_highest_restricted_by = -1;
+	  // since a post can be assigned to multiple tags, we need to iterate through
+	  // the tags of this post
+	  foreach($post_tags_ids as $post_tag_id)
+	  {
+		  $post_tag_id = $post_tag_id->term_id;
+		  
+		  // check if this tag is restricted by any level
+		  $tag_restricted_by_level = $this->membpress_check_tag_restricted_by_level($post_tag_id);
+		  if ($tag_restricted_by_level)
+		  {
+			  // this tag is restricted by a level
+			  // compare with previous high level, and assign if this is greater
+			  if ($tag_restricted_by_level['level_no'] > $tag_highest_restricted_by_level)
+			  {
+				 $tag_highest_restricted_by_level = $tag_restricted_by_level['level_no'];
+				 $tag_highest_restricted_by = $post_tag_id;
+			  }    
+		  }
+	  }
+	  
+	  if ($tag_highest_restricted_by_level < 0)
+	  {
+		   return false;  
+	  }
+	  
+	  $tag_name_highest_restricted_by = get_tag($tag_highest_restricted_by);
+	  
+	  if (!$tag_name_highest_restricted_by)
+	  return false;
+	  
+	  $tag_name_highest_restricted_by = $tag_name_highest_restricted_by->name;
+	  
+	  return array('level_no' => $tag_highest_restricted_by_level, 'tag_id' => $tag_highest_restricted_by, 'tag_name' => $tag_name_highest_restricted_by);   
+   }
+   
+   
    
    
    /**

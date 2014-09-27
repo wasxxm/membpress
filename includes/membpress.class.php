@@ -51,10 +51,15 @@ class MembPress_Main
 	   add_action( 'save_post', array($this, 'membpress_save_meta_box'));
 	   
 	   
-	   //add extra fields to category edit form hook
+	   // add extra fields to category edit form hook
 	   add_action ( 'edit_category_form_fields', array($this, 'membpress_extra_category_fields'));
 	   // save extra fields in category hook
-	   add_action ( 'edited_category', array($this, 'membpress_save_extra_category_fileds'));
+	   add_action ( 'edited_category', array($this, 'membpress_save_extra_category_fields'));
+	   
+	   // add extra fields to tag edit form hook
+	   add_action ( 'edit_tag_form_fields', array($this, 'membpress_extra_tag_fields'));
+	   // save extra fields in tag hook
+	   add_action ( 'edited_term', array($this, 'membpress_save_extra_tag_fields'));
 	   
 	   /*
 	   Filter for modifying the columns in posts/pages/categories/tags screen
@@ -82,12 +87,11 @@ class MembPress_Main
 	   add_filter( 'manage_edit-category_sortable_columns', array($this, 'membpress_sortable_columns'));
 	   
 	   // filter for manage edit tags columns
-	   add_filter('manage_edit-post_tag_columns', array($this, 'membpress_manage_categories_columns'), 10, 2);
+	   add_filter('manage_edit-post_tag_columns', array($this, 'membpress_manage_tags_columns'), 10, 2);
 	   // filter used in conjunction with manage_edit-category_columns filter
-       add_filter('manage_post_tag_custom_column', array($this, 'membpress_manage_categories_custom_column'), 10, 3);
+       add_filter('manage_post_tag_custom_column', array($this, 'membpress_manage_tags_custom_column'), 10, 3);
 	   // filter for sorting the custom columns in edit tags screen
-	   add_filter( 'manage_edit-tag_sortable_columns', array($this, 'membpress_sortable_columns'));
-	   
+	   add_filter( 'manage_edit-post_tag_sortable_columns', array($this, 'membpress_sortable_columns'));
 	   
 	   /*
 	   Add all the shortcodes with their callbacks here
@@ -114,16 +118,24 @@ class MembPress_Main
 	
 	/**
 	@ Function to parse membpress shortcodes
+	@ Echoing the content will put the content on top of the content
+	@ Return will ensure the content is placed at right place
 	*/
 	public function membpress_parse_shortcodes($atts, $content = null)
 	{
-		foreach($atts as $att_key => $att_value)
+		// parse the attrs to check what shortcode do they refer to
+		// check if their is any attribute at all
+		if (is_array($atts) && count($atts))
 		{
-			if ($att_key == $this->membpress_get_shortcode_attrs('restrict_by'))
+			foreach($atts as $att_key => $att_value)
 			{
-		       echo $this->membpress_parse_restrict_by_level_shortcode($att_value, $content);    
-			} 
+				if ($att_key == $this->membpress_get_shortcode_attrs('restrict_by'))
+				{
+				   return $this->membpress_parse_restrict_by_level_shortcode($att_value, $content);   
+				} 
+			}
 		}
+		return $content;
 	}
 	
 	/**
@@ -277,6 +289,20 @@ class MembPress_Main
 	}
 	
 	/**
+	@ Function for callback to manage tag columns edit
+	*/
+	public function membpress_manage_tags_columns($tag_columns)
+	{	   
+	   // add tag ID column to the edit tag screen, after the checkbbox and before title
+	   $tag_columns = $this->membpress_add_tag_ID_column($tag_columns);
+	   
+	   // add tag info column to the edit tag screen, after the title
+	   $tag_columns = $this->membpress_add_tag_info_column($tag_columns);
+	   
+	   return $tag_columns;  	
+	}
+	
+	/**
 	@ Filter function called for managing the custom columns added to edit category screen
 	*/
 	public function membpress_manage_categories_custom_column($c, $column_name, $category_id)
@@ -284,8 +310,20 @@ class MembPress_Main
         // call the function to manage the category ID column content
 		$this->membpress_manage_category_ID_column($c, $column_name, $category_id);
 		
-	    // call the function to manage the post info column content
+	    // call the function to manage the category info column content
 		$this->membpress_manage_category_info_column($c, $column_name, $category_id);
+	}
+	
+    /**
+	@ Filter function called for managing the custom columns added to edit tag screen
+	*/
+	public function membpress_manage_tags_custom_column($c, $column_name, $tag_id)
+	{
+        // call the function to manage the tag ID column content
+		$this->membpress_manage_tag_ID_column($c, $column_name, $tag_id);
+		
+	    // call the function to manage the tag info column content
+		$this->membpress_manage_tag_info_column($c, $column_name, $tag_id);
 	}
 	
 	
@@ -344,6 +382,17 @@ class MembPress_Main
 	   return $category_columns;	
 	}
 	
+	/**
+	@ Function to add tag ID to the edit tag screen
+	*/
+	public function membpress_add_tag_ID_column($tag_columns)
+	{
+	   // we want to add the page ID before the Title column and after the checkbox
+       $tag_columns = array_slice($tag_columns, 0, 1, true) + array("tag_ID" => "ID") + array_slice($tag_columns, 1, count($tag_columns) - 1, true);
+	   
+	   return $tag_columns;	
+	}
+	
 	
     /**
 	@ Function to add restriction info to the edit category screen
@@ -354,6 +403,17 @@ class MembPress_Main
        $category_columns = array_slice($category_columns, 0, 3, true) + array("category_info" => "MembPress") + array_slice($category_columns, 1, count($category_columns) - 1, true);
 	   
 	   return $category_columns;	
+	}
+	
+	/**
+	@ Function to add restriction info to the edit tag screen
+	*/
+	public function membpress_add_tag_info_column($tag_columns)
+	{
+	   // we want to add the tag info column after the title
+       $tag_columns = array_slice($tag_columns, 0, 3, true) + array("tag_info" => "MembPress") + array_slice($tag_columns, 1, count($tag_columns) - 1, true);
+	   
+	   return $tag_columns;	
 	}
 	
 	
@@ -391,6 +451,17 @@ class MembPress_Main
 	}
 	
 	/**
+	@ Function to manage the contents of the tag ID column
+	*/
+	public function membpress_manage_tag_ID_column($c, $column_name, $tag_id)
+	{
+	  if ('tag_ID' == $column_name)
+	  {
+		  echo "<strong>$tag_id</strong>";
+	  }	
+	}
+	
+	/**
 	@ Function to manage the filter for sorting the customs columns
 	@ added in posts, pages, categories, tags
 	*/
@@ -416,17 +487,21 @@ class MembPress_Main
 	
 	public function membpress_sortable_info_columns($query)
 	{
+		// only continue if it is admin
 		if( ! is_admin() )
 			return;
 	 
+	    // get the orderby query parameter
 		$orderby = $query->get( 'orderby');
-	 
+	  
+	    // if this is a post, order by post info like 'Restricted by Free Member' etc
 		if('post_info' == $orderby)
 		{
 			$query->set('meta_key', 'membpress_post_info');
 			$query->set('orderby', 'meta_value');
 		}
 		
+	    // if this is a page, order by page info like 'Restricted by Free Member' etc
 		if('page_info' == $orderby )
 		{
 			$query->set('meta_key', 'membpress_page_info');
@@ -435,7 +510,12 @@ class MembPress_Main
 		
 		if ('category_info' == $orderby)
 		{
-		   	
+		   // do something to sort by category info
+		}
+		
+		if ('tag_info' == $orderby)
+		{
+		 // do something to sort by tag info	
 		}
 	}
 	
@@ -651,9 +731,33 @@ class MembPress_Main
 				return; 
 			 }
 		  }
+
+		  // if no link to membpress is found, echo something to fill space
+		  echo '- - -';
 		  
-		  // update category membpress info to be used in MembPress column sort
-		  update_option('membpress_restrict_category_info_level_' . $category_restricted['level_no'], '');
+	  }	
+	}
+	
+	
+	/**
+	@ Function to manage the contents of the tag info column
+	*/
+	public function membpress_manage_tag_info_column($c, $column_name, $tag_id)
+	{
+	  if ('tag_info' == $column_name)
+	  {  
+		  /**
+		  Check if it is restricted by any membership level
+		  */
+		  $tag_restricted = $this->mp_helper->membpress_check_tag_restricted_by_level($tag_id);
+		  
+		  if ($tag_restricted) // tag is restricted by some level
+		  {
+		     echo ""._x('Restricted by', 'general', 'membpress')." <br><strong><em>".$tag_restricted['level_name']."<em></strong>";
+			 
+			 return; 
+		  }
+
 		  // if no link to membpress is found, echo something to fill space
 		  echo '- - -';
 		  
@@ -674,7 +778,7 @@ class MembPress_Main
 	   $mp_category_restricted_by_level = $this->mp_helper->membpress_check_category_restricted_by_level($tag_id);
 	
 	   echo '<tr class="form-field">
-			<th scope="row" valign="top"><label for="cat_restrict_options">'._x('Restrict this category', 'general', 'membpress').'</label></th>
+			<th scope="row" valign="top"><label for="membpress_restrict_category_level">'._x('Restrict this category', 'general', 'membpress').'</label></th>
 			<td>
 			<select name="membpress_restrict_category_level" class="postform" id="membpress_restrict_category_level"><option value="">-- '._x('No Restriction', 'general', 'membpress').' --</option>';
 			
@@ -691,7 +795,7 @@ class MembPress_Main
 	   }	
 			
 		echo '</select>
-						<p class="description">'._x('Please select the required Membership Level to access this category, in case you want to restrict it from public viewing.', 'general', 'membpress').'</p>
+						<p class="description">'._x('Please select the required Membership Level to access the posts under this category, in case you want to restrict them from public viewing.', 'general', 'membpress').'</p>
 					</td>
 			</tr>';	
 	}
@@ -699,7 +803,7 @@ class MembPress_Main
 	/**
 	@ Function to save extra fields in edit category
 	*/
-	public function membpress_save_extra_category_fileds($term_id)
+	public function membpress_save_extra_category_fields($term_id)
 	{
 		// see if the restrict option was set
 		if (isset($_POST['membpress_restrict_category_level']))
@@ -774,6 +878,123 @@ class MembPress_Main
 		  
 		   // update the restrict categories option
 		   update_option('membpress_restrict_categories_level_' . $mp_level_no, $mp_restrict_categories_by_new_level);
+		}
+	}
+	
+	
+	/**
+	@ Function as a hook to add extra fields to tag edit form
+	*/
+	public function membpress_extra_tag_fields($tag)
+	{
+	   $tag_id = $tag->term_id;
+	   
+	   // get all the membpress membership levels
+	   $mp_get_membership_levels = $this->mp_helper->membpress_get_all_membership_levels();
+	   
+	   $mp_tag_restricted_by_level = $this->mp_helper->membpress_check_tag_restricted_by_level($tag_id);
+	
+	   echo '<tr class="form-field">
+			<th scope="row" valign="top"><label for="membpress_restrict_tag_level">'._x('Restrict this tag', 'general', 'membpress').'</label></th>
+			<td>
+			<select name="membpress_restrict_tag_level" class="postform" id="membpress_restrict_tag_level"><option value="">-- '._x('No Restriction', 'general', 'membpress').' --</option>';
+			
+	   // list all the levels with the assigned as selected
+	   foreach($mp_get_membership_levels as $mp_get_membership_level_key => $mp_get_membership_level_val)
+	   {
+		   $selected = '';
+		   // check if this level is the same level to which the post is assigned restricted
+		   if ($mp_tag_restricted_by_level && $mp_tag_restricted_by_level['level_no'] == $mp_get_membership_level_val['level_no'])
+		   {
+			   $selected = 'selected="selected"';  // select the current level  
+		   }
+		   echo '<option '.$selected.' value="'.$mp_get_membership_level_key.'">' . $mp_get_membership_level_val['display_name'] . '</option>';      
+	   }	
+			
+		echo '</select>
+						<p class="description">'._x('Please select the required Membership Level to access posts assigned to this tag, in case you want to restrict them from public viewing.', 'general', 'membpress').'</p>
+					</td>
+			</tr>';	
+	}
+	
+	/**
+	@ Function to save extra fields in edit tag
+	*/
+	public function membpress_save_extra_tag_fields($term_id)
+	{
+		// see if the restrict option was set
+		if (isset($_POST['membpress_restrict_tag_level']))
+		{		   
+		   /**
+		   Update the list of posts in the membpress restrict_tags_level_{level_no} array option
+		   It can be configured also at: Membpress -> Restriction Options -> Retrict Tags
+		   */
+		   
+		   // clear any previous assignment of the current tag to any membership level
+		   // get the current tag resitricted level, this is before saving the new one
+		   $mp_tag_prev_level = $this->mp_helper->membpress_check_tag_restricted_by_level($term_id);
+		   $mp_tag_prev_level = $mp_tag_prev_level['level_no'];
+		   
+		   // the tag ID can be in more than one membership level, so remove it from all levels
+		   // first get all membership levels
+		   $mp_levels = $this->mp_helper->membpress_get_all_membership_levels();
+		   
+		   // iterate through each level
+		   foreach($mp_levels as $mp_level)
+		   {
+			   // get the mempress restrict tag level option
+			   $mp_restrict_tags_by_curr_level = (array)get_option('membpress_restrict_tags_level_' . $mp_level['level_no']);
+			   
+			   // remove the current tag from this level
+			   // there can be many tag IDs, so iterate
+			   foreach($mp_restrict_tags_by_curr_level as $mp_restrict_tag_by_curr_level_key => $mp_restrict_tag_by_curr_level)
+			   {
+				   if ($mp_restrict_tag_by_curr_level == $term_id)
+				   {
+					   unset($mp_restrict_tags_by_curr_level[$mp_restrict_tag_by_curr_level_key]);   
+				   }
+			   }
+			   
+			   update_option('membpress_restrict_tags_level_' . $mp_level['level_no'], $mp_restrict_tags_by_curr_level);
+		   }
+		   	
+		   /*
+		   Now the current value of tag is removed from the restrict tags level, we can continue further update
+		   */
+		   
+		   // get the tag level number only currently submitted
+		   $mp_level_no = explode('_', $_POST['membpress_restrict_tag_level']);
+		   $mp_level_no = $mp_level_no[count($mp_level_no) - 1];
+		   
+		   if ($mp_level_no == 'subscriber') $mp_level_no = 0;
+		   
+		   // new level for this tag
+		   $mp_restrict_tags_by_new_level = (array)get_option('membpress_restrict_tags_level_' . $mp_level_no);
+		 
+		   // check if the value of restrict level is  empty
+		   if (trim($_POST['membpress_restrict_tag_level']) == '')
+		   {
+			   //   
+		   }
+		   else // means the membership value is set, restriction is applied
+		   {
+			   array_push($mp_restrict_tags_by_new_level, $term_id); 
+		   }
+		   
+		   // make the array unqiue to remove any duplicate values
+		   $mp_restrict_tags_by_new_level = array_unique($mp_restrict_tags_by_new_level);
+		   
+		   // remove empty IDs
+		   foreach($mp_restrict_tags_by_new_level as $mp_restrict_tag_by_new_level_key => $mp_restrict_tag_by_new_level)
+		   {
+			  if (trim($mp_restrict_tag_by_new_level) == '')
+			  {
+				  unset($mp_restrict_tags_by_new_level[$mp_restrict_tag_by_new_level_key]);  
+			  }
+		   }
+		  
+		   // update the restrict tags option
+		   update_option('membpress_restrict_tags_level_' . $mp_level_no, $mp_restrict_tags_by_new_level);
 		}
 	}
 	

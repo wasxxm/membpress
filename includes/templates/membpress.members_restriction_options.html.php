@@ -86,6 +86,15 @@ $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
        <!-- Membership Category Restriction Options section ends above -->
        
        
+        
+       <!-- Membership Tags Restriction Options section starts below -->
+       <?php
+	   // include the restrict tags section
+	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_tags.html.php';
+	   ?>
+       <!-- Membership Tags Restriction Options section ends above -->
+       
+       
        
        <!-- Membership HTML Restriction Options section starts below -->
        <?php

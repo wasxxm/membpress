@@ -72,6 +72,16 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	include_once 'membpress_restriction_options_action/membpress_restrict_categories.php';
 	
 	
+	
+	/*
+	**************************************************
+	@ Include the Restrict Tags section action, submit
+	**************************************************
+	*/
+	include_once 'membpress_restriction_options_action/membpress_restrict_tags.php';
+	
+	
+	
 	/*
 	**************************************************
 	@ Check which section triggered the action and act accordingly
@@ -83,9 +93,22 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	   $section = 'all';
 	}
 	
+	// if Restrict Pages section
 	if (isset($_POST['membpress_restrict_submit-membpress_restrict_page_section']))
 	{
 	   $section = 'membpress_restrict_pages';	
+	}
+	
+	// if Restrict Categories section
+    if (isset($_POST['membpress_restrict_submit-membpress_restrict_category_section']))
+	{
+	   $section = 'membpress_restrict_categories';	
+	}
+	
+    // if Restrict Tags section
+    if (isset($_POST['membpress_restrict_submit-membpress_restrict_tag_section']))
+	{
+	   $section = 'membpress_restrict_tags';	
 	}
 	
 	// see if there was an error
