@@ -23,7 +23,7 @@ endif;
           </div>
           <h3 class="hndle"><span><?php echo _x('Restrict Section', 'general', 'membpress'); ?></span></h3>
           <div class="inside">
-            <p> <?php echo _x('You can also restrict a section of a post/page rather than restricting the post/page itself by using the shortcodes below.', 'membpress_restrict', 'membpress'); ?> </p>
+            <p> <?php echo _x('You can also restrict a section of a post/page rather than restricting the whole post/page itself by using the shortcodes below.', 'membpress_restrict', 'membpress'); ?> </p>
             <?php
             // iterate through all membpress membership levels
 			// and show the post restrict option for each of them

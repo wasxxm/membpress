@@ -22,7 +22,7 @@ define('MEMBPRESS_SETTINGS_MAX_POSTS', 3);
 
 // define membership level counts, cannot be less than 4
 // This DOES NOT include the level 0
-define('MEMBPRESS_LEVEL_COUNT', 4);
+define('MEMBPRESS_LEVEL_COUNT', 6);
 
 // define Membpress Membership level names
 // if you have more than level 4 membership plans, you can add the names here

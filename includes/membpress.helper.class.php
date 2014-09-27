@@ -304,17 +304,24 @@ class MembPress_Helper
 	   // each level will only have the read capability
 	   
 	   // but also check if the MEMBPRESS_LEVEL_COUNT is more than 4 or not. If yes, create additional roles
+	   
+	   // Also update the array of option holding the membership levels, names and other params like subscription charges
+	   
 	   if (defined('MEMBPRESS_LEVEL_COUNT') && MEMBPRESS_LEVEL_COUNT > 4)
 	   {
 		   for($i = MEMBPRESS_LEVEL_COUNT; $i > 4; $i--)
 		   {
-			   if (defined('MEMBPRESS_LEVEL_'.$i) && trim(constant(MEMBPRESS_LEVEL_.$i)) != '')
+			   if (@defined('MEMBPRESS_LEVEL_'.$i) && @trim(constant(MEMBPRESS_LEVEL_.$i)) != '')
 			   {
-			      add_role( 'membpress_level_'.$i, trim(constant(MEMBPRESS_LEVEL_.$i)), array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+			      add_role( 'membpress_level_'.$i, @trim(constant(MEMBPRESS_LEVEL_.$i)), array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+				  // update the levels array
+				  $this->membpress_update_level_by_name('membpress_level_'.$i, @trim(constant(MEMBPRESS_LEVEL_.$i)));
 			   }
 			   else
 			   {
-				  add_role( 'membpress_level_'.$i, 'Membership Level '.$i, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );   
+				  add_role( 'membpress_level_'.$i, 'Membership Level '.$i, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+				  // update the levels array
+				  $this->membpress_update_level_by_name('membpress_level_'.$i, 'Membership Level '.$i);   
 			   }
 		   }
 	   }
@@ -323,6 +330,13 @@ class MembPress_Helper
 	   add_role( 'membpress_level_3', MEMBPRESS_LEVEL_3, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
 	   add_role( 'membpress_level_2', MEMBPRESS_LEVEL_2, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
 	   add_role( 'membpress_level_1', MEMBPRESS_LEVEL_1, array( 'read' => true, 'delete_posts' => false, 'edit_posts'   => false) );
+	   
+	   // update the levels array
+	   $this->membpress_update_level_by_name('membpress_level_0', MEMBPRESS_LEVEL_0);
+	   $this->membpress_update_level_by_name('membpress_level_1', MEMBPRESS_LEVEL_1);
+	   $this->membpress_update_level_by_name('membpress_level_2', MEMBPRESS_LEVEL_2);
+	   $this->membpress_update_level_by_name('membpress_level_3', MEMBPRESS_LEVEL_3);
+	   $this->membpress_update_level_by_name('membpress_level_4', MEMBPRESS_LEVEL_4);
 
 	   
 	   // get the WP roles object
@@ -334,6 +348,34 @@ class MembPress_Helper
 	   
 	   // rename the subscriber level to display name set in the membpress.config.php file
 	   $this->membpress_update_role_display_name($wp_roles, 'subscriber', MEMBPRESS_LEVEL_0);
+   }
+   
+   /**
+   @ Function to update list of membership levels
+   @ $level_name is the index for membership levels array set in membpress_levels
+   @ $level_display_name is the name like 'Free Member' for the level in first param
+   */
+   public function membpress_update_level_by_name($level_name, $level_display_name)
+   {
+	  // first get the membpress_levels array 
+	  $membpress_levels =  (array)get_option('membpress_levels');
+	  
+	  // update the level name and index (if not present already)
+	  if (is_array($membpress_levels[$level_name]))
+	  {
+	      // if already present, save and then update the old value
+		  $membpress_level_prev = $membpress_levels[$level_name];
+		  $membpress_level_prev['display_name'] = $level_display_name;
+		  
+		  $membpress_levels[$level_name] = $membpress_level_prev; 	  
+	  }
+	  else
+	  {
+	     $membpress_levels[$level_name] = array('display_name' => $level_display_name); 
+	  }
+	  
+	  // update the levels array
+	  update_option('membpress_levels', $membpress_levels);
    }
    
    /*
@@ -1709,6 +1751,8 @@ class MembPress_Helper
    */
    public function membpress_get_all_membership_levels()
    {
+	   /*
+	   // Old code retained here just for reference/comparison purposes
 	   // get the core levels
 	   $mp_roles = $this->membpress_get_core_membership_levels();
 	   
@@ -1722,9 +1766,9 @@ class MembPress_Helper
 		  
 		  if (trim(get_option('membpress_membership_name_level_'.$i)) == '')
 		  {
-			  if (defined('MEMBPRESS_LEVEL_'.$i) && trim(constant(MEMBPRESS_LEVEL_.$i)) != '')
+			  if (@defined('MEMBPRESS_LEVEL_'.$i) && @trim(constant(MEMBPRESS_LEVEL_.$i)) != '')
 			  {
-				  $membership_level_name = trim(constant(MEMBPRESS_LEVEL_.$i));   
+				  $membership_level_name = @trim(constant(MEMBPRESS_LEVEL_.$i));   
 			  }
 			  else
 			  {
@@ -1739,6 +1783,33 @@ class MembPress_Helper
 		  $mp_roles['membpress_level_'.$i] = array('display_name' => $membership_level_name, 'level_no' => $i);
 	   }
 	   
+	   return $mp_roles;
+	   */
+	   
+	   // first get the membpress_levels array 
+	   // membership levels array should be defined by now
+	   $membpress_levels =  (array)get_option('membpress_levels');
+	   
+	   // iterate through the array and return the values in the required format
+	   $mp_roles = array();
+	   foreach($membpress_levels as $membpress_level_key => $membpress_level_val)
+	   {
+		   $level_no = explode('_', $membpress_level_key);
+		   $level_no = $level_no[count($level_no) - 1];
+		   
+		   $mp_roles[$membpress_level_key] = array('display_name' => $membpress_level_val['display_name'], 'level_no' => $level_no);     
+	   }
+	   
+	   // sort the mp_roles array by the level_no of the membership
+	   // starting from 0 onwards
+	   function sort_by_level_nos($a, $b)
+	   {
+          return $a['level_no'] - $b['level_no'];
+       }
+
+       usort($mp_roles, 'sort_by_level_nos');
+	   
+	   // return the roles
 	   return $mp_roles;
    }
    

@@ -45,6 +45,13 @@ $membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'membpress_
 $membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'membpress_level_3', sanitize_text_field($_POST['membpress_membership_name_level_3']));
 $membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'membpress_level_4', sanitize_text_field($_POST['membpress_membership_name_level_4']));
 
+// update the array of membership levels option
+$membpress->mp_helper->membpress_update_level_by_name('membpress_level_0', sanitize_text_field($_POST['membpress_membership_name_level_0']));
+$membpress->mp_helper->membpress_update_level_by_name('membpress_level_1', sanitize_text_field($_POST['membpress_membership_name_level_1']));
+$membpress->mp_helper->membpress_update_level_by_name('membpress_level_2', sanitize_text_field($_POST['membpress_membership_name_level_2']));
+$membpress->mp_helper->membpress_update_level_by_name('membpress_level_3', sanitize_text_field($_POST['membpress_membership_name_level_3']));
+$membpress->mp_helper->membpress_update_level_by_name('membpress_level_4', sanitize_text_field($_POST['membpress_membership_name_level_4']));
+
 
 // if the membership levels are more than four, then
 for($i = 5; $i <= MEMBPRESS_LEVEL_COUNT; $i++)
@@ -52,7 +59,10 @@ for($i = 5; $i <= MEMBPRESS_LEVEL_COUNT; $i++)
 	$_POST['membpress_membership_name_level_'.$i] = (trim($_POST['membpress_membership_name_level_'.$i]) == '') ? _x('Membership Level', 'general', 'membpress') . " $i" : trim($_POST['membpress_membership_name_level_'.$i]);
 	update_option('membpress_membership_name_level_'.$i, sanitize_text_field($_POST['membpress_membership_name_level_'.$i]));
 	
-	$membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'membpress_level_' . $i, sanitize_text_field($_POST['membpress_membership_name_level_'.$i]));   	
+	$membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'membpress_level_' . $i, sanitize_text_field($_POST['membpress_membership_name_level_'.$i]));
+	
+	// update the array of membership levels option
+$membpress->mp_helper->membpress_update_level_by_name('membpress_level_' . $i, sanitize_text_field($_POST['membpress_membership_name_level_'.$i]));   	
 }
 
 ?>
