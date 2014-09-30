@@ -105,6 +105,11 @@ Miscellaneous
 .membpress_hidden {
 	display:none;	
 }
+.membpress-admin-menu-sep {
+	height:1px;
+    background-color:#7C7C7C;
+	display:block;	
+}
 /*
 Fix the width of the post/page ID column in edit post screen
 */

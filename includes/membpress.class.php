@@ -200,7 +200,7 @@ class MembPress_Main
 		   // call membpress register sub-menu pages
 		   $this->register_membpress_submenu_pages();
 		   // call membpress menu manage function
-		   // for rearranging, renaming menus ect
+		   // for rearranging, renaming menus etc
 		   $this->membpress_admin_menu_manage();
 	   }
 	}
@@ -1667,7 +1667,8 @@ class MembPress_Main
 	@ Contains all the sub-menu pages hooks
 	*/
     public function register_membpress_submenu_pages()
-	{  
+	{ 
+	   
 	   // add membpress setup page menu
 	   $hook = add_submenu_page(
 		 'membpress_page_quick_start',
@@ -1718,6 +1719,26 @@ class MembPress_Main
 	   global $submenu;
 	   
 	   $submenu['membpress_page_quick_start'][0][0] = 'Quick Start';
+	   
+	   foreach($submenu['membpress_page_quick_start'] as $key => $value)
+	   {
+		  if ($key == 1)
+		  {
+		     $submenu['membpress_page_quick_start'][1] = 
+			 array (
+				0 =>  '<span class="membpress-admin-menu-sep"></span>',
+				1 =>  'manage_options',
+				2 =>  '',
+				3 =>  ''
+				);	    
+			 }
+			 
+			 $submenu['membpress_page_quick_start'][$key + 1] = $value;
+	   }
+	   
+	   /*
+
+		  */
 	}
 };
 

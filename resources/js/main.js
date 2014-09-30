@@ -1,6 +1,9 @@
 jQuery(document).ready(function( $ ) {
 	
-    // options for the login welcome page select box
+    // remove the hand cursor over the separator in menu
+	$('.wp-submenu li a .membpress-admin-menu-sep').parent('a').css('cursor', 'default');
+	
+	// options for the login welcome page select box
 	$('.membpress_settings_welcome_login_type').change(function(e)
 	{
 		var membpress_settings_welcome_group = $(e.target).parents('.membpress_welcome_login_group');
