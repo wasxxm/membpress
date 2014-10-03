@@ -645,7 +645,7 @@ class MembPress_Helper
 	   foreach ($mp_levels as $mp_level)
 	   {
 	       // get the list of pages restricted by the current membership level
-		   $mp_restrict_pages_by_curr_level = get_option('membpress_restrict_pages_level_' . $mp_level['level_no']);
+		   $mp_restrict_pages_by_curr_level = (array)get_option('membpress_restrict_pages_level_' . $mp_level['level_no']);
 		   // if the page ID is present in the list of restricted pages for current level, then store it
 		   if (in_array($page_id, $mp_restrict_pages_by_curr_level))
 		   {
@@ -684,7 +684,7 @@ class MembPress_Helper
 	   foreach ($mp_levels as $mp_level)
 	   {
 	       // get the list of posts restricted by the current membership level
-		   $mp_restrict_posts_by_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
+		   $mp_restrict_posts_by_curr_level = (array)get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
 		   // if the post ID is present in the list of restricted posts for current level, then store it
 		   if (in_array($post_id, $mp_restrict_posts_by_curr_level))
 		   {
@@ -1799,18 +1799,18 @@ class MembPress_Helper
 		   
 		   $mp_roles[$membpress_level_key] = array('display_name' => $membpress_level_val['display_name'], 'level_no' => $level_no);     
 	   }
-	   
-	   // sort the mp_roles array by the level_no of the membership
-	   // starting from 0 onwards
-	   function sort_by_level_nos($a, $b)
-	   {
-          return $a['level_no'] - $b['level_no'];
-       }
 
-       usort($mp_roles, 'sort_by_level_nos');
+       usort($mp_roles, array($this, 'sort_by_level_nos'));
 	   
 	   // return the roles
 	   return $mp_roles;
+   }
+   
+   // sort the mp_roles array by the level_no of the membership
+   // starting from 0 onwards
+   private function sort_by_level_nos($a, $b)
+   {
+	  return $a['level_no'] - $b['level_no'];
    }
    
    /**
