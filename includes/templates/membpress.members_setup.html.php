@@ -98,14 +98,6 @@ $mp_setup_sections_dir = 'membpress_setup_sections';
         <!-- Membership levels section ends above --> 
         
         
-       <!-- Membership Subscriptions section starts below -->
-       <?php
-	   include_once $mp_setup_sections_dir . '/membpress_settings_membership_subscriptions.html.php';
-	   ?>
-        <!-- Membership Subscriptions section ends above --> 
-        
-        
-        
       </div>
       <p>
         <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_settings_submit" name="membpress_settings_submit">

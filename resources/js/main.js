@@ -167,4 +167,68 @@ jQuery(document).ready(function( $ ) {
 	}
 	membpress_goto_section_hash();
 	
-})
+	/**
+	Handle the Membpress Subscription rates, subscription types field
+	*/
+	$('.membpress_subs_type').on('change', function()
+	{
+	    var parent = $(this).parents('.membpress_subs_rate_wrapper');
+		membpress_manage_subscription_types_fields(parent);
+	});
+	
+	$('.membpress_subs_rate_wrapper').each(function(index, element) {
+        membpress_manage_subscription_types_fields(element);    
+    });
+	
+	function membpress_manage_subscription_types_fields(parent)
+	{		
+		var el = $(parent).find('.membpress_subs_type');
+		
+		if ($(el).val() == 'recurring')
+		{
+		   $(parent).find('.membpress_subs_recurring_txt').fadeIn(100);
+		   $(parent).find('.membpress_subs_onetime_txt').hide();
+		   $(parent).find('.membpress_subs_lifetime_txt').hide();
+		   
+		   $(parent).find('.membpress_subs_recurring_for').fadeIn(100);
+		   $(parent).find('.membpress_subs_onetime_for').hide();
+		   $(parent).find('.membpress_subs_lifetime_for').hide();
+		   
+		   $(parent).find('.membpress_subs_duration').fadeIn(100);	
+		}
+	    else if ($(el).val() == 'one_time')
+		{
+		   $(parent).find('.membpress_subs_recurring_txt').hide();
+		   $(parent).find('.membpress_subs_onetime_txt').fadeIn(100);
+		   $(parent).find('.membpress_subs_lifetime_txt').hide();
+		   
+		   $(parent).find('.membpress_subs_recurring_for').hide();
+		   $(parent).find('.membpress_subs_onetime_for').fadeIn(100);
+		   $(parent).find('.membpress_subs_lifetime_for').hide();
+		   
+		   $(parent).find('.membpress_subs_duration').fadeIn(100);	
+		}
+		else if ($(el).val() == 'life_time')
+		{
+		   $(parent).find('.membpress_subs_recurring_txt').hide();
+		   $(parent).find('.membpress_subs_onetime_txt').hide();
+		   $(parent).find('.membpress_subs_lifetime_txt').fadeIn(100);
+		   
+		   $(parent).find('.membpress_subs_recurring_for').hide();
+		   $(parent).find('.membpress_subs_onetime_for').hide();
+		   $(parent).find('.membpress_subs_lifetime_for').fadeIn(100);
+		   
+		   $(parent).find('.membpress_subs_duration').hide();	
+		}	
+	}
+	
+	/**
+	Input/textarea readonly click select all
+	*/
+	$('.membpress input[readonly], .membpress textarea[readonly]').on('click', function()
+	{
+	   $(this).select();
+	}
+	);
+	
+});

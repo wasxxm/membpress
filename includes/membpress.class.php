@@ -1679,15 +1679,25 @@ class MembPress_Main
 		 array($this, 'membpress_setup_page')
 	   );
 	   
-	   // add membpress restriction options page menu
+	   // add membpress subscription rates page menu
 	   $hook2 = add_submenu_page(
+		 'membpress_page_quick_start',
+		 _x('Membpress Subscription Rates', 'general', 'membpress'),
+		 _x('Subscription Rates', 'general', 'membpress'),
+		 'manage_options',
+		 'membpress_subscription_rates_page',
+		 array($this, 'membpress_subscription_rates_page')
+	   ); 
+	   
+	   // add membpress restriction options page menu
+	   $hook3 = add_submenu_page(
 		 'membpress_page_quick_start',
 		 _x('Membpress Restriction Options', 'general', 'membpress'),
 		 _x('Restriction Options', 'general', 'membpress'),
 		 'manage_options',
 		 'membpress_restrict_options_page',
 		 array($this, 'membpress_restrict_options_page')
-	   ); 
+	   );
 	}
 	
 	
@@ -1701,12 +1711,21 @@ class MembPress_Main
 	}
 	
 	/*
-	@ Template for the membpress restrictio options page
+	@ Template for the membpress restriction options page
 	*/
 	public function membpress_restrict_options_page()
 	{
 	   // include the template file for membpress restriction options page
 	   include_once 'templates/membpress.members_restriction_options.html.php';	
+	}
+	
+	/*
+	@ Template for the membpress subscription rates page
+	*/
+	public function membpress_subscription_rates_page()
+	{
+	   // include the template file for membpress subscription rates page
+	   include_once 'templates/membpress.members_subscription_rates.html.php';	
 	}
 	
 	
