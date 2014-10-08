@@ -361,21 +361,30 @@ class MembPress_Helper
 	  $membpress_levels =  (array)get_option('membpress_levels');
 	  
 	  // update the level name and index (if not present already)
-	  if (is_array($membpress_levels[$level_name]))
+	  if (trim($level_name) != '' && isset($membpress_levels[$level_name]) && is_array($membpress_levels[$level_name]))
 	  {
 	      // if already present, save and then update the old value
 		  $membpress_level_prev = $membpress_levels[$level_name];
 		  $membpress_level_prev['display_name'] = $level_display_name;
 		  
-		  $membpress_levels[$level_name] = $membpress_level_prev; 	  
+		  $membpress_levels[$level_name] = $membpress_level_prev;	  
 	  }
-	  else
+	  else if (trim($level_display_name) != '' && trim($level_name) != '')
 	  {
-	     $membpress_levels[$level_name] = array('display_name' => $level_display_name); 
+	     $membpress_levels[$level_name] = array('display_name' => $level_display_name);
 	  }
 	  
-	  // update the levels array
-	  update_option('membpress_levels', $membpress_levels);
+	  // update the membpress levels array
+	  // check if levels are valid indeed
+	  foreach($membpress_levels as $membpress_level_key => $membpress_level_value)
+	  {
+	      if (!isset($membpress_level_value['display_name']) || trim($membpress_level_value['display_name']) == '')
+		  {
+			  unset($membpress_levels[$membpress_level_key]);  
+		  }
+	  }
+	  
+	  update_option('membpress_levels', $membpress_levels); 
    }
    
    /*
