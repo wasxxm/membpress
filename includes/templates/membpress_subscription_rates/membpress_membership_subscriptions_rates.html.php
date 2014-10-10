@@ -54,14 +54,11 @@ endif;
 			// set the subscription rate number = total subscription rates + 1
 		    $subscript_rate_no = count($mp_curr_level_subs_rates) + 1;
 	 ?>
-      <?php if (count($mp_curr_level_subs_rates)) :?>
-      <p><strong><?php echo _x('Subscription Rates for this level.', 'general', 'membpress'); ?></strong></p>
-      <?php endif; ?>
       <?php	
 			foreach ($mp_curr_level_subs_rates as $mp_curr_level_subs_rate):
 	  ?>
       <hr>
-      <p> <a href="javascript:;"><strong> <?php echo $mp_curr_level_subs_rate['subscription_name']; ?> </strong></a></p>
+      <p><strong> <?php echo $mp_curr_level_subs_rate['subscription_name']; ?> </strong></p>
       <p> - Subscription Type is <strong><?php echo $this->mp_helper->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['type']); ?></strong> </p>
       <p>
         <?php if ($mp_curr_level_subs_rate['trial_charge_duration'] <= 0): // trial period is set to 0 ?>

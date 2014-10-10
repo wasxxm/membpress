@@ -38,7 +38,8 @@ class MembPress_Helper
 		  4 => sprintf(_x('The Post ID: %s is not valid. Please provide a valid post ID to be used as the login welcome redirect for membpress level: %s', 'membpress_notices', 'membpress'), @$str[0], @$str[1]),
 		  5 => _x('Please provide a valid Page ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'),
 		  6 => _x('Membpress Restriction Options successfully updated', 'membpress_notices', 'membpress'),
-		  7 => sprintf(_x('New Subscription Rate has been added to the membership: %s', 'membpress_notices', 'membpress'), @$str[0])	
+		  7 => sprintf(_x('New Subscription Rate has been added to the membership level: %s', 'membpress_notices', 'membpress'), @$str[0]),
+		  8 => sprintf(_x('There is already a subscription rate (%s) having the same settings. Duplicate subscription rates are not allowed.', 'membpress_notices', 'membpress'), $this->membpress_get_subscription_rate_name(@$str[2], @$str[1]))	
        );
 	   
 	   if ($notice_id > 0 && isset($notice_ids[$notice_id]))
@@ -1874,6 +1875,27 @@ class MembPress_Helper
 	   if (@is_array($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates']) && count($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates']))
 	   {
 	      return $membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates'];
+	   }
+	   
+	   return false;
+   }
+   
+   /**
+   @ This function returns the subscription rate name for a given membership level and subscription rate index
+   @ $mp_level_no is the input membership level
+   @ $mp_subs_rate_index is the index of the subscription rate array
+   */
+   public function membpress_get_subscription_rate_name($mp_level_no, $mp_subs_rate_index)
+   {
+	   // get membership levels array
+	   $membpress_levels =  (array)get_option('membpress_levels'); 
+	   
+	   if (@is_array($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates']) && count($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates']))
+	   {
+	       if (@is_array($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates'][$mp_subs_rate_index]))
+	       {
+			   return $membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates'][$mp_subs_rate_index]['subscription_name'];   
+		   }
 	   }
 	   
 	   return false;

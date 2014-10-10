@@ -42,7 +42,7 @@ if ( isset( $_POST['membpress_subscription_rates_page_nonce']) && wp_verify_nonc
 	// Save for which Membership section, the subscription rate was triggered
 	$membpress_subscription_rate_level = (int)$_POST['membpress_subscription_rate_level'];
 	
-	$notice_vars = $membpress->mp_helper->membpress_get_membership_level_name($membpress_subscription_rate_level); 
+	$notice_vars = urlencode($membpress->mp_helper->membpress_get_membership_level_name($membpress_subscription_rate_level)); 
 	
 	/*
 	**************************************************
@@ -63,8 +63,6 @@ if ( isset( $_POST['membpress_subscription_rates_page_nonce']) && wp_verify_nonc
 	{
 	   // set error as true
 	   $error = true;
-	   // ok, set the section to the one which triggered the error
-	   $section = $membpress_error_section;
 	   // set the notice ID to the error ID	
 	   $notice = $membpress_error_id;
 	}
@@ -76,7 +74,7 @@ if ( isset( $_POST['membpress_subscription_rates_page_nonce']) && wp_verify_nonc
 	   $notice_error_q .= '&error=1';
 	}
 	
-	wp_redirect(admin_url() . 'admin.php?page=membpress_subscription_rates_page&updated=1&section=' . urlencode($section) . $notice_error_q . '&n_vars=' . urlencode($notice_vars) . '#section=#'.urlencode($section));
+	wp_redirect(admin_url() . 'admin.php?page=membpress_subscription_rates_page&updated=1&section=' . urlencode($section) . $notice_error_q . '&n_vars=' . ($notice_vars) . '#section=#'.urlencode($section));
 }
 else
 {

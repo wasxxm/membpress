@@ -66,8 +66,8 @@ Updated message bar close button on right
 .membpress .membpress_updated_close {
 	float: right;
 }
-.membpress .updated {
-	color: #272727;
+.membpress .updated, .membpress .error p{
+	color: #272727 !important;
 }
 
 /*
