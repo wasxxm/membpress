@@ -49,13 +49,6 @@ $mp_subscription_rates_sections_dir = 'membpress_subscription_rates';
 <div class="membpress_header">
   <img src="<?php echo plugins_url(); ?>/membpress/resources/images/logo2.png"  alt="<?php echo _x('MembPress', 'general', 'membpress'); ?>"/></div>
   <div class="wrap" id="poststuff">
-    <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_setup.action.php" enctype="multipart/form-data">
-    
-      <?php
-	     // create the nonce field for this page
-		 wp_nonce_field( 'membpress_subscription_rates_page', 'membpress_subscription_rates_page_nonce' );
-	  ?>
-      
        <?php
 	   // this is the header html like the expand/collapse links and the heading of this page
 	   include_once $mp_subscription_rates_sections_dir . '/membpress_subscription_rates_header.html.php';
@@ -68,10 +61,6 @@ $mp_subscription_rates_sections_dir = 'membpress_subscription_rates';
 	   include_once $mp_subscription_rates_sections_dir . '/membpress_membership_subscriptions_rates.html.php';
 	   ?>
         <!-- Membership Subscriptions section ends above --> 
-        
-        
-        
       </div>
-    </form>
   </div>
 </div>

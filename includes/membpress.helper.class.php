@@ -37,7 +37,8 @@ class MembPress_Helper
 		  3 => _x('Please provide a valid Post ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'),
 		  4 => sprintf(_x('The Post ID: %s is not valid. Please provide a valid post ID to be used as the login welcome redirect for membpress level: %s', 'membpress_notices', 'membpress'), @$str[0], @$str[1]),
 		  5 => _x('Please provide a valid Page ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'),
-		  6 => _x('Membpress Restriction Options successfully updated', 'membpress_notices', 'membpress') 	
+		  6 => _x('Membpress Restriction Options successfully updated', 'membpress_notices', 'membpress'),
+		  7 => sprintf(_x('New Subscription Rate has been added to the membership: %s', 'membpress_notices', 'membpress'), @$str[0])	
        );
 	   
 	   if ($notice_id > 0 && isset($notice_ids[$notice_id]))
@@ -1859,5 +1860,50 @@ class MembPress_Helper
 	   $mp_level_no = $mp_level_no[count($mp_level_no) - 1];
 	   return $mp_level_no;     
    }
+   
+   
+   /**
+   @ This function returns the subscription rates for a membership level
+   @ $mp_level_no is the input param for which the subscription rates will be returned
+   */
+   public function membpress_get_subscription_rates_by_level_no($mp_level_no)
+   {
+	   // get membership levels array
+	   $membpress_levels =  (array)get_option('membpress_levels'); 
+	   
+	   if (@is_array($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates']) && count($membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates']))
+	   {
+	      return $membpress_levels['membpress_level_'.$mp_level_no]['subscription_rates'];
+	   }
+	   
+	   return false;
+   }
+   
+   
+   /**
+   @ The function maps the subscription rate settings like type, duration, charge to their strings
+   */
+   public function membpress_get_subscription_rates_string($setting_string)
+   {
+	   $setting_strings = array
+	   (
+	      'recurring' => _x('Recurring', 'general', 'membpress'),
+		  'one_time' => _x('One Time', 'general', 'membpress'),
+		  'life_time' => _x('Life Time', 'general', 'membpress'),
+		  'hour' => _x('Hour(s)', 'general', 'membpress'),
+		  'day' => _x('Day(s)', 'general', 'membpress'),
+		  'week' => _x('Week(s)', 'general', 'membpress'),
+		  'month' => _x('Month(s)', 'general', 'membpress'),
+		  'year' => _x('Year(s)', 'general', 'membpress')
+	   );
+	   
+	   if (isset($setting_strings[$setting_string]))
+	   {
+		   return $setting_strings[$setting_string];   
+	   }
+	   
+	   return $setting_string;
+   }
+   
 };
 ?>

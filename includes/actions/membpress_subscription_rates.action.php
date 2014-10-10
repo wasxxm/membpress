@@ -1,6 +1,6 @@
 <?php
 /**
-* This file handles the submit action of the MembPress Settings/Setup Page
+* This file handles the submit action of the MembPress Subscription Rates Page
 
 * Copyright: © 2014
 * {@link http://www.membpress.com, MembPress Inc.}
@@ -13,6 +13,7 @@
 * @since 1.0
 */
 
+
 // load the Wordpress Main Load File
 require_once '../../../../../wp-load.php';
 
@@ -24,7 +25,7 @@ if (!is_user_logged_in() || !current_user_can( 'manage_options' ))
 }
 
 // Check if our nonce is set.
-if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST['membpress_settings_page_nonce'], 'membpress_settings_page' ))
+if ( isset( $_POST['membpress_subscription_rates_page_nonce']) && wp_verify_nonce( $_POST['membpress_subscription_rates_page_nonce'], 'membpress_subscription_rates_page' ))
 {	
 	// variable that will keep track of which section triggered the error
 	$membpress_error_section = 'all';
@@ -34,56 +35,28 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	$membpress_error_id = 1;
 	
 	$section = 'all'; // section all means that the update message should appear at top
-	$notice = 1; // default notice ID
+	$notice = 7; // default notice ID
 	$error = false; // error is set to false by default
-	$notice_vars = '';
+	$notice_vars = ''; // varaibles data to be used in the notice display
+	
+	// Save for which Membership section, the subscription rate was triggered
+	$membpress_subscription_rate_level = (int)$_POST['membpress_subscription_rate_level'];
+	
+	$notice_vars = $membpress->mp_helper->membpress_get_membership_level_name($membpress_subscription_rate_level); 
 	
 	/*
 	**************************************************
-	@ Include the Welcome Login Page section, submit
+	@ Include the Subscription Rate Create/Manage action, submit
 	**************************************************
 	*/
-	include_once 'membpress_setup_action/membpress_settings_welcome_page_login.php';
-	
-	/*
-	**************************************************
-	@ Include the Membership Options Page section, submit
-	**************************************************
-	*/
-	include_once 'membpress_setup_action/membpress_settings_membership_options_page.php';
-	
-	
-	/*
-	**************************************************
-	@ Include the Membership Levels section, submit
-	**************************************************
-	*/
-	include_once 'membpress_setup_action/membpress_settings_membership_levels.php';
-	
-	
+	include_once 'membpress_subscriptions_rates_action/membpress_subscription_rate_manage.php';
 	
 	/*
 	**************************************************
 	@ Check which section triggered the action and act accordingly
 	*/
-	
-	// if login welcome section
-	if (isset($_POST['membpress_settings_submit-membpress_settings_welcome_page_login']))
-	{
-	   $section = 'all';
-	}
-	// if membership options page section
-	else if(isset($_POST['membpress_settings_submit-membpress_settings_membership_options_page']))
-	{
-	   $section = 'membpress_settings_membership_options_page';
-	   	
-	}
-	// if membership levels section
-	else if(isset($_POST['membpress_settings_submit-membpress_settings_membership_levels']))
-	{
-	   $section = 'membpress_settings_membership_levels';
-	   	
-	}
+	// set the section accordingly so this section can be scrolled into view
+	$section = 'membpress_settings_membership_subscriptions_' . $membpress_subscription_rate_level;
 	
 	// see if there was an error
 	if ($membpress_error_flag)
@@ -103,7 +76,7 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	   $notice_error_q .= '&error=1';
 	}
 	
-	wp_redirect(admin_url() . 'admin.php?page=membpress_setup_page&updated=1&section=' . urlencode($section) . $notice_error_q . '&n_vars=' . urlencode($notice_vars) . '#section=#'.urlencode($section));
+	wp_redirect(admin_url() . 'admin.php?page=membpress_subscription_rates_page&updated=1&section=' . urlencode($section) . $notice_error_q . '&n_vars=' . urlencode($notice_vars) . '#section=#'.urlencode($section));
 }
 else
 {

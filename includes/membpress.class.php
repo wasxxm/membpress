@@ -101,6 +101,10 @@ class MembPress_Main
 	   
 	   // initialize membpress helper class object
 	   $this->mp_helper = new Membpress_Helper();
+	   
+	   $membpress_levels =  (array)get_option('membpress_levels');
+	   
+	   //var_dump($membpress_levels);
 	}
 	
 	/**

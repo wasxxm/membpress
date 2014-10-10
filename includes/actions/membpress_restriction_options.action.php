@@ -27,7 +27,7 @@ if (!is_user_logged_in() || !current_user_can( 'manage_options' ))
 // Check if our nonce is set.
 if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_nonce( $_POST['membpress_restriction_options_page_nonce'], 'membpress_restriction_options_page' ))
 {	
-	// variable that will keep tract of which section triggered the error
+	// variable that will keep track of which section triggered the error
 	$membpress_error_section = 'all';
 	// varaible that will flag an error
 	$membpress_error_flag = false;
@@ -38,14 +38,6 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	$notice = 6; // default notice ID
 	$error = false; // error is set to false by default
 	$notice_vars = '';
-	
-    // get all roles with names, to be used below
-	global $wp_roles; // global varaible holding wp roles object
-	if ( ! isset( $wp_roles ) )
-	{
-		$wp_roles = new WP_Roles();
-	}
-	$membpress_wp_roles = $wp_roles->role_names;
 	
 	/*
 	**************************************************

@@ -38,6 +38,7 @@ update_option('membpress_membership_name_level_1', sanitize_text_field($_POST['m
 update_option('membpress_membership_name_level_2', sanitize_text_field($_POST['membpress_membership_name_level_2']));
 update_option('membpress_membership_name_level_3', sanitize_text_field($_POST['membpress_membership_name_level_3']));
 update_option('membpress_membership_name_level_4', sanitize_text_field($_POST['membpress_membership_name_level_4']));
+
 // also update the WP User Roles option
 $membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'subscriber', sanitize_text_field($_POST['membpress_membership_name_level_0']));
 $membpress->mp_helper->membpress_update_role_display_name($wp_roles, 'membpress_level_1', sanitize_text_field($_POST['membpress_membership_name_level_1']));
