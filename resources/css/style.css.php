@@ -1,3 +1,9 @@
+<?php
+// load the Wordpress Main Load File
+require_once '../../../../../wp-load.php';
+header("Content-type: text/css");
+?>
+
 /*
 Override default #poststuff
 */
@@ -134,4 +140,14 @@ Clear background clear of the read only textboxes and textareas
 */
 .membpress input.readonly, .membpress input[readonly], .membpress textarea.readonly, .membpress textarea[readonly] {
 	background-color: #FFF;
+}
+
+/*
+Admin menu bar customizations for membpress links
+*/
+#wpadminbar #wp-admin-bar-membpress_admin_bar > .ab-item {
+	background-image:url('<?php echo plugins_url(); ?>/membpress/resources/images/icon.png') !important;
+    background-repeat:no-repeat;
+    background-position:8px;
+    padding-left:34px;
 }

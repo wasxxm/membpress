@@ -29,6 +29,8 @@ class MembPress_Main
 	{
 	   // add admin menu hook
 	   add_action('admin_menu', array($this, 'membpress_action_admin_menu'));
+	   // add admin bar menu hook
+	   add_action( 'admin_bar_menu', array($this, 'membpress_action_admin_bar_menu'), 999 );
 	   // add init hook
 	   add_action('init', array($this, 'membpress_action_init'));
 	   // add admin notices hook
@@ -206,6 +208,21 @@ class MembPress_Main
 		   // call membpress menu manage function
 		   // for rearranging, renaming menus etc
 		   $this->membpress_admin_menu_manage();
+	   }
+	}
+	
+	
+    /*
+	@ Function hooked to the admin_bar_menu action
+	*/
+	public function membpress_action_admin_bar_menu($wp_admin_bar)
+	{
+	   // we need to make sure that the current user has the
+	   // capability to update options
+	   if (current_user_can('manage_options'))
+	   {
+		   // call membpress register admin menu bar function
+		   $this->register_membpress_admin_bar_links($wp_admin_bar);
 	   }
 	}
 	
@@ -1293,7 +1310,7 @@ class MembPress_Main
 	public function membpress_register_plugin_styles()
 	{
 		// register and enqueue main membpress stylesheet
-		wp_register_style( 'membpress-style-sheet', plugins_url( 'membpress/resources/css/style.css' ) );
+		wp_register_style( 'membpress-style-sheet', plugins_url( 'membpress/resources/css/style.css.php' ) );
 		wp_enqueue_style( 'membpress-style-sheet' );	
 	}
 	
@@ -1702,6 +1719,53 @@ class MembPress_Main
 		 'membpress_restrict_options_page',
 		 array($this, 'membpress_restrict_options_page')
 	   );
+	}
+	
+	
+	/*
+	Contains all admin menu bar links
+	*/
+	public function register_membpress_admin_bar_links($wp_admin_bar)
+	{
+		$args = array(
+			  'id'    => 'membpress_admin_bar',
+			  'title' => _x('MembPress', 'general', 'membpress'),
+			  'href'  => admin_url('admin.php?page=membpress_page_quick_start'),
+			  'meta'  => array( 'class' => 'menupop' )
+		  );
+		  $wp_admin_bar->add_node( $args );
+		  
+		  $args = array(
+			  'id'    => 'membpress_admin_bar_link_1',
+			  'title' => _x('Quick Start', 'general', 'membpress'),
+			  'href'  => admin_url('admin.php?page=membpress_page_quick_start'),
+			  'parent'=> 'membpress_admin_bar'
+		  );
+		  $wp_admin_bar->add_node( $args );
+		  
+		  $args = array(
+			  'id'    => 'membpress_admin_bar_link_2',
+			  'title' => _x('Basic Setup', 'general', 'membpress'),
+			  'href'  => admin_url('admin.php?page=membpress_setup_page'),
+			  'parent'=> 'membpress_admin_bar'
+		  );
+		  $wp_admin_bar->add_node( $args );
+		  
+		  $args = array(
+			  'id'    => 'membpress_admin_bar_link_3',
+			  'title' => _x('Subscription Rates', 'general', 'membpress'),
+			  'href'  => admin_url('admin.php?page=membpress_subscription_rates_page'),
+			  'parent'=> 'membpress_admin_bar'
+		  );
+		  $wp_admin_bar->add_node( $args );
+		  
+		  $args = array(
+			  'id'    => 'membpress_admin_bar_link_4',
+			  'title' => _x('Restriction Options', 'general', 'membpress'),
+			  'href'  => admin_url('admin.php?page=membpress_restrict_options_page'),
+			  'parent'=> 'membpress_admin_bar'
+		  );
+		  $wp_admin_bar->add_node( $args );	
 	}
 	
 	
