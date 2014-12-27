@@ -54,7 +54,7 @@ $posts_count = $posts_count->publish;
 /**
 // get all membpress membership levels
 */
-$mp_levels = $this->mp_helper->membpress_get_all_membership_levels();
+$mp_levels = $this->membpress_get_all_membership_levels();
 
 // membpress setup sections html include dir
 $mp_setup_sections_dir = 'membpress_setup_sections';

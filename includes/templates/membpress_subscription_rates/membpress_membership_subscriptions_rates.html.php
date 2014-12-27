@@ -19,7 +19,7 @@ foreach($mp_levels as $mp_level):
 ?>
 <?php
 if (isset($_GET['section']) && $_GET['section'] == 'membpress_settings_membership_subscriptions_'.$mp_level['level_no']):
-   $this->mp_helper->membpress_show_update_notice((isset($_GET['notice'])) ? $_GET['notice'] : 1, (isset($_GET['error'])) ? 'error' : 'success', (isset($_GET['n_vars'])) ? $_GET['n_vars'] : '');
+   $this->membpress_show_update_notice((isset($_GET['notice'])) ? $_GET['notice'] : 1, (isset($_GET['error'])) ? 'error' : 'success', (isset($_GET['n_vars'])) ? $_GET['n_vars'] : '');
 endif;
 ?>
 
@@ -44,7 +44,7 @@ endif;
 		 $subscript_rate_no = 1;
 		 
 		 // get all the subscription rates for this level
-		 $mp_curr_level_subs_rates = $this->mp_helper->membpress_get_subscription_rates_by_level_no($mp_level['level_no']);
+		 $mp_curr_level_subs_rates = $this->membpress_get_subscription_rates_by_level_no($mp_level['level_no']);
 		 
 		 //var_dump($mp_curr_level_subs_rates);
 		 
@@ -59,24 +59,24 @@ endif;
 	  ?>
       <hr>
       <p><strong> <?php echo $mp_curr_level_subs_rate['subscription_name']; ?> </strong></p>
-      <p> - Subscription Type is <strong><?php echo $this->mp_helper->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['type']); ?></strong> </p>
+      <p> - Subscription Type is <strong><?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['type']); ?></strong> </p>
       <p>
         <?php if ($mp_curr_level_subs_rate['trial_charge_duration'] <= 0): // trial period is set to 0 ?>
         - No trial/free period is set for this subscription
         <?php else: // trial period is more than 0 ?>
         <?php if ($mp_curr_level_subs_rate['trial_charge'] <= 0): // trial period charge is 0 ?>
-        - Free trial is set for <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->mp_helper->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
+        - Free trial is set for <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
         <?php else: // trial period charge is more than 0 ?>
-        - Trial charge of <strong>$<?php echo $mp_curr_level_subs_rate['trial_charge']; ?></strong> is set for <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->mp_helper->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
+        - Trial charge of <strong>$<?php echo $mp_curr_level_subs_rate['trial_charge']; ?></strong> is set for <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
         <?php endif; ?>
         <?php endif; ?>
       
 	  <?php if ($mp_curr_level_subs_rate['normal_charge_duration'] > 0 && $mp_curr_level_subs_rate['normal_charge'] > 0): 
 	  // normal rate charge and duration are both greater than 0 ?>
          <?php if ($mp_curr_level_subs_rate['type'] == 'recurring'): ?>
-      <p> - Normal charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set per <strong><?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?> <?php echo $this->mp_helper->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']); ?></strong> </p>
+      <p> - Normal charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set per <strong><?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']); ?></strong> </p>
             <?php elseif ($mp_curr_level_subs_rate['type'] == 'one_time'): ?>
-      <p> - One Time charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set for <strong><?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?> <?php echo $this->mp_helper->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']); ?></strong> </p>  
+      <p> - One Time charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set for <strong><?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']); ?></strong> </p>  
             <?php elseif ($mp_curr_level_subs_rate['type'] == 'life_time'): ?>
        <p> - Life Time charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set</p>   
          <?php endif; ?>

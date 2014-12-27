@@ -15,7 +15,7 @@
 ?>
 <?php
 if (isset($_GET['section']) && $_GET['section'] == 'membpress_restrict_section'):
-   $this->mp_helper->membpress_show_update_notice((isset($_GET['notice'])) ? $_GET['notice'] : 1, (isset($_GET['error'])) ? 'error' : 'success', (isset($_GET['n_vars'])) ? $_GET['n_vars'] : '');
+   $this->membpress_show_update_notice((isset($_GET['notice'])) ? $_GET['notice'] : 1, (isset($_GET['error'])) ? 'error' : 'success', (isset($_GET['n_vars'])) ? $_GET['n_vars'] : '');
 endif;
 ?> 
 <div id="membpress_restrict_section" class="postbox<?php if(!isset($_COOKIE['membpress_restrict_section']) || !$_COOKIE['membpress_restrict_section']): ?> closed<?php endif; ?>">
