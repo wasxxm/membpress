@@ -1143,10 +1143,69 @@ class MembPress_Helper
    }
    
    
+   /*
+   Function to get the current URI
+   */
+   public function get_current_uri()
+   {
+	   $curr_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+	   
+	   $base_url = str_replace('http://', '', home_url());
+	   $base_url = str_replace('https://', '', $base_url);  
+	   
+	   $curr_uri = str_replace($base_url, '', $curr_url);
+	   
+	   return $curr_uri;  
+   }
+   
+   /*
+   Function to parse the regular expression enabled string
+   The regex in the string is assumed to be in the following format
+     This is a string containing {{ regex_expression }}
+   The anything between {{ }} double curly braces is treated as regex
+   
+   $string_with_regex = the string containing the regex and other normal characters
+   $check_string = the string to check against
+   
+   Example:
+   $string_with_regex = "/membpress/?age={{ [0-9]+ }}&id={{ [0-9]+ }}&name={{ [a-z]+ }}";
+   $check_string = "/membpress/?age=27&id=2332&name=waseem";
+   
+   The function will return the matched pattern if matched, else false
+   */
+   public function check_regex_string($string_with_regex, $check_string)
+   {
+	  preg_match_all ("^\{\{(.*?)\}\}^", $string_with_regex, $string_with_regex_arr);
+
+	  $string_with_regex_arr = $string_with_regex_arr[1];
+	  
+	  $string_with_regex_rep = preg_quote(str_replace($string_with_regex_arr, '', $string_with_regex));
+	  
+	  $string_with_regex_rep = str_replace('/', '\/', $string_with_regex_rep);
+	  
+	  $string_with_regex_rep = explode('\{\{\}\}', $string_with_regex_rep);
+	  
+	  $regex_str = '';
+	  
+	  foreach($string_with_regex_rep as $key => $value)
+	  {
+		 $regex_str .= $value . trim((isset($string_with_regex_arr[$key]) ? $string_with_regex_arr[$key] : ''));	
+	  }
+	  
+	  preg_match_all ("/$regex_str/", $check_string, $matched_arr);
+	  
+	  if (is_array($matched_arr) && count($matched_arr))
+	  {
+	      return $matched_arr[0][0];
+	  }
+	  
+	  return false;
+   }
    
    
    /**
-   Function to restrict pages/post/categories/content etc by a membership level. Any post/page accessed without the required membership level
+   Function to restrict pages/post/categories/content etc by a membership level.
+   Any post/page accessed without the required membership level
    will redirect the user to the membership options page
    */
    public function membpress_manage_restricted_access($query)
@@ -1155,8 +1214,7 @@ class MembPress_Helper
 	   if ($query->is_admin) return;
    
 	   // see if it is the main query requested by the user
-	   // also check if this page is not the front page
-	   if ($query->is_main_query() && !is_front_page())
+	   if ($query->is_main_query())
 	   {  
 		  // get all the membership levels
 		  $mp_levels = $this->membpress_get_all_membership_levels();
@@ -1168,6 +1226,18 @@ class MembPress_Helper
 		  
 		  // get the main query object
 		  $q = $this->membpress_query_object_check($query);
+		  
+		  // we first need to check if the current url is restricted by
+		  // by any membership level, as configured in Restrictions-> Restrict URIs
+		  // we will then check for the other restrictions
+		  // call the function to manage URIs restriction access
+		  $this->membpress_manage_restricted_uri_access($this->get_current_uri(), $mp_levels, $mp_membership_option_page_permalink);
+		  
+		  // check if it is the front page
+		  // the reason we are checking it after the check of restricted URI access is that
+		  // we want the users to be able to restrict their frontpage too with URI pattern
+		  // for example: www.example.com/?name=waseem
+		  if (is_front_page()) return;
 		  
 		  // if it is a post, call the post restriction function
 		  if (isset($q['post_id']) && $q['post_id'] > 0)
@@ -1227,7 +1297,7 @@ class MembPress_Helper
 	   foreach ($mp_levels as $mp_level)
 	   {
 		   // append post ID and membership level info to the redirection url
-	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_p_id' => $post_id), $mp_redirect_to);
+	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_post_id' => $post_id), $mp_redirect_to);
 		   
 		   // get the posts restricted by this level
 		   $posts_restricted_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
@@ -1644,6 +1714,77 @@ class MembPress_Helper
 	   }
    }
    
+   
+   /**
+   Function to check if a string is present in an array of regex enabled strings
+   */
+   public function in_array_regex($string_to_check, $regex_strings)
+   {
+	   foreach ($regex_strings as $regex_string)
+	   {
+		   if ($return_str = $this->check_regex_string($regex_string, $string_to_check)) 
+		   {
+			   return $return_str;	  
+		   }
+	   } 
+	   
+	   return false;  
+   }
+   
+   
+   
+   /**
+   Function to manage restriction of URIs by membership levels
+   $curr_uri is the current URI which is to be checked against the restricted URIs
+   $mp_levels is an array containing all membership levels
+   $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
+   */
+   
+   public function membpress_manage_restricted_uri_access($curr_uri, $mp_levels, $mp_redirect_to)
+   {      	  
+	   // see if this URI is restricted by any level
+	   // iterate through each level
+	   foreach ($mp_levels as $mp_level)
+	   {
+		   // append curr URI and membership level info to the redirection url
+		   // this will be appended to the query on the membership options page and
+		   // will help us keep track of what restricted URI brought the user to that page
+	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_uri' => urlencode($curr_uri)), $mp_redirect_to);
+		   
+		   // get the uris restricted by this level
+		   $uris_restricted_curr_level = get_option('membpress_restrict_uris_level_' . $mp_level['level_no']);
+		   
+		   // check if current uri is present in the restricted uris of the current level
+		   if ($this->in_array_regex($curr_uri, $uris_restricted_curr_level))
+		   {
+			   // check if the user is logged in
+			   if (is_user_logged_in())
+			   {
+				   // check if the current user has the required membership level
+				   // greater or equal to required mp level number
+				   if (!$this->membpress_check_curr_user_level_meets($mp_level['level_no']))
+				   {
+						// required level is not found, redirect to membership options page
+						wp_redirect($mp_redirect_to);
+						exit;   
+				   }
+			   }
+			   else
+			   // user is not logged in
+			   {
+				  // since the user is not logged in we only need to check if this URI
+				  // is restricted by current membership level
+				  // this level is the highest level by which the URI is restricted
+				 if ($this->in_array_regex($curr_uri, $uris_restricted_curr_level))
+				 {
+					 // URI is restricted by this level, go to membership options sign-up page
+					 wp_redirect($mp_redirect_to);
+					 exit;  
+				 }
+			   }
+		   }
+	   }
+   }
    
    
    

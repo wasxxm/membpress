@@ -213,7 +213,7 @@ class MembPress_Main
 	    // call the function to manage the login welcome access of posts/pages/external url
 		$this->mp_helper->membpress_manage_login_welcome_access($query);	
 		
-		// call the function to manage the restriction imposed on posts/pages/categories/content etc
+		// call the function to manage the restriction imposed on posts/pages/categories/tags/content/uris etc
 		// based on membership levels
 		$this->mp_helper->membpress_manage_restricted_access($query);
 		
