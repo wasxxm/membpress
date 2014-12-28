@@ -804,7 +804,7 @@ class MembPress_Helper
    */
    public function membpress_query_object_check($query = false)
    {
-      if (!$query) return;
+      if (!$query) return false;
 	  
 	  // get the query object from main query
 	  $q = $query->query;
@@ -820,13 +820,26 @@ class MembPress_Helper
 			 $page_id = $page_id[0]; 
 			 return array('page_id' => $page_id->ID);  
 		  }
-		  // not a post, may be post or custom post
-		  else
+		  // not a page, may be post or custom post
+		  elseif($query->is_single)
 		  {
 			 // get the post ID using the slug
 			 $post_id = query_posts('name='.$q['name']);
 			 $post_id = $post_id[0]; 
-			 return array('p' => $post_id->ID);
+			 return array('post_id' => $post_id->ID);
+		  }
+		  // may be a category
+		  elseif($query->is_category)
+		  {
+			 // get the category ID using the slug
+			 $cat_id = get_category_by_slug($q['category_name']);
+			 return array('cat_id' => $cat_id->term_id);    
+		  }
+		  elseif($query->is_tag)
+		  {
+			 // get the tag ID using the slug
+			 $tag_id = get_term_by('slug', $q['tag'], 'post_tag');
+			 return array('tag_id' => $tag_id->term_id);    
 		  }
 	  }
 	  // if the permalink is not defined
@@ -836,13 +849,23 @@ class MembPress_Helper
 		 {
 			return array('page_id' => $q['page_id']);
 		 }
-		 else if (isset($q['p']))
+		 else if (isset($q['p'])) // if post ID is set
 		 {
-			return array('p' => $q['p']); // else if post ID is set 
+			return array('post_id' => $q['p']); 
+		 }
+		 else if (isset($q['cat'])) // if cat ID is set
+		 {
+			return array('cat_id' => $q['cat']); 
+		 }
+		 else if (isset($q['tag'])) // if tag ID is set
+		 {
+			 // get the tag ID using the slug
+			 $tag_id = get_term_by('slug', $q['tag'], 'post_tag');
+			 return array('tag_id' => $tag_id->term_id);
 		 }
 	  }
 	  
-	  return;
+	  return false;
    }
    
    
@@ -911,7 +934,7 @@ class MembPress_Helper
 				 else if ($mp_login_redirect_vars['login_redirect_type'] == 'post')
 				 {
 				    // check if current post ID matches global login redirect post ID
-					if (isset($q['p']) && $q['p'] == $login_redirect_id)
+					if (isset($q['post_id']) && $q['post_id'] == $login_redirect_id)
 					{
 					   // check if membership options post permalink is valid
 					   if ($mp_membership_option_page_permalink && $mp_membership_option_page_permalink != '')
@@ -1031,8 +1054,8 @@ class MembPress_Helper
 				 }
 				 else if ($login_redirect_types[$i] == 'post')
 				 {
-					// check if current page ID matches global login redirect page ID
-					if (isset($q['p']) && $q['p'] == $login_redirect_ids[$i])
+					// check if current post ID matches global login redirect post ID
+					if (isset($q['post_id']) && $q['post_id'] == $login_redirect_ids[$i])
 					{
 					   // if there is no restriction for current post, return
 					   if ((bool)$login_redirect_restrict_flags[$i])
@@ -1147,15 +1170,25 @@ class MembPress_Helper
 		  $q = $this->membpress_query_object_check($query);
 		  
 		  // if it is a post, call the post restriction function
-		  if (isset($q['p']) && $q['p'] > 0)
+		  if (isset($q['post_id']) && $q['post_id'] > 0)
 		  {
 		     // call the function to manage post restriction access
-			 $this->membpress_manage_restricted_post_access($q['p'], $mp_levels, $mp_membership_option_page_permalink);
+			 $this->membpress_manage_restricted_post_access($q['post_id'], $mp_levels, $mp_membership_option_page_permalink);
 		  }
 		  else if (isset($q['page_id']) && $q['page_id'] > 0)
 		  {
 			 // call the function to manage page restriction access
 			 $this->membpress_manage_restricted_page_access($q['page_id'], $mp_levels, $mp_membership_option_page_permalink);  
+		  }
+		  else if (isset($q['cat_id']) && $q['cat_id'] > 0)
+		  {
+			 // call the function to manage category restriction access
+			 $this->membpress_manage_restricted_category_access($q['cat_id'], $mp_levels, $mp_membership_option_page_permalink);  
+		  }
+		  else if (isset($q['tag_id']) && $q['tag_id'] > 0)
+		  {
+			 // call the function to manage tag restriction access
+			 $this->membpress_manage_restricted_tag_access($q['tag_id'], $mp_levels, $mp_membership_option_page_permalink);  
 		  }
 		  
 	   }
@@ -1428,8 +1461,8 @@ class MembPress_Helper
    
    
    /**
-   Function to manage restriction of posts by membership levels
-   $post_id is the post ID to be checked
+   Function to manage restriction of pages by membership levels
+   $page_id is the page ID to be checked
    $mp_levels is an array containing all membership levels
    $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
    */
@@ -1496,6 +1529,121 @@ class MembPress_Helper
 		   }
 	   }
    }
+   
+   
+   
+   /**
+   Function to manage restriction of category by membership levels
+   $cat_id is the category ID to be checked
+   $mp_levels is an array containing all membership levels
+   $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
+   */
+   
+   public function membpress_manage_restricted_category_access($cat_id, $mp_levels, $mp_redirect_to)
+   {      
+	   // see if this category is restricted by any level
+	   
+	   // iterate through each level
+	   foreach ($mp_levels as $mp_level)
+	   {
+		   // append category ID and membership level info to the redirection url
+		   // this will be appended to the query on the membership options page and
+		   // will help us keep track of what restricted category brought the user to that page
+	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_cat_id' => $cat_id), $mp_redirect_to);
+		   
+		   // get the categories restricted by this level
+		   $cats_restricted_curr_level = get_option('membpress_restrict_categories_level_' . $mp_level['level_no']);
+		   
+		   // check if current category is present in the restricted categories of the current level
+		   if (in_array($cat_id, $cats_restricted_curr_level))
+		   {
+			   
+			   // check if the user is logged in
+			   if (is_user_logged_in())
+			   {
+				   // check if the current user has the required membership level
+				   // greater or equal to required mp level number
+				   if (!$this->membpress_check_curr_user_level_meets($mp_level['level_no']))
+				   {
+						// required level is not found, redirect to membership options page
+						wp_redirect($mp_redirect_to);
+						exit;   
+				   }
+			   }
+			   else
+			   // user is not logged in
+			   {
+				  // since the user is not logged in we only need to check if this category
+				  // is restricted by current membership level
+				  // this level is the highest level by which the category is restricted
+				 if (in_array($cat_id, $cats_restricted_curr_level))
+				 {
+					 // category is restricted by this level, go to membership options sign-up page
+					 wp_redirect($mp_redirect_to);
+					 exit;  
+				 }
+			   }
+		   }
+	   }
+   }
+   
+   
+   
+   /**
+   Function to manage restriction of tag by membership levels
+   $tag_id is the tag ID to be checked
+   $mp_levels is an array containing all membership levels
+   $mp_redirect_to is the permalink where the user will be redirected in case of unauthorized access
+   */
+   
+   public function membpress_manage_restricted_tag_access($tag_id, $mp_levels, $mp_redirect_to)
+   {      
+	   // see if this tag is restricted by any level
+	   
+	   // iterate through each level
+	   foreach ($mp_levels as $mp_level)
+	   {
+		   // append tag ID and membership level info to the redirection url
+		   // this will be appended to the query on the membership options page and
+		   // will help us keep track of what restricted tag brought the user to that page
+	       $mp_redirect_to = add_query_arg(array('mp_r_level' => $mp_level['level_no'], 'mp_tag_id' => $tag_id), $mp_redirect_to);
+		   
+		   // get the tags restricted by this level
+		   $tags_restricted_curr_level = get_option('membpress_restrict_tags_level_' . $mp_level['level_no']);
+		   
+		   // check if current tag is present in the restricted tags of the current level
+		   if (in_array($tag_id, $tags_restricted_curr_level))
+		   {
+			   
+			   // check if the user is logged in
+			   if (is_user_logged_in())
+			   {
+				   // check if the current user has the required membership level
+				   // greater or equal to required mp level number
+				   if (!$this->membpress_check_curr_user_level_meets($mp_level['level_no']))
+				   {
+						// required level is not found, redirect to membership options page
+						wp_redirect($mp_redirect_to);
+						exit;   
+				   }
+			   }
+			   else
+			   // user is not logged in
+			   {
+				  // since the user is not logged in we only need to check if this tag
+				  // is restricted by current membership level
+				  // this level is the highest level by which the tag is restricted
+				 if (in_array($tag_id, $tags_restricted_curr_level))
+				 {
+					 // tag is restricted by this level, go to membership options sign-up page
+					 wp_redirect($mp_redirect_to);
+					 exit;  
+				 }
+			   }
+		   }
+	   }
+   }
+   
    
    
    
