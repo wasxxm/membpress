@@ -73,6 +73,15 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	include_once 'membpress_restriction_options_action/membpress_restrict_tags.php';
 	
 	
+    
+	/*
+	**************************************************
+	@ Include the Restrict URIs section action, submit
+	**************************************************
+	*/
+	include_once 'membpress_restriction_options_action/membpress_restrict_uris.php';
+	
+	
 	
 	/*
 	**************************************************
@@ -101,6 +110,12 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
     if (isset($_POST['membpress_restrict_submit-membpress_restrict_tag_section']))
 	{
 	   $section = 'membpress_restrict_tags';	
+	}
+	
+	// if Restrict URIs section
+    if (isset($_POST['membpress_restrict_submit-membpress_restrict_uri_section']))
+	{
+	   $section = 'membpress_restrict_uris';	
 	}
 	
 	// see if there was an error

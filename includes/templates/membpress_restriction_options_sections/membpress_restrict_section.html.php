@@ -26,16 +26,16 @@ endif;
             <p> <?php echo _x('You can also restrict a section of a post/page rather than restricting the whole post/page itself by using the shortcodes below.', 'membpress_restrict', 'membpress'); ?> </p>
             <?php
             // iterate through all membpress membership levels
-			// and show the post restrict option for each of them
+			// and show the section restrict option for each of them
 			foreach ($mp_levels as $mp_level):
 			?>
             <p>
             <strong><?php echo sprintf(_x('Restrict Section by Membership Level %s (%s):', 'membpress_restrict', 'membpress'), $mp_level['level_no'], $mp_level['display_name']); ?></strong>
             </p>
             <p>
-            <label for="membpress_restrict_section_level_<?php echo $mp_level['level_no']; ?>"><?php echo _x('Enclose the content you want to restrict by the following shortcode', 'membpress_restrict', 'membpress'); ?></label><br><textarea style="width:100%" id="membpress_restrict_section_level_<?php echo $mp_level['level_no']; ?>" rows="5" readonly>[membpress <?php echo $this->membpress_get_shortcode_attrs('restrict_by'); ?>=<?php echo $mp_level['level_no']; ?>]
+            <label for="membpress_restrict_section_level_<?php echo $mp_level['level_no']; ?>"><?php echo _x('Enclose the content you want to restrict by the following shortcode', 'membpress_restrict', 'membpress'); ?></label><br><textarea style="width:100%" id="membpress_restrict_section_level_<?php echo $mp_level['level_no']; ?>" rows="5" readonly>[membpress <?php echo $this->mp_shortcodes->membpress_get_shortcode_attrs('restrict_by'); ?>=<?php echo $mp_level['level_no']; ?>]
 
-The content/section you want to restrict goes here
+<?php echo _x('The content/section you want to restrict goes here', 'membpress_restrict', 'membpress'); ?>
 
 [/membpress]</textarea>
             </p>

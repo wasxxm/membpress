@@ -3,8 +3,20 @@
 // include the membpress helper class
 include_once 'membpress.helper.class.php';
 
+// include the membpress helper class
+include_once 'membpress.shortcodes.class.php';
+
 class Membpress_Menus extends Membpress_Helper
 {
+	// instance of membpress shortcodes class
+	public $mp_shortcodes;
+	
+	// constructor
+	public function Membpress_Menus()
+	{
+		$this->mp_shortcodes = new MembPress_ShortCodes();
+	}
+	
 	/*
 	@ Function hooked to the admin_menu action
 	*/

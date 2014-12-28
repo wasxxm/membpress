@@ -38,7 +38,7 @@ $posts_count = $posts_count->publish;
 /**
 // get all membpress membership levels
 */
-$mp_levels = $this->mp_helper->membpress_get_all_membership_levels();
+$mp_levels = $this->membpress_get_all_membership_levels();
 
 // membpress setup sections html include dir
 $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
@@ -102,6 +102,14 @@ $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
 	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_section.html.php';
 	   ?>
        <!-- Membership HTML Restriction Options section ends above --> 
+       
+       
+       <!-- Membership URI Restriction Options section starts below -->
+       <?php
+	   // include the restrict categories section
+	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_uri.html.php';
+	   ?>
+       <!-- Membership URI Restriction Options section ends above --> 
        
        
       </div>
