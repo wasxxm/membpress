@@ -1218,6 +1218,10 @@ class MembPress_Helper
 	   {  
 		  // get all the membership levels
 		  $mp_levels = $this->membpress_get_all_membership_levels();
+		  // reverse the order of memberships from high to low
+		  // this will ensure higher level memberships are checked first
+		  // since higher membership levels have precedence over lower ones
+		  $mp_levels = array_reverse($mp_levels);
 		  
 		  // membpress membership options page set in the membpress settings
 		  $mp_membership_option_page = get_option('membpress_settings_membership_option_page');
@@ -1718,13 +1722,34 @@ class MembPress_Helper
    /**
    Function to check if a string is present in an array of regex enabled strings
    */
-   public function in_array_regex($string_to_check, $regex_strings)
+   public function in_array_regex($string_to_check, $regex_strings, $strict_match = true)
    {
 	   foreach ($regex_strings as $regex_string)
 	   {
-		   if ($return_str = $this->check_regex_string($regex_string, $string_to_check)) 
+		   $regex_string = rtrim($regex_string, "/");
+		   $regex_string = ltrim($regex_string, "/");
+		   $regex_string = '/' . $regex_string;
+		   
+		   $regex_string1 = $regex_string;
+		   
+		   $regex_string2 = $regex_string . '/';
+		   
+		   if ($strict_match)
+		   {
+			 // append '$' at the end of the URI so for patterns like /members/
+			 // only the /members/ URI is restricted and not /members/sub_dirs
+			 $regex_string1 = '{{^}}' . $regex_string1 . '{{$}}';
+			 $regex_string2 = '{{^}}' . $regex_string2 . '{{$}}';
+		   }
+		   
+		   if ($return_str = $this->check_regex_string($regex_string1, $string_to_check)) 
 		   {
 			   return $return_str;	  
+		   }
+		   // if the match is not found, try once again by adding a trailing slash
+		   elseif ($return_str = $this->check_regex_string($regex_string2, $string_to_check))
+		   {
+			   return $return_str;     
 		   }
 	   } 
 	   
@@ -1743,6 +1768,7 @@ class MembPress_Helper
    public function membpress_manage_restricted_uri_access($curr_uri, $mp_levels, $mp_redirect_to)
    {      	  
 	   // see if this URI is restricted by any level
+	   
 	   // iterate through each level
 	   foreach ($mp_levels as $mp_level)
 	   {
