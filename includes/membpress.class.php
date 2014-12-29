@@ -79,6 +79,8 @@ class MembPress_Main
 	   add_action( 'admin_bar_menu', array($this->mp_menus, 'membpress_action_admin_bar_menu'), 999 );
 	   // add init hook
 	   add_action('init', array($this, 'membpress_action_init'));
+	   // add admin init hook
+	   add_action('admin_init', array($this, 'membpress_admin_init'));
 	   // add admin notices hook
 	   add_action('admin_notices', array($this->mp_adminnotices, 'membpress_admin_notice'));
 	   // add the hook for adding metaboxes
@@ -164,6 +166,16 @@ class MembPress_Main
 	   
 	   // call the membpress login page welcome routine
 	   $this->mp_helper->membpress_login_welcome();	
+	}
+	
+    /*
+	@ Function hooked to the admin_init action
+	*/
+	public function membpress_admin_init()
+	{
+		// remove all other admin notices during membpress admin screens
+		// of course do not remove membpress own notices
+		$this->mp_adminnotices->membpress_remove_admin_notices();
 	}
 	
 	/*
