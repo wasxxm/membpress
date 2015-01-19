@@ -1724,7 +1724,7 @@ class MembPress_Helper
    */
    public function in_array_regex($string_to_check, $regex_strings, $strict_match = true)
    {
-	   foreach ($regex_strings as $regex_string)
+	   foreach ((array)$regex_strings as $regex_string)
 	   {
 		   $regex_string = rtrim($regex_string, "/");
 		   $regex_string = ltrim($regex_string, "/");
