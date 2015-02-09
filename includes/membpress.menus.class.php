@@ -64,7 +64,7 @@ class Membpress_Menus extends Membpress_Helper
 		 'membpress_page_quick_start',
 		 array($this, 'membpress_page_quick_start'),
 		 plugins_url( 'membpress/resources/images/icon.png' ),
-		 99.1251221851919 // 1251221851919 = membpress
+		 3.1251221851919 // 1251221851919 = membpress
 	   );
     }
 	

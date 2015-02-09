@@ -35,6 +35,9 @@ include_once 'membpress.extrafields.class.php';
 // include the membpress adminnotices class
 include_once 'membpress.adminnotices.class.php';
 
+// include the memberess admin pointers class
+include_once 'membpress.adminpointers.class.php';
+
 class MembPress_Main
 {
 	// instance of membpress helper class
@@ -51,6 +54,8 @@ class MembPress_Main
 	public $mp_extrafields;
 	// instance of membpress adminnotices class
 	public $mp_adminnotices;
+	// instance of membpress admin pointers class
+	public $mp_adminpointers;
 	
 	/*
 	@Contructor function loads basic hooks
@@ -71,6 +76,8 @@ class MembPress_Main
 	   $this->mp_extrafields = new Membpress_ExtraFields();
 	   // initialize membpress adminnotices class object
 	   $this->mp_adminnotices = new Membpress_AdminNotices();
+	   // initialize membpress adminpointers class object
+	   $this->mp_adminpointers = new Membpress_AdminPointers();
 	   
 	   
 	   // add admin menu hook
@@ -85,6 +92,8 @@ class MembPress_Main
 	   add_action('admin_notices', array($this->mp_adminnotices, 'membpress_admin_notice'));
 	   // add the hook for adding metaboxes
 	   add_action('add_meta_boxes', array($this->mp_metaboxes, 'membpress_add_meta_box'));
+	   // enqueue scripts to admin
+	   add_action( 'admin_enqueue_scripts', array($this, 'mp_admin_enqueue_scripts'), 1000 );
 	   
 	   // hook for plugin activation
 	   register_activation_hook(
@@ -176,6 +185,9 @@ class MembPress_Main
 		// remove all other admin notices during membpress admin screens
 		// of course do not remove membpress own notices
 		$this->mp_adminnotices->membpress_remove_admin_notices();
+		
+		// render the install messages as admin pointers
+		$this->mp_adminpointers->mp_render_install_pointers();
 	}
 	
 	/*
@@ -231,6 +243,16 @@ class MembPress_Main
 		
 		// function to sort the MembPress info column on posts/pages/categories/tags etc
 		$this->mp_customcolumns->membpress_sortable_info_columns($query);
+	}
+	
+	
+	/**
+	Admin Enqueue Scripts 
+	*/
+	public function mp_admin_enqueue_scripts($hook_suffix)
+	{
+	    // enqueue the pointers function
+		$this->mp_adminpointers->mp_pointers_load($hook_suffix);
 	}
 };
 
