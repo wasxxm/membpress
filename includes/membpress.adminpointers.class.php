@@ -30,7 +30,7 @@ class Membpress_AdminPointers extends Membpress_Helper
 	 
 			// Sanity check
 			if ( in_array( $pointer_id, $dismissed ) || empty( $pointer )  || empty( $pointer_id ) || empty( $pointer['target'] ) || empty( $pointer['options'] ) )
-				continue;
+				continue; 
 	 
 			$pointer['pointer_id'] = $pointer_id;
 	 
