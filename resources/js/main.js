@@ -12,12 +12,14 @@ jQuery(document).ready(function( $ ) {
 		if (membpress_settings_welcome_login_type == 'page')
 		{
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_page').parent('p')).show();
+		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_restrict_checkbox')).show();
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_post').parent('p')).hide();
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_url').parent('p')).hide();	
 		}
 		else if (membpress_settings_welcome_login_type == 'post')
 		{
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_post').parent('p')).show();
+		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_restrict_checkbox')).show();
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_page').parent('p')).hide();
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_url').parent('p')).hide();	
 		}
@@ -25,7 +27,8 @@ jQuery(document).ready(function( $ ) {
 		{
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_url').parent('p')).show();
 		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_post').parent('p')).hide();
-		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_page').parent('p')).hide();	
+		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_page').parent('p')).hide();
+		  $($(membpress_settings_welcome_group).find('.membpress_settings_welcome_login_restrict_checkbox')).hide();	
 		}
     });
 	

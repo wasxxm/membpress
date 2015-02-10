@@ -184,7 +184,11 @@ class MembPress_Main
 	   $this->mp_helper->membpress_login_welcome();
 	   
 	   // customize login page
-	   $this->mp_loginpage->membpress_customize_login_page();	
+	   // check if the login page customization is set in 'MembPress Basic Setup -> Customize Login Page'
+	   if ((bool)get_option('membpress_settings_customize_login_page_flag'))
+	   {
+	      $this->mp_loginpage->membpress_customize_login_page();
+	   }
 	}
 	
     /*

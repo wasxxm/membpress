@@ -82,6 +82,8 @@ class Membpress_AdminNotices extends Membpress_Helper
 	{
 		global $wp_filter;
 		
+		if (!is_array($wp_filter[$hook_name])) return;
+		
 		foreach( $wp_filter[ $hook_name ] as $priority => $actions )
 		{
 			foreach( $actions as $key => $data )

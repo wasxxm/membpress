@@ -64,6 +64,15 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	
 	/*
 	**************************************************
+	@ Include the Membership Customize Login Page, submit
+	**************************************************
+	*/
+	include_once 'membpress_setup_action/membpress_settings_customize_login_page.php';
+	
+	
+	
+	/*
+	**************************************************
 	@ Check which section triggered the action and act accordingly
 	*/
 	
@@ -82,6 +91,12 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	else if(isset($_POST['membpress_settings_submit-membpress_settings_membership_levels']))
 	{
 	   $section = 'membpress_settings_membership_levels';
+	   	
+	}
+	// if customize login page section
+	else if(isset($_POST['membpress_settings_submit-membpress_settings_customize_login_page']))
+	{
+	   $section = 'membpress_settings_customize_login_page';
 	   	
 	}
 	

@@ -34,6 +34,9 @@ $membpress_settings_welcome_login_individual = (bool)get_option('membpress_setti
 // get membership options page ID
 $membpress_settings_membership_option_page = get_option('membpress_settings_membership_option_page');
 
+// get the flag for the login page customization
+$membpress_settings_customize_login_page_flag = (bool)get_option('membpress_settings_customize_login_page_flag');
+
 /**
 // pages list, will be used many times
 */
@@ -92,6 +95,12 @@ include_once 'membpress.header.html.php';
        <!-- Membership Levels section starts below -->
        <?php
 	   include_once $mp_setup_sections_dir . '/membpress_settings_membership_levels.html.php';
+	   ?>
+        <!-- Membership levels section ends above --> 
+        
+        <!-- Membership Customize Login Page starts below -->
+       <?php
+	   include_once $mp_setup_sections_dir . '/membpress_settings_membership_customize_login_page.html.php';
 	   ?>
         <!-- Membership levels section ends above --> 
         

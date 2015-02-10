@@ -76,7 +76,7 @@
                   <br>
                   <br>
                   <small> <?php echo _x('Must be a fully resolved URL like: http://www.membpress.com/welcome-page<br>Please make sure the URL is correct, else the users other than the administrators might not be able to login.', 'membpress_setup', 'membpress'); ?> </small> </p>
-                <p>
+                <p class="membpress_settings_welcome_login_restrict_checkbox <?php if($membpress_settings_welcome_login_type == 'url'): ?>membpress_hidden<?php endif; ?>">
                   <input type="checkbox" name="membpress_settings_welcome_login_restrict" id="membpress_settings_welcome_login_restrict" <?php if($membpress_settings_welcome_login_restrict == 1): ?>checked<?php endif; ?> value="1">
                   <label for="membpress_settings_welcome_login_restrict"> <?php echo _x('Do not make the page/post restricted', 'membpress_setup', 'membpress'); ?> </label>
                 </p>
@@ -92,49 +92,52 @@
     </p>
 	
 	<?php
-	  
+	
+	/*  
     $roles = get_editable_roles();
 	
 	// iterate through each role to assign the login welcome page/post/url
-	foreach($roles as $role_key => $role_val):
+	foreach($roles as $mp_level['level_no'] => $role_val):
 	
 	// check if the role is defined by MembPress like membpress_level_1
 	// include the subscriber role as the Membpress Level 0 /Free Level
-	if (stristr($role_key, 'membpress_level_') === FALSE && $role_key != 'subscriber')
+	if (stristr($mp_level['level_no'], 'membpress_level_') === FALSE && $mp_level['level_no'] != 'subscriber')
 	{
 	   continue; //skip the rest of the code and move to next role in array
 	}
+	*/
+	foreach($mp_levels as $mp_level):
 	
-	$membpress_settings_welcome_login_type = get_option('membpress_settings_welcome_login_type_' . $role_key);
+	$membpress_settings_welcome_login_type = get_option('membpress_settings_welcome_login_type_' . $mp_level['level_no']);
     if ($membpress_settings_welcome_login_type == '')
     $membpress_settings_welcome_login_type = 'page';
 
-    $membpress_settings_welcome_login_page = get_option('membpress_settings_welcome_login_page_' . $role_key);
-    $membpress_settings_welcome_login_post = get_option('membpress_settings_welcome_login_post_' . $role_key);
-    $membpress_settings_welcome_login_url = get_option('membpress_settings_welcome_login_url_' . $role_key);
+    $membpress_settings_welcome_login_page = get_option('membpress_settings_welcome_login_page_' . $mp_level['level_no']);
+    $membpress_settings_welcome_login_post = get_option('membpress_settings_welcome_login_post_' . $mp_level['level_no']);
+    $membpress_settings_welcome_login_url = get_option('membpress_settings_welcome_login_url_' . $mp_level['level_no']);
 	
-	$membpress_settings_welcome_login_restrict = (bool)get_option('membpress_settings_welcome_login_restrict_' . $role_key);
+	$membpress_settings_welcome_login_restrict = (bool)get_option('membpress_settings_welcome_login_restrict_' . $mp_level['level_no']);
 	
-	$role_name = $role_val['name'];
+	$role_name = $mp_level['display_name'] . ' ' . _x(sprintf('(MembPress Level %d)', $mp_level['level_no']), 'general', 'membpress');
 	
-	if ($role_key == 'subscriber')
-	    $role_name = _x('Subscriber (MembPress Level 0 - Free)', 'general', 'membpress');
+	if ($mp_level['level_no'] == 0)
+	    $role_name = $mp_level['display_name'] . ' ' . _x('(MembPress Level 0 - Subscriber)', 'general', 'membpress');
 	
 	?>
               <hr>
               <div class="membpress_welcome_login_group">
                 <h4><?php echo $role_name; ?></h4>
                 <p>
-                  <input type="radio" name="membpress_settings_welcome_login_type_<?php echo $role_key; ?>" value="page" id="membpress_settings_welcome_login_type_page_<?php echo $role_key; ?>" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_welcome_login_type == 'page'): ?>checked<?php endif; ?>>
-                  <label for="membpress_settings_welcome_login_type_page_<?php echo $role_key; ?>"><span class="dashicons dashicons-admin-page"></span> <?php echo _x('Page', 'general', 'membpress'); ?> </label>
-                  <input type="radio" name="membpress_settings_welcome_login_type_<?php echo $role_key; ?>" value="post" id="membpress_settings_welcome_login_type_post_<?php echo $role_key; ?>" <?php if($membpress_settings_welcome_login_type == 'post'): ?>checked<?php endif; ?> class="membpress_settings_welcome_login_type">
-                  <label for="membpress_settings_welcome_login_type_post_<?php echo $role_key; ?>"><span class="dashicons dashicons-admin-post"></span> <?php echo _x('Post', 'general', 'membpress'); ?> </label>
-                  <input type="radio" name="membpress_settings_welcome_login_type_<?php echo $role_key; ?>" value="url" id="membpress_settings_welcome_login_type_url_<?php echo $role_key; ?>" <?php if($membpress_settings_welcome_login_type == 'url'): ?>checked<?php endif; ?> class="membpress_settings_welcome_login_type">
-                  <label for="membpress_settings_welcome_login_type_url_<?php echo $role_key; ?>"><span class="dashicons dashicons-admin-links"></span> <?php echo _x('URL', 'membpress', 'membpress'); ?> </label>
+                  <input type="radio" name="membpress_settings_welcome_login_type_<?php echo $mp_level['level_no']; ?>" value="page" id="membpress_settings_welcome_login_type_page_<?php echo $mp_level['level_no']; ?>" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_welcome_login_type == 'page'): ?>checked<?php endif; ?>>
+                  <label for="membpress_settings_welcome_login_type_page_<?php echo $mp_level['level_no']; ?>"><span class="dashicons dashicons-admin-page"></span> <?php echo _x('Page', 'general', 'membpress'); ?> </label>
+                  <input type="radio" name="membpress_settings_welcome_login_type_<?php echo $mp_level['level_no']; ?>" value="post" id="membpress_settings_welcome_login_type_post_<?php echo $mp_level['level_no']; ?>" <?php if($membpress_settings_welcome_login_type == 'post'): ?>checked<?php endif; ?> class="membpress_settings_welcome_login_type">
+                  <label for="membpress_settings_welcome_login_type_post_<?php echo $mp_level['level_no']; ?>"><span class="dashicons dashicons-admin-post"></span> <?php echo _x('Post', 'general', 'membpress'); ?> </label>
+                  <input type="radio" name="membpress_settings_welcome_login_type_<?php echo $mp_level['level_no']; ?>" value="url" id="membpress_settings_welcome_login_type_url_<?php echo $mp_level['level_no']; ?>" <?php if($membpress_settings_welcome_login_type == 'url'): ?>checked<?php endif; ?> class="membpress_settings_welcome_login_type">
+                  <label for="membpress_settings_welcome_login_type_url_<?php echo $mp_level['level_no']; ?>"><span class="dashicons dashicons-admin-links"></span> <?php echo _x('URL', 'membpress', 'membpress'); ?> </label>
                 </p>
                 <p class="membpress_hidden" <?php if($membpress_settings_welcome_login_type == 'page'): ?>style="display:block"<?php endif; ?>>
-                  <label for="membpress_settings_welcome_login_page_<?php echo $role_key; ?>"> <?php echo _x('Select Welcome Page:', 'general', 'membpress')?> </label>
-                  <select name="membpress_settings_welcome_login_page_<?php echo $role_key; ?>" id="membpress_settings_welcome_login_page_<?php echo $role_key; ?>" class="membpress_settings_welcome_login_page">
+                  <label for="membpress_settings_welcome_login_page_<?php echo $mp_level['level_no']; ?>"> <?php echo _x('Select Welcome Page:', 'general', 'membpress')?> </label>
+                  <select name="membpress_settings_welcome_login_page_<?php echo $mp_level['level_no']; ?>" id="membpress_settings_welcome_login_page_<?php echo $mp_level['level_no']; ?>" class="membpress_settings_welcome_login_page">
                     <option value="">-- <?php echo _x('Select a Page', 'general', 'membpress'); ?> --</option>
                     <?php 
       foreach ( $pages as $page )
@@ -154,8 +157,8 @@
                 </p>
                 <p class="membpress_hidden" <?php if($membpress_settings_welcome_login_type == 'post'): ?>style="display:block"<?php endif; ?>>
                 <?php if($posts_count <= MEMBPRESS_SETTINGS_MAX_POSTS): ?>
-                  <label for="membpress_settings_welcome_login_post_<?php echo $role_key; ?>"> <?php echo _x('Select Welcome Post:', 'membpress', 'membpress')?> </label>
-                  <select name="membpress_settings_welcome_login_post_<?php echo $role_key; ?>" id="membpress_settings_welcome_login_post_<?php echo $role_key; ?>" class="membpress_settings_welcome_login_post">
+                  <label for="membpress_settings_welcome_login_post_<?php echo $mp_level['level_no']; ?>"> <?php echo _x('Select Welcome Post:', 'membpress', 'membpress')?> </label>
+                  <select name="membpress_settings_welcome_login_post_<?php echo $mp_level['level_no']; ?>" id="membpress_settings_welcome_login_post_<?php echo $mp_level['level_no']; ?>" class="membpress_settings_welcome_login_post">
                     <option value="">-- <?php echo _x('Select a Post', 'membpress', 'membpress'); ?> --</option>
                     <?php
     foreach ( $postslist as $post ) :
@@ -167,19 +170,19 @@
     ?>
                   </select>
                   <?php else: ?>
-                  <label for="membpress_settings_welcome_login_post_<?php echo $role_key; ?>"> <?php echo _x('Specify Welcome Post ID:', 'membpress', 'membpress')?> </label>
-                   <input name="membpress_settings_welcome_login_post_<?php echo $role_key; ?>" id="membpress_settings_welcome_login_post_<?php echo $role_key; ?>" class="membpress_settings_welcome_login_post" type="text" value="<?php echo $membpress_settings_welcome_login_post; ?>">
+                  <label for="membpress_settings_welcome_login_post_<?php echo $mp_level['level_no']; ?>"> <?php echo _x('Specify Welcome Post ID:', 'membpress', 'membpress')?> </label>
+                   <input name="membpress_settings_welcome_login_post_<?php echo $mp_level['level_no']; ?>" id="membpress_settings_welcome_login_post_<?php echo $mp_level['level_no']; ?>" class="membpress_settings_welcome_login_post" type="text" value="<?php echo $membpress_settings_welcome_login_post; ?>">
                   <?php endif; ?>
                 </p>
                 <p class="membpress_hidden" <?php if($membpress_settings_welcome_login_type == 'url'): ?>style="display:block"<?php endif; ?>>
-                  <label for="membpress_settings_welcome_login_url_<?php echo $role_key; ?>"> <?php echo _x('Select Welcome URL:', 'general', 'membpress')?> </label>
-                  <input name="membpress_settings_welcome_login_url_<?php echo $role_key; ?>" id="membpress_settings_welcome_login_url_<?php echo $role_key; ?>" type="text" placeholder="http://" value="<?php echo $membpress_settings_welcome_login_url; ?>" class="membpress_settings_welcome_login_url">
+                  <label for="membpress_settings_welcome_login_url_<?php echo $mp_level['level_no']; ?>"> <?php echo _x('Select Welcome URL:', 'general', 'membpress')?> </label>
+                  <input name="membpress_settings_welcome_login_url_<?php echo $mp_level['level_no']; ?>" id="membpress_settings_welcome_login_url_<?php echo $mp_level['level_no']; ?>" type="text" placeholder="http://" value="<?php echo $membpress_settings_welcome_login_url; ?>" class="membpress_settings_welcome_login_url">
                   <br>
                   <br>
                   <small> <?php echo _x('Must be a fully resolved URL like: http://www.membpress.com/welcome-page<br>Please make sure the URL is correct, else the users other than the administrators might not be able to login.', 'membpress_setup', 'membpress'); ?> </small> </p>
-                <p>
-                  <input type="checkbox" name="membpress_settings_welcome_login_restrict_<?php echo $role_key; ?>" id="membpress_settings_welcome_login_restrict_<?php echo $role_key; ?>" <?php if($membpress_settings_welcome_login_restrict == 1): ?>checked<?php endif; ?> value="1">
-                  <label for="membpress_settings_welcome_login_restrict_<?php echo $role_key; ?>"> <?php echo _x('Do not make the page/post restricted', 'membpress_setup', 'membpress'); ?> </label>
+                <p class="membpress_settings_welcome_login_restrict_checkbox <?php if($membpress_settings_welcome_login_type == 'url'): ?>membpress_hidden<?php endif; ?>">
+                  <input type="checkbox" name="membpress_settings_welcome_login_restrict_<?php echo $mp_level['level_no']; ?>" id="membpress_settings_welcome_login_restrict_<?php echo $mp_level['level_no']; ?>" <?php if($membpress_settings_welcome_login_restrict == 1): ?>checked<?php endif; ?> value="1">
+                  <label for="membpress_settings_welcome_login_restrict_<?php echo $mp_level['level_no']; ?>"> <?php echo _x('Do not make the page/post restricted', 'membpress_setup', 'membpress'); ?> </label>
                 </p>
               </div>
               <!-- End .membpress_welcome_login_group -->

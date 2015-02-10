@@ -20,6 +20,9 @@ class Membpress_LoginPage extends Membpress_Helper
 		
 		// change wordpress login URL Title
 		add_filter( 'login_headertitle', array($this, 'membpress_login_page_logo_title')); 
+		
+		// let the users authenticate using email address too
+	    add_action( 'wp_authenticate', array($this, 'membpress_allow_email_login'));
 	}
 	
 	public function membpress_login_page_logo() {
@@ -84,13 +87,33 @@ class Membpress_LoginPage extends Membpress_Helper
        </style>';
     }
 	
+	/**
+	Change login logo URL target to web site address
+	*/
 	public function membpress_login_page_logo_url()
 	{
        return get_bloginfo( 'url' );
     }
 
+    /**
+	Change login logo title
+	*/
     public function membpress_login_page_logo_title()
 	{
        return _x('MembPress - Ultimate membership system for WordPress', 'general', 'membpress');
+    }
+
+
+    /**
+	Let the users login via their email addresses too
+	*/
+    public function membpress_allow_email_login( &$username, &$password = '')
+    {
+		$user = get_user_by( 'email', $username );
+	
+		if( !empty( $user->user_login ) )
+		{
+			$username = $user->user_login;
+		}
     }	
 };
