@@ -45,7 +45,7 @@ class Membpress_AdminNotices extends Membpress_Helper
 		   $conflict_plugins = implode(', ', $conflict_plugins);
 		   
 		   echo '<div class="error membpress_clear">
-			  <p>'. _x('We have detected that you have following plugins: "'.$conflict_plugins.'" installed. This might conflict with your MembPress membership system and render many inconsistencies in the plugin\'s working. Please deactivate the plugin(s) to avoid any problem.', 'general', 'membpress') .'</p>
+			  <p>'. _x('We have detected that you have following plugin(s): "'.$conflict_plugins.'" installed. This might conflict with your MembPress membership system and render many inconsistencies in the plugin\'s working. Please deactivate the plugin(s) to avoid any problem.', 'general', 'membpress') .'</p>
 			  </div>';
 	   }
     }

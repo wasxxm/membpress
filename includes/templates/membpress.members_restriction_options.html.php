@@ -43,12 +43,10 @@ $mp_levels = $this->membpress_get_all_membership_levels();
 // membpress setup sections html include dir
 $mp_restriction_options_sections_dir = 'membpress_restriction_options_sections';
 
-?>
+// include the membpress header
+include_once 'membpress.header.html.php';
 
-<div class="membpress">
-<div class="membpress_header">
-  <img src="<?php echo plugins_url(); ?>/membpress/resources/images/logo2.png"  alt="<?php echo _x('MembPress', 'general', 'membpress'); ?>"/></div>
-  <div class="wrap" id="poststuff">
+?>
     <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_restriction_options.action.php" enctype="multipart/form-data">
     
       <?php

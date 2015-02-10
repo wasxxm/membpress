@@ -12,11 +12,11 @@
 * @package membpress
 * @since 1.0
 */
-?>
 
-<div class="membpress">
-  <div class="wrap" id="poststuff">
-    <div class="membpress_header"> <img src="<?php echo plugins_url(); ?>/membpress/resources/images/logo2.png"  alt="<?php echo _x('MembPress', 'general', 'membpress'); ?>"/></div>
+// include the membpress header
+include_once 'membpress.header.html.php';
+
+?>
     <h2><?php echo _x('MembPress Quick-Start Guide', 'general', 'membpress'); ?></h2>
   </div>
 </div>

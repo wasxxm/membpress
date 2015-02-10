@@ -35,8 +35,11 @@ include_once 'membpress.extrafields.class.php';
 // include the membpress adminnotices class
 include_once 'membpress.adminnotices.class.php';
 
-// include the memberess admin pointers class
+// include the memberess adminpointers class
 include_once 'membpress.adminpointers.class.php';
+
+// include the memberess loginpage class
+include_once 'membpress.loginpage.class.php';
 
 class MembPress_Main
 {
@@ -56,6 +59,8 @@ class MembPress_Main
 	public $mp_adminnotices;
 	// instance of membpress admin pointers class
 	public $mp_adminpointers;
+    // instance of membpress loginpage class
+	public $mp_loginpage;
 	
 	/*
 	@Contructor function loads basic hooks
@@ -78,6 +83,8 @@ class MembPress_Main
 	   $this->mp_adminnotices = new Membpress_AdminNotices();
 	   // initialize membpress adminpointers class object
 	   $this->mp_adminpointers = new Membpress_AdminPointers();
+	   // initialize membpress loginpage class object
+	   $this->mp_loginpage = new Membpress_LoginPage();
 	   
 	   
 	   // add admin menu hook
@@ -174,7 +181,10 @@ class MembPress_Main
 	   $this->membpress_register_plugin_scripts();
 	   
 	   // call the membpress login page welcome routine
-	   $this->mp_helper->membpress_login_welcome();	
+	   $this->mp_helper->membpress_login_welcome();
+	   
+	   // customize login page
+	   $this->mp_loginpage->membpress_customize_login_page();	
 	}
 	
     /*
@@ -205,7 +215,7 @@ class MembPress_Main
 	public function membpress_register_plugin_styles()
 	{
 		// register and enqueue main membpress stylesheet
-		wp_register_style( 'membpress-style-sheet', plugins_url( 'membpress/resources/css/style.css.php' ) );
+		wp_register_style( 'membpress-style-sheet', plugins_url( 'membpress/resources/css/style.css' ) );
 		wp_enqueue_style( 'membpress-style-sheet' );	
 	}
 	
