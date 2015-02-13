@@ -18,8 +18,25 @@ if (!defined('MEMBPRESS_LOADED'))
 {
    exit;	
 }
-	
+
+
 // update the customize login page check flag
 update_option('membpress_settings_customize_login_page_flag', isset($_POST['membpress_settings_customize_login_page_flag']) ? 1 : 0);
+
+$new_rewrite_flag = isset($_POST['membpress_settings_customize_login_rewrite_flag']) ? 1 : 0;
+
+$old_rewrite_flag = (bool)get_option('membpress_settings_customize_login_rewrite_flag');
+
+
+if (($old_rewrite_flag == 1 && $new_rewrite_flag == 0) || ($old_rewrite_flag == 0 && $new_rewrite_flag == 1))
+{
+	// update the  login rewrite pending flag
+	// if there is a change in the setting of login url rewrite
+	update_option('membpress_settings_customize_login_rewrite_pending_flag', 1);
+}
+
+// update the login page rewrite flag
+update_option('membpress_settings_customize_login_rewrite_flag', $new_rewrite_flag);
+
 
 ?>

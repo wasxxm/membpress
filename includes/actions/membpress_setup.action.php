@@ -44,7 +44,6 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	**************************************************
 	*/
 	include_once 'membpress_setup_action/membpress_settings_welcome_page_login.php';
-	
 	/*
 	**************************************************
 	@ Include the Membership Options Page section, submit
@@ -52,15 +51,12 @@ if ( isset( $_POST['membpress_settings_page_nonce']) && wp_verify_nonce( $_POST[
 	*/
 	include_once 'membpress_setup_action/membpress_settings_membership_options_page.php';
 	
-	
 	/*
 	**************************************************
 	@ Include the Membership Levels section, submit
 	**************************************************
 	*/
 	include_once 'membpress_setup_action/membpress_settings_membership_levels.php';
-	
-	
 	
 	/*
 	**************************************************

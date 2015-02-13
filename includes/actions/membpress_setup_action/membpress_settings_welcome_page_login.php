@@ -79,10 +79,13 @@ if (isset($_POST['membpress_settings_welcome_login_individual']))
    // iterate all the membpress login redirect levels
    foreach($_POST as $key => $val)
    {
+	  // proceed only if the current post data is for login welcome page only
+	  if (stristr($key, 'membpress_settings_welcome_login') === FALSE) continue;
+	  
 	  // check if the membpress login redirect page/post/url is set for this level
 	  if (str_replace(array('membpress_settings_welcome_login_type_', 'membpress_settings_welcome_login_page_', 'membpress_settings_welcome_login_post_', 'membpress_settings_welcome_login_url_'), '', $key) != '')
 	  {
-		  update_option($key, sanitize_text_field($val));  
+		  update_option($key, sanitize_text_field($val)); 
 	  }
 	  
 	  // check if the membpress login type is set for this level

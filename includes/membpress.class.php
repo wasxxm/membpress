@@ -86,7 +86,6 @@ class MembPress_Main
 	   // initialize membpress loginpage class object
 	   $this->mp_loginpage = new Membpress_LoginPage();
 	   
-	   
 	   // add admin menu hook
 	   add_action('admin_menu', array($this->mp_menus, 'membpress_action_admin_menu'));
 	   // add admin bar menu hook
@@ -100,13 +99,20 @@ class MembPress_Main
 	   // add the hook for adding metaboxes
 	   add_action('add_meta_boxes', array($this->mp_metaboxes, 'membpress_add_meta_box'));
 	   // enqueue scripts to admin
-	   add_action( 'admin_enqueue_scripts', array($this, 'mp_admin_enqueue_scripts'), 1000 );
+	   add_action('admin_enqueue_scripts', array($this, 'mp_admin_enqueue_scripts'), 1000 );
 	   
 	   // hook for plugin activation
 	   register_activation_hook(
 	      // root directory relative to the dir of current file
 		  str_replace('includes', '', dirname(__FILE__)) . 'membpress.php', 
 	      array($this, 'membpress_register_activation_hook')
+	   );
+	   
+	   // hook for plugin deactivation
+	   register_deactivation_hook(
+	      // root directory relative to the dir of current file
+		  str_replace('includes', '', dirname(__FILE__)) . 'membpress.php', 
+	      array($this, 'membpress_register_deactivation_hook')
 	   );
 	   
 	   // pre get post gook
@@ -171,7 +177,7 @@ class MembPress_Main
 	@ Function hooked to the init action
 	*/
 	public function membpress_action_init()
-	{
+	{  
 	   // set the text domain for the translation files
 	   load_plugin_textdomain('membpress', false, basename( dirname( __FILE__ ) ) . '/languages' );
 	   
@@ -188,6 +194,24 @@ class MembPress_Main
 	   if ((bool)get_option('membpress_settings_customize_login_page_flag'))
 	   {
 	      $this->mp_loginpage->membpress_customize_login_page();
+	   }
+	   
+	   // let users access wp-login.php also via /login/
+	   // check if the apprpriate flag is checked
+	   // but first check if a change is pending or not
+	   if ((bool)get_option('membpress_settings_customize_login_rewrite_pending_flag'))
+	   {
+		   if ((bool)get_option('membpress_settings_customize_login_rewrite_flag'))
+		   {		  
+			   $this->mp_loginpage->membpress_login_rewrite();
+		   }
+		   // if not set then flush rewrite rules, to revert the changes
+		   else
+		   {
+			   $this->mp_loginpage->membpress_login_rewrite_undo();
+		   }
+		   // clear the pending flag
+		   update_option('membpress_settings_customize_login_rewrite_pending_flag', 0);
 	   }
 	}
 	
@@ -211,6 +235,23 @@ class MembPress_Main
 	{
 	   // add the default membpress roles
 	   $this->mp_helper->membpress_add_default_roles();	
+	   
+	   // let users access wp-login.php also via /login/
+	   // add login rewrite on plugin activation
+	   // only do if the option is set
+	   if ((bool)get_option('membpress_settings_customize_login_rewrite_flag', 1) == true)
+	   {
+	       $this->mp_loginpage->membpress_login_rewrite(); 
+	   }
+	}
+	
+    /*
+	@ Function called when the plugin is deactivated
+	*/
+	public function membpress_register_deactivation_hook()
+	{
+		// undo the login rewrite
+		$this->mp_loginpage->membpress_login_rewrite_undo();
 	}
 	
     /*

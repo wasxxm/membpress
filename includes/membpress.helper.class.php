@@ -13,6 +13,12 @@
 * @package membpress
 * @since 1.0
 */
+
+// load the Wordpress file
+require_once ABSPATH . 'wp-admin/includes/file.php';
+// load the wordpress misc file
+require_once ABSPATH .  'wp-admin/includes/misc.php';
+
 class MembPress_Helper
 {
 	/*
@@ -2241,6 +2247,88 @@ class MembPress_Helper
 	   
 	   return $setting_string;
    }
+   
+   /**
+   MembPress own .htaccess mod_rewrite function to add rules
+   */
+   public function membpress_add_rewrite_rule($rule_string)
+   {   
+	   if (!got_mod_rewrite ()) return false;
+	   
+	   // htaccess path
+	   $htaccess = ABSPATH . '.htaccess';
+	   
+	   // open for reading only
+	   $f = fopen($htaccess, 'r'); 
+	   
+	   $rules = fread($f, filesize($htaccess));
+	   
+	   $mp_start = '#MembPress Begin';
+	   $mp_end = '#MembPress End';
+	   
+	   $if_module_start = "<IfModule mod_rewrite.c>";
+	   $if_module_end = "</IfModule>";
+	   
+	   $rewrite_engine_on = "RewriteEngine On";
+	   $rewrite_base = "RewriteBase " . $this->get_rel_root_path();
+	   
+	   // get current membpress rules, if any
+	   $curr_mp_rules_org = trim($this->get_string_between($rules, $mp_start, $mp_end));
+	   
+	   $curr_mp_rules = trim($this->get_string_between($curr_mp_rules_org, $if_module_start, $if_module_end));
+	   
+	   $updated_mp_rules = trim($curr_mp_rules . "\n" . $rule_string);
+	   
+	   $updated_mp_rules = trim(str_replace(array($rewrite_engine_on, $rewrite_base), '', $updated_mp_rules));
+	   
+	   $updated_mp_rules = $mp_start . "\n" . $if_module_start . "\n" . $rewrite_engine_on . "\n" . $rewrite_base . "\n" . $updated_mp_rules . "\n" . $if_module_end . "\n" . $mp_end;
+	   
+	   $updated_mp_rules = $this->replace_string_between($rules, $mp_start, $mp_end, $updated_mp_rules);
+	  
+	   // close reading
+	   fclose($f);
+	   
+	   // open for write
+	   $f = fopen($htaccess, 'w'); 
+	   
+	   // write the updated rules to .htaccess
+	   fwrite($f, $updated_mp_rules);
+	   fclose($f);
+   }
+   
+   /**
+   Function to get content between two strings
+   */
+   public function get_string_between($string, $start, $end)
+   {
+      $string = " ".$string;
+      $ini = strpos($string,$start);
+	  
+	  // if no match found, return empty
+      if ($ini == 0) return "";
+	  
+      $ini += strlen($start);
+      $len = strpos($string,$end,$ini) - $ini;
+	  
+	  // return the string found
+      return substr($string,$ini,$len);
+    }
+	
+	/**
+	Function to replace content between two strings
+	*/
+	public function replace_string_between($string, $start, $end, $replace)
+	{
+       return preg_replace('#('.preg_quote($start, '#').')(.*)('.preg_quote($end, '#').')#si', $replace, $string); 
+	}
+	
+	/**
+	Function to get the relative root path of WP
+	*/
+	public function get_rel_root_path()
+	{
+	   return str_replace($_SERVER['DOCUMENT_ROOT'], '', get_home_path());	
+	}
    
 };
 ?>

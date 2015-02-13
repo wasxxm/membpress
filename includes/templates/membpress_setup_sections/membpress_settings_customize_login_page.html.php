@@ -26,6 +26,10 @@ endif;
   <div class="inside">
     <p> <?php echo _x('MembPress lets you customize the login page of your wordpress web site to match it more closely with your theme. Below you can find several configurations which let you customize the login screen exactly the way you want it to be.', 'membpress_setup', 'membpress'); ?> </p>
     <p>
+      <input type="checkbox" value="1" name="membpress_settings_customize_login_rewrite_flag" id="membpress_settings_customize_login_rewrite_flag" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_rewrite_flag): ?>checked<?php endif; ?>>
+      <label for="membpress_settings_customize_login_rewrite_flag"> <?php echo _x('Let the users access the login page [your_site]/wp-login.php by using [your_site]/login as the URL.', 'general', 'membpress'); ?> </label>
+    </p>
+    <p>
       <input type="checkbox" value="1" name="membpress_settings_customize_login_page_flag" id="membpress_settings_customize_login_page_flag" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_page_flag): ?>checked<?php endif; ?>>
       <label for="membpress_settings_customize_login_page_flag"> <?php echo _x('Enable customization of the login page', 'general', 'membpress'); ?> </label>
     </p>

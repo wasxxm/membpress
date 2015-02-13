@@ -10,6 +10,10 @@ include_once 'membpress.helper.class.php';
 
 class Membpress_LoginPage extends Membpress_Helper
 {
+	/**
+	Functions to customize the login page
+	This function is called from wordpress init action
+	*/
 	public function membpress_customize_login_page()
 	{
 	    // change wordpress login logo
@@ -116,4 +120,23 @@ class Membpress_LoginPage extends Membpress_Helper
 			$username = $user->user_login;
 		}
     }	
+	
+	/**
+	Function to add login rewrite so access for wp-login.php can be reached
+	via login/ as well
+	*/
+	public function membpress_login_rewrite()
+	{
+       add_rewrite_rule( 'login/?$', 'wp-login.php', 'top' );
+	   flush_rewrite_rules(true); 
+
+    }
+	
+	/**
+	Function to remove login rewrite
+	*/
+	public function membpress_login_rewrite_undo()
+	{	   
+	   flush_rewrite_rules(true); 
+	}
 };
