@@ -196,23 +196,8 @@ class MembPress_Main
 	      $this->mp_loginpage->membpress_customize_login_page();
 	   }
 	   
-	   // let users access wp-login.php also via /login/
-	   // check if the apprpriate flag is checked
-	   // but first check if a change is pending or not
-	   if ((bool)get_option('membpress_settings_customize_login_rewrite_pending_flag'))
-	   {
-		   if ((bool)get_option('membpress_settings_customize_login_rewrite_flag'))
-		   {		  
-			   $this->mp_loginpage->membpress_login_rewrite();
-		   }
-		   // if not set then flush rewrite rules, to revert the changes
-		   else
-		   {
-			   $this->mp_loginpage->membpress_login_rewrite_undo();
-		   }
-		   // clear the pending flag
-		   update_option('membpress_settings_customize_login_rewrite_pending_flag', 0);
-	   }
+	   // load the customize login page init
+	   $this->mp_loginpage->membpress_customize_login_page_init();
 	}
 	
     /*

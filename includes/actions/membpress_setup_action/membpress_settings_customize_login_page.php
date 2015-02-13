@@ -23,6 +23,12 @@ if (!defined('MEMBPRESS_LOADED'))
 // update the customize login page check flag
 update_option('membpress_settings_customize_login_page_flag', isset($_POST['membpress_settings_customize_login_page_flag']) ? 1 : 0);
 
+// update the customize login page hide password link flag
+update_option('membpress_settings_customize_login_hide_passforgot', isset($_POST['membpress_settings_customize_login_hide_passforgot']) ? 1 : 0);
+
+// update the hide back to web site on login page
+update_option('membpress_settings_customize_login_hide_bloglink', isset($_POST['membpress_settings_customize_login_hide_bloglink']) ? 1 : 0);
+
 $new_rewrite_flag = isset($_POST['membpress_settings_customize_login_rewrite_flag']) ? 1 : 0;
 
 $old_rewrite_flag = (bool)get_option('membpress_settings_customize_login_rewrite_flag');

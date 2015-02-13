@@ -40,6 +40,12 @@ $membpress_settings_customize_login_page_flag = (bool)get_option('membpress_sett
 // get the flag for the login rewrite page
 $membpress_settings_customize_login_rewrite_flag = (bool)get_option('membpress_settings_customize_login_rewrite_flag');
 
+// get the flag for the login hide passwrd forgot
+$membpress_settings_customize_login_hide_passforgot = (bool)get_option('membpress_settings_customize_login_hide_passforgot');
+
+// get the flag for the hide blog link on login page
+$membpress_settings_customize_login_hide_bloglink = (bool)get_option('membpress_settings_customize_login_hide_bloglink');
+
 /**
 // pages list, will be used many times
 */

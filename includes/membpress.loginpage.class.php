@@ -11,8 +11,43 @@ include_once 'membpress.helper.class.php';
 class Membpress_LoginPage extends Membpress_Helper
 {
 	/**
+	Function called from the action init
+	*/
+	public function membpress_customize_login_page_init()
+	{
+	   	   // let users access wp-login.php also via /login/
+	   // check if the apprpriate flag is checked
+	   // but first check if a change is pending or not
+	   if ((bool)get_option('membpress_settings_customize_login_rewrite_pending_flag'))
+	   {
+		   if ((bool)get_option('membpress_settings_customize_login_rewrite_flag'))
+		   {		  
+			   $this->membpress_login_rewrite();
+		   }
+		   // if not set then flush rewrite rules, to revert the changes
+		   else
+		   {
+			   $this->membpress_login_rewrite_undo();
+		   }
+		   // clear the pending flag
+		   update_option('membpress_settings_customize_login_rewrite_pending_flag', 0);
+	   }
+	   
+	   // check if the forgot password link on the login page is checked
+	   if ((bool)get_option('membpress_settings_customize_login_hide_passforgot'))
+	   {
+		   $this->hide_forgot_pass_link();   
+	   }
+	   
+	   // check if the forgot password link on the login page is checked
+	   if ((bool)get_option('membpress_settings_customize_login_hide_bloglink'))
+	   {
+		   $this->hide_back_blog_link();   
+	   }	
+	}
+	
+	/**
 	Functions to customize the login page
-	This function is called from wordpress init action
 	*/
 	public function membpress_customize_login_page()
 	{
@@ -92,6 +127,42 @@ class Membpress_LoginPage extends Membpress_Helper
     }
 	
 	/**
+	hide forgot password link
+	*/
+	public function hide_forgot_pass_link()
+	{
+	   	// change wordpress login logo
+		add_action('login_head', array($this, 'hide_forgot_pass_link_action'));
+	}
+	
+	public function hide_forgot_pass_link_action ()
+	{
+	   echo '<style type="text/css">
+	   .login #nav {
+		   display: none !important;   
+	   }
+	   </style>';	
+	}
+	
+    /**
+	hide back to blog link
+	*/
+	public function hide_back_blog_link()
+	{
+	   	// change wordpress login logo
+		add_action('login_head', array($this, 'hide_back_blog_link_action'));
+	}
+	
+	public function hide_back_blog_link_action()
+	{
+	   echo '<style type="text/css">
+	   .login #backtoblog {
+		   display: none !important;   
+	   }
+	   </style>';	
+	}
+	
+	/**
 	Change login logo URL target to web site address
 	*/
 	public function membpress_login_page_logo_url()
@@ -105,8 +176,7 @@ class Membpress_LoginPage extends Membpress_Helper
     public function membpress_login_page_logo_title()
 	{
        return _x('MembPress - Ultimate membership system for WordPress', 'general', 'membpress');
-    }
-
+	}
 
     /**
 	Let the users login via their email addresses too
