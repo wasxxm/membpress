@@ -39,6 +39,12 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	$error = false; // error is set to false by default
 	$notice_vars = '';
 	
+	// get all options
+	$all_options = wp_load_alloptions();
+	
+	// get all membership levels
+	$mp_all_membership_levels = $membpress->mp_helper->membpress_get_all_membership_levels();
+	
 	/*
 	**************************************************
 	@ Include the Restrict Posts section action, submit
@@ -71,6 +77,15 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	**************************************************
 	*/
 	include_once 'membpress_restriction_options_action/membpress_restrict_tags.php';
+	
+
+
+	/*
+	**************************************************
+	@ Include the Restrict Widgets section action, submit
+	**************************************************
+	*/
+	include_once 'membpress_restriction_options_action/membpress_restrict_widgets.php';
 	
 	
     
@@ -110,6 +125,12 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
     if (isset($_POST['membpress_restrict_submit-membpress_restrict_tag_section']))
 	{
 	   $section = 'membpress_restrict_tags';	
+	}
+	
+	// if Restrict Widgets section
+    if (isset($_POST['membpress_restrict_submit-membpress_restrict_widgets_section']))
+	{
+	   $section = 'membpress_restrict_widgets';	
 	}
 	
 	// if Restrict URIs section

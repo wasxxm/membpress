@@ -100,6 +100,8 @@ class MembPress_Main
 	   add_action('add_meta_boxes', array($this->mp_metaboxes, 'membpress_add_meta_box'));
 	   // enqueue scripts to admin
 	   add_action('admin_enqueue_scripts', array($this, 'mp_admin_enqueue_scripts'), 1000 );
+	   // add inline javascript to wordpress admin footer
+	   add_action( 'admin_print_footer_scripts', array($this, 'membpress_admin_footer_inline_js'));
 	   
 	   // hook for plugin activation
 	   register_activation_hook(
@@ -164,15 +166,21 @@ class MembPress_Main
        add_filter('manage_post_tag_custom_column', array($this->mp_customcolumns, 'membpress_manage_tags_custom_column'), 10, 3);
 	   // filter for sorting the custom columns in edit tags screen
 	   add_filter( 'manage_edit-post_tag_sortable_columns', array($this->mp_customcolumns, 'membpress_sortable_columns'));
+	   // filter for sidebar widgets
+	   add_filter( 'sidebars_widgets', array($this, 'membpress_sidebar_widgets'));
 	   
 	   /*
 	   Add all the shortcodes with their callbacks here
 	   */
 	   add_shortcode('membpress', array($this->mp_shortcodes, 'membpress_parse_shortcodes'));
 	   
-	   $membpress_levels =  (array)get_option('membpress_levels');
+	   //$membpress_levels =  (array)get_option('membpress_levels');
+	   
+	   // show some text in admin widgets
+	   //add_action('widgets_admin_page', array($this, 'membpress_widgets_admin_page'));
 	}
-	
+
+
 	/*
 	@ Function hooked to the init action
 	*/
@@ -197,7 +205,17 @@ class MembPress_Main
 	   }
 	   
 	   // load the customize login page init
-	   $this->mp_loginpage->membpress_customize_login_page_init();
+	   $this->mp_loginpage->membpress_customize_login_page_init(); 
+	   
+	   // call the function to customize the widget titles of the restricted ones
+	   $this->mp_helper->membpress_customize_sidebar_widget_restricted_by_level();
+	}
+	
+	public function membpress_sidebar_widgets( $sidebars_widgets )
+	{
+		$sidebars_widgets = $this->mp_helper->membpress_restrict_sidebar_widgets_on_site($sidebars_widgets);
+		
+		return $sidebars_widgets;
 	}
 	
     /*
@@ -293,6 +311,16 @@ class MembPress_Main
 	{
 	    // enqueue the pointers function
 		$this->mp_adminpointers->mp_pointers_load($hook_suffix);
+	}
+	
+	
+	/**
+	Add javascript to admin footer action
+	*/
+	public function membpress_admin_footer_inline_js()
+	{
+	    // customize the display of restricted widgets in sidebars of admin widgets page
+		$this->mp_helper->membpress_customize_restricted_widgets_admin();	
 	}
 };
 

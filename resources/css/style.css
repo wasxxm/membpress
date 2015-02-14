@@ -74,7 +74,8 @@ Updated message bar close button on right
 Fix the padding on the membpress icon in the menu
 */
 #toplevel_page_membpress_page_quick_start .wp-menu-image img {
-	padding:6px 0 0 !important;	
+	padding:6px 0 0 !important;
+	width:20px;	
 }
 
 /*
@@ -147,8 +148,47 @@ Clear background clear of the read only textboxes and textareas
 Admin menu bar customizations for membpress links
 */
 #wpadminbar #wp-admin-bar-membpress_admin_bar > .ab-item {
-	background-image:url('../images/icon.png') !important;
+	background-image:url('../images/icon_60.png') !important;
     background-repeat:no-repeat;
     background-position:8px;
     padding-left:34px;
+	background-size:20px;
+}
+
+#wpadminbar #wp-admin-bar-membpress_admin_bar:hover > .ab-item {
+    background-image:url('../images/icon_blue.png') !important;		
+}
+
+/*
+Custom widget in title rules in WP admin
+*/
+.membpress-in-widget-title {
+    color: #666;
+	display:block;
+	padding-bottom:15px;
+	margin-left:10px;
+	padding-left:25px;
+	background-image:url(../images/icon_gray.png);
+	background-size:18px;
+	background-repeat:no-repeat;
+	background-position:left top;
+}
+
+/*
+Restrict sidebar widgets list rule
+*/
+.membpress_restrict_sidebars_widgets ul {
+	display:block;
+	float:left;
+	margin-top:0px;
+	margin-right:20px;
+}
+
+.membpress_restrict_sidebars_widgets ul li:nth-child(n + 2) {
+	margin-left: 20px;
+}
+
+.membpress_restrict_sidebars_widgets ul li p {
+	margin-top:4px;
+	margin-bottom:4px;	
 }

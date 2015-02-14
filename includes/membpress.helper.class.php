@@ -803,6 +803,69 @@ class MembPress_Helper
    
    
    
+   /**
+   Function to check for the sidebar widgets if they are restricted by some
+   membpress membership level
+   */
+   public function membpress_check_sidebar_widget_restricted_by_level()
+   {
+	   // get the global var of registered widgets
+	   global $wp_registered_widgets;
+	   
+	   $wp_registered_widgets['pages-3']['name'] = 'Waseem';   
+   }
+   
+   
+   /**
+   Function to customize the widget titles of the widgets which are restricted by some
+   membpress membership level
+   */
+   public function membpress_customize_sidebar_widget_restricted_by_level()
+   {
+	   // get the global var of registered widgets
+	   global $wp_registered_widgets;
+	   
+	   //var_dump($wp_registered_widgets); exit;
+	   
+	   //$wp_registered_widgets['search-2']['name'] = $wp_registered_widgets['search-2']['name'] . ' (Restricted by: Free Member)';
+   }
+   
+   
+   /**
+   Function to restrict the sidebar widgets restricted by some level, for being
+   displayed on wordpress web site
+   */
+   public function membpress_restrict_sidebar_widgets_on_site($sidebars_widgets)
+   {
+	    //var_dump($sidebars_widgets); exit;
+		
+		// do not hide/remove sidebar in admin
+		// only do this for front-end
+		if (!is_admin())
+		{
+		   unset($sidebars_widgets['sidebar-1'][0]);
+		}
+		
+		return $sidebars_widgets;   
+   }
+   
+   
+   /**
+   Function to customize the display of sidebar widgets restricted by some level
+   in the WP admin
+   */
+   public function membpress_customize_restricted_widgets_admin()
+   {
+	   echo '<script>
+	      jQuery("#sidebar-1 #widget-13_search-2 .widget-title").append(\'<span class="membpress-in-widget-title">Free Member</span>\');
+		  jQuery(document).ready(function(){
+		     jQuery("#accordion-section-sidebar-widgets-sidebar-1 #widget-13_search-2 .widget-title").append(\'<span class="membpress-in-widget-title">Free Member</span>\');
+		  });
+	   </script>';   
+   }
+   
+   
+   
    /*
    @ Function to check the $query object for the query variables and return the post/page with their IDs
    @ The $query object returns different query object, based on whether the permalink is enabled or not

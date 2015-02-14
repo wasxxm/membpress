@@ -96,15 +96,24 @@ include_once 'membpress.header.html.php';
        
        <!-- Membership HTML Restriction Options section starts below -->
        <?php
-	   // include the restrict categories section
+	   // include the restrict HTML section
 	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_section.html.php';
 	   ?>
        <!-- Membership HTML Restriction Options section ends above --> 
        
        
+       
+       <!-- Membership Sidebar Widgets Restriction Options section starts below -->
+       <?php
+	   // include the restrict sidebar widgets section
+	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_widgets.html.php';
+	   ?>
+       <!-- Membership Sidebar Widgets Restriction Options section ends above --> 
+       
+       
        <!-- Membership URI Restriction Options section starts below -->
        <?php
-	   // include the restrict categories section
+	   // include the restrict URI section
 	   include_once $mp_restriction_options_sections_dir . '/membpress_restrict_uri.html.php';
 	   ?>
        <!-- Membership URI Restriction Options section ends above --> 

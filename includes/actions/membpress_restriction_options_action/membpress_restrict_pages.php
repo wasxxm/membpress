@@ -24,9 +24,6 @@ if (!defined('MEMBPRESS_LOADED'))
 @ Handle the action of Membpress Levels section
 */
 
-// iterate through all the levels
-$mp_all_membership_levels = $membpress->mp_helper->membpress_get_all_membership_levels();
-
 // before updating with new values, clear the old values
 // clear the membpress restrict pages level, Restrict Pages
 foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
