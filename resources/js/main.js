@@ -234,4 +234,74 @@ jQuery(document).ready(function( $ ) {
 	}
 	);
 	
+	
+	/**
+	Check all widgets if a sidebar is checked.
+	Also uncheck the sidebar if any of the widget is unchecked
+	*/
+	$('.membpress_restrict_widgets_wrapper').each(function(index, element) {
+		var if_all_checked = true;
+		$(element).find('li').each(function(index, element) {
+           if (index > 0)
+		   {
+			   if (!$(element).find('input[type=checkbox]:checked'))
+			   {
+				   if_all_checked = false;   
+			   }
+			   else
+			   {
+			   }
+				   
+		   }
+		   return;
+        });
+		
+		if (!if_all_checked)
+		{
+		   $(element).find('li:first input[type=checkbox]').removeAttr('checked');	
+		}
+    });
+	
+	$('.membpress_restrict_widgets_wrapper input[type=checkbox]').change(function(e) {
+		var widget_li = $(e.target).parents('li');
+		var widget_ul = $(e.target).parents('ul');
+		var widget_li_index = $(widget_li).index();
+		
+		if (widget_li_index == 0 && $(e.target).attr('checked'))
+		{
+		   $(widget_ul).find('li').each(function(index, element) {
+              if (index > 0)
+			  {
+				 $(element).find('input[type=checkbox]').attr('checked', true);  
+			  }
+           }); 
+		   return;  	
+		}
+		
+		if (widget_li_index > 0 && !$(e.target).attr('checked'))
+		{
+		   	$(widget_ul).find('li:first input[type=checkbox]').removeAttr('checked');
+		}
+		
+		// also check if all the widgets are checked
+		// if yes then check the sidebar
+		// only do if it is not sidebar itself
+		if (widget_li_index > 0)
+		{
+			if ($(widget_ul).find('li:nth-child(n + 2) input[type=checkbox]:checked').length == ($(widget_ul).find('li').length - 1))
+			{
+				$(widget_ul).find('li:first input[type=checkbox]').attr('checked', true);
+			}
+		}
+		else
+		{
+		   $(widget_ul).find('li').each(function(index, element) {
+              if (index > 0)
+			  {
+				 $(element).find('input[type=checkbox]').removeAttr('checked');  
+			  }
+           });    	
+		}
+		
+    });
 });

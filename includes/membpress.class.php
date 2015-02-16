@@ -207,8 +207,7 @@ class MembPress_Main
 	   // load the customize login page init
 	   $this->mp_loginpage->membpress_customize_login_page_init(); 
 	   
-	   // call the function to customize the widget titles of the restricted ones
-	   $this->mp_helper->membpress_customize_sidebar_widget_restricted_by_level();
+	   $this->mp_helper->membpress_get_current_user_membership_level();
 	}
 	
 	public function membpress_sidebar_widgets( $sidebars_widgets )

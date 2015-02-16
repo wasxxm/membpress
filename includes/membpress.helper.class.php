@@ -24,9 +24,11 @@ class MembPress_Helper
 	/*
 	@ Class contructor
 	*/
+ 
+	
 	public function MembPress_Helper()
 	{
-		//	
+		//
 	}
 	
 	
@@ -804,30 +806,61 @@ class MembPress_Helper
    
    
    /**
-   Function to check for the sidebar widgets if they are restricted by some
+   Function to check for the sidebar widget if they are restricted by some
    membpress membership level
-   */
-   public function membpress_check_sidebar_widget_restricted_by_level()
-   {
-	   // get the global var of registered widgets
-	   global $wp_registered_widgets;
-	   
-	   $wp_registered_widgets['pages-3']['name'] = 'Waseem';   
-   }
    
+   @param $widget_sidebar_key is the key of the restricted widgets/sidebar options
+   @param $widget_sidebar_val is the value of the restricted widgets/sidebar options
+   @param $sidebars_widgets is the global array of widgets and sidebars
    
-   /**
-   Function to customize the widget titles of the widgets which are restricted by some
-   membpress membership level
+   @Returns the modified $sidebars_widgets variable
    */
-   public function membpress_customize_sidebar_widget_restricted_by_level()
-   {
-	   // get the global var of registered widgets
-	   global $wp_registered_widgets;
+   public function membpress_check_sidebar_widget_restricted_by_level($widget_sidebar_key, $widget_sidebar_val, $sidebars_widgets)
+   {   
+	   // check if the key is valid
+	   if (!is_array($widget_sidebar_val) || count($widget_sidebar_val) < 4)
+	      return $sidebars_widgets;
 	   
-	   //var_dump($wp_registered_widgets); exit;
+	   // check if this is a widget or a sidebar
+	   if ($widget_sidebar_val[1] === false)
+	   {
+		  // this is a widget
+		  //echo $widget_sidebar_key . '<br>';
+		  
+		  // get the sidebar ID of this widget
+		  $sidebar_id = $widget_sidebar_val[2];
+		  
+		  // get the widget ID
+		  $widget_id = $widget_sidebar_val[3];
+		  
+		  //echo $sidebar_id . ' ' . $widget_id . '<br>';
+		  
+		  // unset its index in its sidebar in the global sidebar_widgets variable
+		  // a sidebar can have many widgets, so iterate and unset this current widget
+		  if (isset($sidebars_widgets[$sidebar_id]) && is_array($sidebars_widgets[$sidebar_id]) && trim($widget_sidebar_val[2]))
+		  {
+			  foreach ($sidebars_widgets[$sidebar_id] as $widget_key => $widget_val)
+			  {
+				 if ($widget_val == $widget_id)
+				 {
+					unset($sidebars_widgets[$sidebar_id][$widget_key]); 
+				 }
+			  }
+		  }
+	   }
+	   else
+	   {
+		 // this is a sidebar
+		 // get the sidebar ID
+		 $sidebar_id = explode('_', $widget_sidebar_key);
+		 unset($sidebar_id[0], $sidebar_id[1], $sidebar_id[2], $sidebar_id[3], $sidebar_id[4]);
+		 $sidebar_id = implode("", (array)$sidebar_id[5]);
+
+         // unset the whole sidebar
+		 unset($sidebars_widgets[$sidebar_id]);  
+	   }
 	   
-	   //$wp_registered_widgets['search-2']['name'] = $wp_registered_widgets['search-2']['name'] . ' (Restricted by: Free Member)';
+	   return $sidebars_widgets;
    }
    
    
@@ -838,13 +871,73 @@ class MembPress_Helper
    public function membpress_restrict_sidebar_widgets_on_site($sidebars_widgets)
    {
 	    //var_dump($sidebars_widgets); exit;
-		
+
 		// do not hide/remove sidebar in admin
 		// only do this for front-end
 		if (!is_admin())
 		{
-		   unset($sidebars_widgets['sidebar-1'][0]);
+			/*
+			// check if user is logged in 
+			if (is_user_logged_in())
+			{
+			   // check if the current user has the required membership level
+			   // greater or equal to required category_highest_restricted_by_level
+			   if (!$this->membpress_check_curr_user_level_meets($category_highest_restricted_by_level))
+			   {
+					// required level is not found, redirect to membership options page
+					wp_redirect($mp_redirect_to);
+					exit;   
+			   }  
+			}
+			else
+			{
+				// user is not logged in, go directly to membership options page
+				wp_redirect($mp_redirect_to);
+				exit;   
+			}
+			*/
+		   // get the array holding the widgets/sidebars restrictions
+           $mp_restrict_sidebars_widgets_option = get_option('membpress_restrict_sidebars_widgets_option');
+		   
+		   //var_dump($mp_restrict_sidebars_widgets_option);
+		   //membpress_get_current_user_membership_level()
+		   
+		   // iterate through all the widgets/sidebars restrictions
+		   foreach ($mp_restrict_sidebars_widgets_option as $widget_sidebar_key => $widget_sidebar_val)
+		   {
+			   // check if the user is logged in
+			   if (is_user_logged_in())
+			   {
+				   // user if logged in
+				   // get current used membpress level
+				   $curr_user_mp_level = $this->membpress_get_current_user_membership_level();
+				   
+				   // only restrict for membpress levels
+				   if ($curr_user_mp_level > -1)
+				   {
+					  // get the membpress level for the restricted widget/sidebar
+					  $mp_level_for_widget_sidebar = explode('_', $widget_sidebar_key);
+					  $mp_level_for_widget_sidebar = $mp_level_for_widget_sidebar[3];
+					  
+					  // if the current user level is less than the level restricted for widget/sidebar
+					  // then restrict the sidebar/widget
+					  if ($curr_user_mp_level < $mp_level_for_widget_sidebar)
+					  {
+					      $sidebars_widgets = $this->membpress_check_sidebar_widget_restricted_by_level($widget_sidebar_key, $widget_sidebar_val, $sidebars_widgets);  
+					  }
+				   }
+				   
+			   }
+			   else
+			   {
+				  // user is not logged in
+				  // no need to check for restriction levels
+				  // just hide the restricted sidebar or widget
+				  $sidebars_widgets = $this->membpress_check_sidebar_widget_restricted_by_level($widget_sidebar_key, $widget_sidebar_val, $sidebars_widgets);   
+			   }
+		   }
 		}
+
 		
 		return $sidebars_widgets;   
    }
@@ -856,12 +949,59 @@ class MembPress_Helper
    */
    public function membpress_customize_restricted_widgets_admin()
    {
-	   echo '<script>
-	      jQuery("#sidebar-1 #widget-13_search-2 .widget-title").append(\'<span class="membpress-in-widget-title">Free Member</span>\');
-		  jQuery(document).ready(function(){
-		     jQuery("#accordion-section-sidebar-widgets-sidebar-1 #widget-13_search-2 .widget-title").append(\'<span class="membpress-in-widget-title">Free Member</span>\');
-		  });
-	   </script>';   
+      // get the array holding the widgets/sidebars restrictions
+      $mp_restrict_sidebars_widgets_option = get_option('membpress_restrict_sidebars_widgets_option');
+	  
+	  // get all membpress membership levels
+	  $mp_all_membership_levels = $this->membpress_get_all_membership_levels();
+	  
+	  $script_to_output = '
+	  <script type="text/javascript" src="'.plugins_url('membpress/resources/js/restrict_widgets_sidebars.js').'"></script>
+	  <script type="text/javascript">jQuery(document).ready(function(){ ';
+	  
+	  // iterate through all options checking for sidebar/widgets restrictions
+	  foreach ($mp_restrict_sidebars_widgets_option as $option_key => $option_val)
+	  {  
+		 foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
+		 {
+			 $sidebar_key = 'membpress_restrict_sidebar_' . $mp_level_val['level_no'];
+			 // get the sidebar/widget ID part only from the key
+			 $sidebar_key_id = explode($sidebar_key, $option_key);
+			 $sidebar_key_id = $sidebar_key_id[1];
+			 
+			 // get the sidebar ID
+			 $sidebar_id = trim($option_val[2]);
+			 
+			 if ($sidebar_id == '') continue;
+             
+			 // check if the widget/sidebar restriction is set
+			 if ((bool)$option_val[0])
+			 {
+				
+				// check if this is a sidebar
+			    if ($option_val[1] == true)
+			    {
+			       //$script_to_output .= 	 
+			    }
+				// this is some widget in a sidebar
+				else
+				{						
+				    // get the widget ID
+				    $widget_id = explode($sidebar_id, $sidebar_key_id);
+					$widget_id = trim($widget_id[1]);
+					
+					if ($widget_id != '')
+					{
+					  $script_to_output .= 'membpress_restrict_title_widget("'.$sidebar_id.'", "'.$widget_id.'", "'.$mp_level_val['display_name'].'");';
+					}
+				}
+			 }
+		 }
+	  }
+	  
+	  $script_to_output .= '});</script>';
+	  
+	  echo $script_to_output;
    }
    
    
@@ -1901,6 +2041,42 @@ class MembPress_Helper
 	  return false;
    }
    
+   /**
+   Function to get current user highest membership level
+   @ Return: integer value of the membpress membership level
+   -1 indicates that the current user has no role
+   -2 indicates that the current user has some non membpress level like administrator etc
+   All other values indicate membpress levels
+   */
+   public function membpress_get_current_user_membership_level()
+   {
+      // get current user object
+	  $current_user = wp_get_current_user();
+	  
+	  // array of current user mp levels
+	  $cur_user_mp_levels = array();
+	 
+	  // check if the current user object an instance of WP_User class
+	  if ($current_user instanceof WP_User && is_array($current_user->roles))
+	  {
+		  // if there is no role assigned, it is a guest user
+		  if (count($current_user->roles) <= 0) return -1;
+		  
+		  foreach($current_user->roles as $role)
+		  {
+		     if ($level = $this->membpress_extract_level_no($role))
+			 {
+				$cur_user_mp_levels[] = $level; 
+			 }
+		  }
+		  
+		  if (count($cur_user_mp_levels) > 0) return max($cur_user_mp_levels );
+	  }
+	  
+	  // user has some non membpress level
+	  return -2;
+   }
+   
    
    /**
    Function to check if the user meets the required membership level
@@ -2238,11 +2414,13 @@ class MembPress_Helper
    */
    public function membpress_extract_level_no($mp_level_no)
    {
+	   $mp_level_no = strtolower($mp_level_no);
+	   
 	   // if level is a subscriber, it is 0 level
 	   if ($mp_level_no == 'subscriber') return 0;
 	      
-	   $mp_level_no = explode("_", $mp_level_no);
-	   $mp_level_no = $mp_level_no[count($mp_level_no) - 1];
+	   $mp_level_no = explode("membpress_level_", $mp_level_no);
+	   $mp_level_no = $mp_level_no[1];
 	   return $mp_level_no;     
    }
    

@@ -36,7 +36,7 @@ foreach ($mp_all_membership_levels as $mp_level_name => $mp_level_val)
 }
 
 // reverse the membership levels so we can retain the tag ID for higher levels and discard the lower levels
-$mp_all_membership_levels = array_reverse($mp_all_membership_levels);
+$mp_all_membership_levels = array_reverse($mp_all_membership_levels, true);
 // array to hold the tag IDs already assigned to higher membership levels
 $mp_higher_restricted_tags = array();
 

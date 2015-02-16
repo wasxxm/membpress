@@ -40,7 +40,7 @@ if ( isset( $_POST['membpress_restriction_options_page_nonce']) && wp_verify_non
 	$notice_vars = '';
 	
 	// get all options
-	$all_options = wp_load_alloptions();
+	//$all_options = wp_load_alloptions();
 	
 	// get all membership levels
 	$mp_all_membership_levels = $membpress->mp_helper->membpress_get_all_membership_levels();
