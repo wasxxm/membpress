@@ -29,6 +29,15 @@ update_option('membpress_settings_customize_login_hide_passforgot', isset($_POST
 // update the hide back to web site on login page
 update_option('membpress_settings_customize_login_hide_bloglink', isset($_POST['membpress_settings_customize_login_hide_bloglink']) ? 1 : 0);
 
+// update the login logo URL
+update_option('membpress_settings_customize_login_logo_url', sanitize_text_field($_POST['membpress_settings_customize_login_logo_url']));
+
+// update the login background color
+update_option('membpress_settings_customize_login_page_bg', sanitize_text_field($_POST['membpress_settings_customize_login_page_bg']));
+
+// update te login form background color
+update_option('membpress_settings_customize_login_form_bg', sanitize_text_field($_POST['membpress_settings_customize_login_form_bg']));
+
 $new_rewrite_flag = isset($_POST['membpress_settings_customize_login_rewrite_flag']) ? 1 : 0;
 
 $old_rewrite_flag = (bool)get_option('membpress_settings_customize_login_rewrite_flag');

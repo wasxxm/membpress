@@ -14,6 +14,11 @@
 * @since 1.0
 */
 
+// load the Wordpress file
+require_once ABSPATH . 'wp-admin/includes/file.php';
+// load the wordpress misc file
+require_once ABSPATH .  'wp-admin/includes/misc.php';
+
 // include the membpress helper class
 include_once 'membpress.helper.class.php';
 
@@ -175,9 +180,6 @@ class MembPress_Main
 	   add_shortcode('membpress', array($this->mp_shortcodes, 'membpress_parse_shortcodes'));
 	   
 	   //$membpress_levels =  (array)get_option('membpress_levels');
-	   
-	   // show some text in admin widgets
-	   //add_action('widgets_admin_page', array($this, 'membpress_widgets_admin_page'));
 	}
 
 
@@ -198,16 +200,14 @@ class MembPress_Main
 	   $this->mp_helper->membpress_login_welcome();
 	   
 	   // customize login page
-	   // check if the login page customization is set in 'MembPress Basic Setup -> Customize Login Page'
-	   if ((bool)get_option('membpress_settings_customize_login_page_flag'))
-	   {
-	      $this->mp_loginpage->membpress_customize_login_page();
-	   }
+	   $this->mp_loginpage->membpress_customize_login_page();
 	   
 	   // load the customize login page init
 	   $this->mp_loginpage->membpress_customize_login_page_init(); 
 	   
-	   $this->mp_helper->membpress_get_current_user_membership_level();
+	   // add the filter for gettext
+	   // mainly used for replacing WP default texts
+	   add_filter( 'gettext', array($this, 'membpress_getext_filter')  , 1, 3 );
 	}
 	
 	public function membpress_sidebar_widgets( $sidebars_widgets )
@@ -274,13 +274,21 @@ class MembPress_Main
 		// include these scripts only in admin
 		if (is_admin())
 		{
+		    // Add the color picker css file       
+           wp_enqueue_style( 'wp-color-picker' ); 
+		   
 		   // register and enqueue main javascript file
-		   wp_register_script( 'membpress-script', plugins_url( 'membpress/resources/js/main.js' ) );
+		   wp_register_script( 'membpress-script', plugins_url( 'membpress/resources/js/main.js' ), array('jquery', 'wp-color-picker'));
+		   
+		   wp_enqueue_script('jquery');
 		   wp_enqueue_script( 'membpress-script' );
 		
 		   // register and enqueue the jquery cookie script
 		   wp_register_script( 'membpress-script-cookie', plugins_url( 'membpress/resources/js/jquery.cookie.js' ) );
-		   wp_enqueue_script( 'membpress-script-cookie' );
+		   wp_enqueue_script( 'membpress-script-cookie' ); 
+		   
+		   // call the media uploader enqueue on basic setup page
+		   $this->mp_loginpage->enqueue_media_uploader_scripts();
 		}
 	}
 	
@@ -319,7 +327,25 @@ class MembPress_Main
 	public function membpress_admin_footer_inline_js()
 	{
 	    // customize the display of restricted widgets in sidebars of admin widgets page
-		$this->mp_helper->membpress_customize_restricted_widgets_admin();	
+		$this->mp_helper->membpress_customize_restricted_widgets_admin();
+		
+		// output the change login logo script, only for basic setup page
+		$this->mp_loginpage->render_media_uploader_login_logo();	
+	}
+	
+	/**
+	Gettext filter, mainly used to replace text in WP
+	*/
+	public function membpress_getext_filter($translated_text, $text, $domain)
+	{
+	   // call the customize insert into post button for login logo uploader
+	   $mp_loginpage_ret = $this->mp_loginpage->customize_logo_insert_btn_text($text);
+	   if ($mp_loginpage_ret !== false)
+	   {
+		   return $mp_loginpage_ret;
+	   }
+	   
+	   return $translated_text;	
 	}
 };
 

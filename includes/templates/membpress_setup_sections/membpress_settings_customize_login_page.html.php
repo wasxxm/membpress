@@ -26,8 +26,10 @@ endif;
   <div class="inside">
     <p> <?php echo _x('MembPress lets you customize the login page of your wordpress web site to match it more closely with your theme. Below you can find several configurations which let you customize the login screen exactly the way you want it to be.', 'membpress_setup', 'membpress'); ?> </p>
     <p>
-      <input type="checkbox" value="1" name="membpress_settings_customize_login_rewrite_flag" id="membpress_settings_customize_login_rewrite_flag" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_rewrite_flag): ?>checked<?php endif; ?>>
-      <label for="membpress_settings_customize_login_rewrite_flag"> <?php echo _x('Let the users access the login page [your_site]/wp-login.php by using [your_site]/login as the URL. Uncheck this option if you are already using /login/ for some other page/post to avoid conflicts.', 'general', 'membpress'); ?> </label>
+      <input type="checkbox" <?php if (!get_option('permalink_structure')): $membpress_settings_customize_login_rewrite_flag = false; ?>disabled<?php endif; ?> value="1" name="membpress_settings_customize_login_rewrite_flag" id="membpress_settings_customize_login_rewrite_flag" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_rewrite_flag): ?>checked<?php endif; ?>>
+      <label for="membpress_settings_customize_login_rewrite_flag"> <?php echo _x('Let the users access the login page [your_site]/wp-login.php by using [your_site]/login as the URL. Uncheck this option if you are already using /login/ for some other page/post to avoid conflicts.', 'general', 'membpress'); ?>
+        <?php if (!get_option('permalink_structure')): echo _x('(Please enable the permalinks in Settings -> Permalinks to get this feature working.)', 'general', 'membpress'); endif; ?>
+      </label>
     </p>
     <p>
       <input type="checkbox" value="1" name="membpress_settings_customize_login_hide_passforgot" id="membpress_settings_customize_login_hide_passforgot" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_hide_passforgot): ?>checked<?php endif; ?>>
@@ -37,10 +39,33 @@ endif;
       <input type="checkbox" value="1" name="membpress_settings_customize_login_hide_bloglink" id="membpress_settings_customize_login_hide_bloglink" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_hide_bloglink): ?>checked<?php endif; ?>>
       <label for="membpress_settings_customize_login_hide_bloglink"> <?php echo _x('Hide the back to your wordpress web site link on the login page.', 'general', 'membpress'); ?> </label>
     </p>
+    <hr>
     <p>
       <input type="checkbox" value="1" name="membpress_settings_customize_login_page_flag" id="membpress_settings_customize_login_page_flag" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_page_flag): ?>checked<?php endif; ?>>
-      <label for="membpress_settings_customize_login_page_flag"> <?php echo _x('Enable customization of the login page', 'general', 'membpress'); ?> </label>
+      <label for="membpress_settings_customize_login_page_flag"> <?php echo _x('Enable customization of the login page. Checking this option will change the default theme of your wp-login page. You can customize each bit of styling and elements.', 'general', 'membpress'); ?> </label>
     </p>
+    <div class="membpress_login_customize_options <?php if(!$membpress_settings_customize_login_page_flag): ?>membpress_hidden<?php endif; ?>">
+      <p> <?php echo _x('Change the default membpress logo with your own company/brand logo. The recommended dimensions are 800 * 220 pixels to ensure good rendering at high definition and large displays.', 'general', 'membpress'); ?> </p>
+      <p><img src="<?php echo $membpress_settings_customize_login_logo_url; ?>" width="250px" class="membpress_pull-left" id="membpress_login_logo_holder" />
+        <input type="hidden" id="membpress_settings_customize_login_logo_url" name="membpress_settings_customize_login_logo_url" value="<?php echo $membpress_settings_customize_login_logo_url; ?>">
+      <div class="membpress_logo_btns">
+        <button class="button button-secondary" type="button" id="membpress_settings_customize_login_logo_upload_btn"><?php echo _x('Change logo', 'general', 'membpress'); ?></button>
+        <button class="button button-secondary" type="button" id="membpress_settings_customize_login_logo_reset_btn"><?php echo _x('Reset to default', 'general', 'membpress'); ?></button>
+      </div>
+      </p>
+      <div class="membpress_clear"></div>
+      <p>
+        <label for="membpress_settings_customize_login_page_bg"> <?php echo _x('Customize the background color of the login page:', 'general', 'membpress'); ?> </label>
+        <br>
+        <input type="text" value="<?php echo $membpress_settings_customize_login_page_bg; ?>" name="membpress_settings_customize_login_page_bg" id="membpress_settings_customize_login_page_bg" class="membpress_settings_welcome_login_type color-field">
+      </p>
+       <p>
+        <label for="membpress_settings_customize_login_form_bg"> <?php echo _x('Customize the background color of the login form:', 'general', 'membpress'); ?> </label>
+        <br>
+        <input type="text" value="<?php echo $membpress_settings_customize_login_form_bg; ?>" name="membpress_settings_customize_login_form_bg" id="membpress_settings_customize_login_form_bg" class="membpress_settings_welcome_login_type color-field">
+      </p>
+    </div>
+    <div class="membpress_clear"></div>
     <hr>
     <input type="submit" value="<?php echo _x('Save Settings', 'general', 'membpress'); ?>" class="button button-primary" id="membpress_settings_submit" name="membpress_settings_submit-membpress_settings_customize_login_page">
   </div>

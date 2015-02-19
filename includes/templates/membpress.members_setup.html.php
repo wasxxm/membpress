@@ -46,6 +46,15 @@ $membpress_settings_customize_login_hide_passforgot = (bool)get_option('membpres
 // get the flag for the hide blog link on login page
 $membpress_settings_customize_login_hide_bloglink = (bool)get_option('membpress_settings_customize_login_hide_bloglink');
 
+// get the membpress login page logo URL option
+$membpress_settings_customize_login_logo_url = get_option('membpress_settings_customize_login_logo_url', plugins_url('membpress/resources/images/login_logo.png'));
+
+// get the background color value for the login page
+$membpress_settings_customize_login_page_bg = get_option('membpress_settings_customize_login_page_bg', '#ffffff');
+
+// get the background color value for the login form page
+$membpress_settings_customize_login_form_bg = get_option('membpress_settings_customize_login_form_bg', '#f5f8fb');
+
 /**
 // pages list, will be used many times
 */

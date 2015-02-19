@@ -304,4 +304,23 @@ jQuery(document).ready(function( $ ) {
 		}
 		
     });
+	
+	/**
+	Hide/Display login page customization options
+	*/
+	$('#membpress_settings_customize_login_page_flag').change(function(e) {
+        if (this.checked)
+		{
+		   $('.membpress_login_customize_options').fadeIn(200);	
+		}
+		else
+		{
+		   $('.membpress_login_customize_options').fadeOut(200);
+		}
+    });
+	
+	// Add Color Picker to all inputs that have 'color-field' class
+    $(function() {
+        $('.color-field').wpColorPicker();
+    });
 });

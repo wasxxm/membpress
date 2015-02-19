@@ -15,7 +15,7 @@ class Membpress_LoginPage extends Membpress_Helper
 	*/
 	public function membpress_customize_login_page_init()
 	{
-	   	   // let users access wp-login.php also via /login/
+	   // let users access wp-login.php also via /login/
 	   // check if the apprpriate flag is checked
 	   // but first check if a change is pending or not
 	   if ((bool)get_option('membpress_settings_customize_login_rewrite_pending_flag'))
@@ -51,7 +51,11 @@ class Membpress_LoginPage extends Membpress_Helper
 	*/
 	public function membpress_customize_login_page()
 	{
-	    // change wordpress login logo
+	    // check if the login page customization is set in 'MembPress Basic Setup -> Customize Login Page'
+	   if (!$this->check_if_login_customize())
+	      return;
+		
+		// change wordpress login logo
 		add_action('login_head', array($this, 'membpress_login_page_logo'));
 		
 		// change wordpress login URL
@@ -64,10 +68,12 @@ class Membpress_LoginPage extends Membpress_Helper
 	    add_action( 'wp_authenticate', array($this, 'membpress_allow_email_login'));
 	}
 	
-	public function membpress_login_page_logo() {
-       echo '<style type="text/css">
+	public function membpress_login_page_logo()
+	{
+	   
+	   echo '<style type="text/css">
         .login h1 a { 
-		   background-image:url('. plugins_url('membpress/resources/images/login_logo.png') .') !important; 
+		   background-image:url('. $this->get_login_logo_url() .') !important; 
 		   background-size: 380px auto !important; 
 		   width: 380px !important; 
 		}
@@ -90,11 +96,11 @@ class Membpress_LoginPage extends Membpress_Helper
 	   }
 	   
 	   html, body {
-		   background-color: #FFF !important;   
+		   background-color: '.get_option('membpress_settings_customize_login_page_bg').' !important;   
 	   }
 	   
 	   .login form {
-		   background-color: #f5f8fb !important;
+		   background-color: '.get_option('membpress_settings_customize_login_form_bg').' !important;
 		   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 	   }
 	   
@@ -125,6 +131,85 @@ class Membpress_LoginPage extends Membpress_Helper
 	   
        </style>';
     }
+	
+	
+	/**
+	Function to enqueue media uploader scripts for the wp login logo change function to work
+	This function is called by membpress_register_plugin_scripts() from the main membpress class
+	*/
+	public function enqueue_media_uploader_scripts()
+	{		  
+		// make sure the scripts are enqueued only for the membpress_setup_page page
+		if ( 'membpress_setup_page' == $this->get_admin_page_slug() )
+		{
+		   wp_enqueue_script('thickbox');
+           wp_enqueue_style('thickbox');
+ 
+           wp_enqueue_script('media-upload');
+		}
+	}
+	
+	/**
+	Function to render script for the change login logo media uploader
+	*/
+	public function render_media_uploader_login_logo()
+	{  
+	   // only output for basic setup page
+	   if ( 'membpress_setup_page' == $this->get_admin_page_slug() )
+	   {
+		   
+		   echo "<script type=\"text/javascript\">jQuery(document).ready(function($)
+		   {
+			  $('#membpress_settings_customize_login_logo_upload_btn').click(function()
+			  {
+				  tb_show('"._x('Upload login logo', 'general', 'membpress')."', 'media-upload.php?referer=membpress-login-logo&type=image&TB_iframe=true&post_id=0', false);
+				  return false;
+			  });
+			  window.send_to_editor = function(html)
+			  {
+				  var image_url = $('img',html).attr('src');
+				  if (image_url != '')
+				  {
+				     $('#membpress_login_logo_holder').attr('src', image_url);
+				     $('#membpress_settings_customize_login_logo_url').val(image_url);
+				  }
+				  tb_remove();
+		      }
+			  $('#membpress_settings_customize_login_logo_reset_btn').click(function()
+			  {
+				 $('#membpress_login_logo_holder').attr('src', '".$this->get_default_login_url()."'); 
+				 $('#membpress_settings_customize_login_logo_url').val('".$this->get_default_login_url()."'); 
+			  });
+		   });</script>";
+	   }
+	}
+	
+	/**
+	Customize text for the Insert into Post button on login logo media uploader
+	*/
+	public function customize_logo_insert_btn_text($text)
+	{
+	    // check if the login page customization is set in 'MembPress Basic Setup -> Customize Login Page'
+	    if (!$this->check_if_login_customize())
+	      return false;
+		  
+	    global $pagenow;
+ 
+        if ( 'media-upload.php' == $pagenow || 'async-upload.php' == $pagenow ) 
+	    {
+		  if ('insert into post' == strtolower($text))
+		  {
+			 $referer = strpos( wp_get_referer(), 'membpress-login-logo' );
+			 if ( $referer != '' )
+			 {
+				return _x('Set this as logo on login page', 'general', 'membpress');
+			 }
+		  }
+		}
+		
+		return false;
+	}
+	
 	
 	/**
 	hide forgot password link
@@ -208,5 +293,33 @@ class Membpress_LoginPage extends Membpress_Helper
 	public function membpress_login_rewrite_undo()
 	{	   
 	   flush_rewrite_rules(true); 
+	}
+	
+	/**
+	Function to check if login customization is enabled 
+	*/
+	public function check_if_login_customize()
+	{	    
+	   // check if the login page customization is set in 'MembPress Basic Setup -> Customize Login Page'
+	   if ((bool)get_option('membpress_settings_customize_login_page_flag'))
+	      return true;
+		  
+		return false;
+	}
+	
+	/**
+	Function to get the login logo URL
+	*/
+	public function get_login_logo_url()
+	{
+	   	return get_option('membpress_settings_customize_login_logo_url', $this->get_default_login_url());	
+	}
+	
+	/**
+	Function to get the default login logo URL
+	*/
+	public function get_default_login_url()
+	{
+	    return plugins_url('membpress/resources/images/login_logo.png');	   	
 	}
 };

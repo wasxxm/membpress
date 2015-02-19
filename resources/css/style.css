@@ -134,7 +134,25 @@ Create rules for textbox/textarea sizes
 .membpress_span2 {
 	width: 120px;
 }
-.membress_span-full {
+.membpress_span3 {
+	width: 180px;
+}
+.membpress_span4 {
+	width: 240px;
+}
+.membpress_span5 {
+	width: 300px;
+}
+.membpress_span6 {
+	width: 360px;
+}
+.membpress_span7 {
+	width: 420px;
+}
+.membpress_span8 {
+	width: 480px;
+}
+.membpress_span-full {
 	width: 100%;
 }
 /*
@@ -191,4 +209,13 @@ Restrict sidebar widgets list rule
 .membpress_restrict_sidebars_widgets ul li p {
 	margin-top:4px;
 	margin-bottom:4px;	
+}
+
+/**
+Change logo button css
+*/
+.membpress_logo_btns {
+	margin-top:15px !important;
+	margin-left:15px !important;
+	float:left;	
 }

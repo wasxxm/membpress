@@ -14,11 +14,6 @@
 * @since 1.0
 */
 
-// load the Wordpress file
-require_once ABSPATH . 'wp-admin/includes/file.php';
-// load the wordpress misc file
-require_once ABSPATH .  'wp-admin/includes/misc.php';
-
 class MembPress_Helper
 {
 	/*
@@ -2569,6 +2564,21 @@ class MembPress_Helper
 	public function get_rel_root_path()
 	{
 	   return str_replace($_SERVER['DOCUMENT_ROOT'], '', get_home_path());	
+	}
+	
+	/**
+	Function to get the page slug in URLs like wp-admin/admin.php?page=membpress_setup_page
+	*/
+	public function get_admin_page_slug()
+  	{
+		// get current file name
+		$current_file = basename($_SERVER['PHP_SELF']);
+		if ($current_file == 'admin.php' && isset($_GET['page']) && $_GET['page'] != '')
+		{
+		   return $_GET['page'];
+		}
+		
+		return false;
 	}
    
 };
