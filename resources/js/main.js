@@ -323,4 +323,13 @@ jQuery(document).ready(function( $ ) {
     $(function() {
         $('.color-field').wpColorPicker();
     });
+	
+	// reset colors in login customize section
+	$('.reset-login-color').click(function(e)
+	{
+		var el = $('#' + $(this).data('element-id'));	
+		var col_val = $(this).data('color-value');
+	
+        $(el).wpColorPicker('color', col_val);    
+    });
 });

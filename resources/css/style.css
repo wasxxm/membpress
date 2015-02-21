@@ -219,3 +219,10 @@ Change logo button css
 	margin-left:15px !important;
 	float:left;	
 }
+
+/*
+Customize the layout of the color picker button on login customize form
+*/
+.membpress_login_customize_options  .wp-picker-container {
+	float:left;	
+}

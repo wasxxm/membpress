@@ -50,10 +50,22 @@ $membpress_settings_customize_login_hide_bloglink = (bool)get_option('membpress_
 $membpress_settings_customize_login_logo_url = get_option('membpress_settings_customize_login_logo_url', plugins_url('membpress/resources/images/login_logo.png'));
 
 // get the background color value for the login page
-$membpress_settings_customize_login_page_bg = get_option('membpress_settings_customize_login_page_bg', '#ffffff');
+$membpress_settings_customize_login_page_bg = get_option('membpress_settings_customize_login_page_bg', MEMBPRESS_LOGIN_BG_COLOR);
 
 // get the background color value for the login form page
-$membpress_settings_customize_login_form_bg = get_option('membpress_settings_customize_login_form_bg', '#f5f8fb');
+$membpress_settings_customize_login_form_bg = get_option('membpress_settings_customize_login_form_bg', MEMBPRESS_LOGIN_FORM_BG_COLOR);
+
+// get the background color value for the login button
+$membpress_settings_customize_login_btn_bg = get_option('membpress_settings_customize_login_btn_bg', MEMBPRESS_LOGIN_BTN_BG_COLOR);
+
+// get the background color value for the login button
+$membpress_settings_customize_login_btn_border = get_option('membpress_settings_customize_login_btn_border', MEMBPRESS_LOGIN_BTN_BORDER_COLOR);
+
+// get the backurl for logo on login
+$membpress_settings_customize_login_backurl = get_option('membpress_settings_customize_login_backurl', MEMBPRESS_LOGIN_BACKURL);
+
+// get the backurl title for logo on login
+$membpress_settings_customize_login_backurl_title = get_option('membpress_settings_customize_login_backurl_title', MEMBPRESS_LOGIN_BACKURL_TITLE);
 
 /**
 // pages list, will be used many times

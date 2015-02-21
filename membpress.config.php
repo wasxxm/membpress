@@ -14,6 +14,10 @@
 * @since 1.0
 */
 
+//////////////////////////////////////////////////////////////////////////////
+// Core MembPress Configs
+//////////////////////////////////////////////////////////////////////////////
+
 // this constant will be used to check the membpress engine is included
 define('MEMBPRESS_LOADED', true);
 
@@ -38,5 +42,15 @@ define('MEMBPRESS_LEVEL_5', _x('Ultra Premium Member', 'general', 'membpress'));
 define('MEMBPRESS_MIN_PHP_VERSION', '5.2');
 // minimum wordpress version required for membpress
 define('MEMBPRESS_MIN_WP_VERSION', '3.5');
+
+//////////////////////////////////////////////////////////////////////////////
+// Advanced Configs
+//////////////////////////////////////////////////////////////////////////////
+define('MEMBPRESS_LOGIN_BG_COLOR', '#ffffff');
+define('MEMBPRESS_LOGIN_FORM_BG_COLOR', '#f5f8fb');
+define('MEMBPRESS_LOGIN_BTN_BG_COLOR', '#045580');
+define('MEMBPRESS_LOGIN_BTN_BORDER_COLOR', '#045580');
+define('MEMBPRESS_LOGIN_BACKURL', get_home_url());
+define('MEMBPRESS_LOGIN_BACKURL_TITLE', get_bloginfo('name'));
 
 ?>

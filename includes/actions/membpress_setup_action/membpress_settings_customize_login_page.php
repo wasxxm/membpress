@@ -35,8 +35,20 @@ update_option('membpress_settings_customize_login_logo_url', sanitize_text_field
 // update the login background color
 update_option('membpress_settings_customize_login_page_bg', sanitize_text_field($_POST['membpress_settings_customize_login_page_bg']));
 
-// update te login form background color
+// update the login form background color
 update_option('membpress_settings_customize_login_form_bg', sanitize_text_field($_POST['membpress_settings_customize_login_form_bg']));
+
+// update the login button background color
+update_option('membpress_settings_customize_login_btn_bg', sanitize_text_field($_POST['membpress_settings_customize_login_btn_bg']));
+
+// update the login button border color
+update_option('membpress_settings_customize_login_btn_border', sanitize_text_field($_POST['membpress_settings_customize_login_btn_border']));
+
+// update the login logo backlink URL
+update_option('membpress_settings_customize_login_backurl', sanitize_text_field($_POST['membpress_settings_customize_login_backurl']));
+
+// update the login logo backlink URL title
+update_option('membpress_settings_customize_login_backurl_title', sanitize_text_field($_POST['membpress_settings_customize_login_backurl_title']));
 
 $new_rewrite_flag = isset($_POST['membpress_settings_customize_login_rewrite_flag']) ? 1 : 0;
 

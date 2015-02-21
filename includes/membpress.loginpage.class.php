@@ -82,8 +82,8 @@ class Membpress_LoginPage extends Membpress_Helper
 		  padding:6% 0 0 !important;
        }
 	   .wp-core-ui .button-primary {
-		   background-color: #045580 !important; 
-		   border-color: #045580 !important;
+		   background-color: '.get_option('membpress_settings_customize_login_btn_bg', MEMBPRESS_LOGIN_BTN_BG_COLOR).' !important; 
+		   border-color: '.get_option('membpress_settings_customize_login_btn_border', MEMBPRESS_LOGIN_BTN_BORDER_COLOR).' !important;
 		   height: 35px !important;
            line-height: 32px !important;
            padding: 0 23px 2px !important;
@@ -96,11 +96,11 @@ class Membpress_LoginPage extends Membpress_Helper
 	   }
 	   
 	   html, body {
-		   background-color: '.get_option('membpress_settings_customize_login_page_bg').' !important;   
+		   background-color: '.get_option('membpress_settings_customize_login_page_bg', MEMBPRESS_LOGIN_BG_COLOR).' !important;   
 	   }
 	   
 	   .login form {
-		   background-color: '.get_option('membpress_settings_customize_login_form_bg').' !important;
+		   background-color: '.get_option('membpress_settings_customize_login_form_bg', MEMBPRESS_LOGIN_FORM_BG_COLOR).' !important;
 		   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 	   }
 	   
@@ -252,7 +252,7 @@ class Membpress_LoginPage extends Membpress_Helper
 	*/
 	public function membpress_login_page_logo_url()
 	{
-       return get_bloginfo( 'url' );
+       return get_option('membpress_settings_customize_login_backurl', MEMBPRESS_LOGIN_BACKURL);
     }
 
     /**
@@ -260,7 +260,7 @@ class Membpress_LoginPage extends Membpress_Helper
 	*/
     public function membpress_login_page_logo_title()
 	{
-       return _x('MembPress - Ultimate membership system for WordPress', 'general', 'membpress');
+       return get_option('membpress_settings_customize_login_backurl_title', MEMBPRESS_LOGIN_BACKURL_TITLE);
 	}
 
     /**
