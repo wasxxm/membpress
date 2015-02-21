@@ -42,12 +42,12 @@ endif;
     <p>
       <label for="membpress_settings_customize_login_backurl"> <?php echo _x('Specify the target URL for the login screen logo:', 'general', 'membpress'); ?> </label>
       <br>
-      <input type="url" name="membpress_settings_customize_login_backurl" id="membpress_settings_customize_login_backurl" value="<?php echo MEMBPRESS_LOGIN_BACKURL; ?>" class="membpress_span8">
+      <input type="url" name="membpress_settings_customize_login_backurl" id="membpress_settings_customize_login_backurl" value="<?php echo get_option('membpress_settings_customize_login_backurl', MEMBPRESS_LOGIN_BACKURL); ?>" class="membpress_span8">
     </p>
     <p>
       <label for="membpress_settings_customize_login_backurl_title"> <?php echo _x('Specify the title for the login screen logo link:', 'general', 'membpress'); ?> </label>
       <br>
-      <input type="url" name="membpress_settings_customize_login_backurl_title" id="membpress_settings_customize_login_backurl_title" value="<?php echo MEMBPRESS_LOGIN_BACKURL_TITLE; ?>" class="membpress_span8">
+      <input type="text" name="membpress_settings_customize_login_backurl_title" id="membpress_settings_customize_login_backurl_title" value="<?php echo get_option('membpress_settings_customize_login_backurl_title', MEMBPRESS_LOGIN_BACKURL_TITLE); ?>" class="membpress_span8">
     </p>
     <hr>
     <p>

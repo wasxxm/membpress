@@ -951,7 +951,6 @@ class MembPress_Helper
 	  $mp_all_membership_levels = $this->membpress_get_all_membership_levels();
 	  
 	  $script_to_output = '
-	  <script type="text/javascript" src="'.plugins_url('membpress/resources/js/restrict_widgets_sidebars.js').'"></script>
 	  <script type="text/javascript">jQuery(document).ready(function(){ ';
 	  
 	  // iterate through all options checking for sidebar/widgets restrictions
