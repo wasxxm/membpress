@@ -226,3 +226,11 @@ Customize the layout of the color picker button on login customize form
 .membpress_login_customize_options  .wp-picker-container {
 	float:left;	
 }
+
+/**
+Customize the appearance of membpress subscriptions added
+*/
+.membpress_subs_rates {
+	background-color:#f5fafc;
+	padding:5px 15px;	
+}

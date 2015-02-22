@@ -332,6 +332,28 @@ jQuery(document).ready(function( $ ) {
 	
         $(el).wpColorPicker('color', col_val);    
     });
+	
+	
+	
+	/**
+	Toggle the display of the edit subscription form on the Membpress Subscription page
+	*/
+	$('.mp_subs_edit_btn').click(function(e) {
+        var this_parent = $(this).parents('.membpress_subs_rates');
+		$(this_parent).find('.membpress_subs_rate_wrapper').show();
+		$(this_parent).find('.mp_subs_canceledit_btn').show();
+		$(this).hide();
+    });
+	$('.mp_subs_canceledit_btn').click(function(e) {
+        $(this).parents('.membpress_subs_rates').find('.membpress_subs_rate_wrapper').hide();
+		$(this).parents('.membpress_subs_rates').find('.mp_subs_edit_btn').show();
+		$(this).hide();
+    });
+	$('.membpress_subs_cancel').click(function(e) {
+        $(this).parents('.membpress_subs_rates').find('.membpress_subs_rate_wrapper').hide();
+		$(this).parents('.membpress_subs_rates').find('.mp_subs_edit_btn').show();
+		$(this).parents('.membpress_subs_rates').find('.mp_subs_canceledit_btn').hide(); 
+    });
 });
 
 /**

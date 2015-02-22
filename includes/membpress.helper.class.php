@@ -42,7 +42,8 @@ class MembPress_Helper
 		  5 => _x('Please provide a valid Page ID to be used as the login welcome redirect.', 'membpress_notices', 'membpress'),
 		  6 => _x('Membpress Restriction Options successfully updated', 'membpress_notices', 'membpress'),
 		  7 => sprintf(_x('New Subscription Rate has been added to the membership level: %s', 'membpress_notices', 'membpress'), @$str[0]),
-		  8 => sprintf(_x('There is already a subscription rate (%s) having the same settings. Duplicate subscription rates are not allowed.', 'membpress_notices', 'membpress'), $this->membpress_get_subscription_rate_name(@$str[2], @$str[1]))	
+		  8 => sprintf(_x('There is already a subscription rate (%s) having the same settings. Duplicate subscription rates are not allowed.', 'membpress_notices', 'membpress'), $this->membpress_get_subscription_rate_name(@$str[2], @$str[1])),
+		  9 => sprintf(_x('Subscription Rate "%s" has been updated.', 'membpress_notices', 'membpress'), @$str[0]),
        );
 	   
 	   if ($notice_id > 0 && isset($notice_ids[$notice_id]))

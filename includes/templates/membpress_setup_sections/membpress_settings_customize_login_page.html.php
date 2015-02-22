@@ -39,16 +39,6 @@ endif;
       <input type="checkbox" value="1" name="membpress_settings_customize_login_hide_bloglink" id="membpress_settings_customize_login_hide_bloglink" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_hide_bloglink): ?>checked<?php endif; ?>>
       <label for="membpress_settings_customize_login_hide_bloglink"> <?php echo _x('Hide the back to your wordpress web site link on the login page.', 'general', 'membpress'); ?> </label>
     </p>
-    <p>
-      <label for="membpress_settings_customize_login_backurl"> <?php echo _x('Specify the target URL for the login screen logo:', 'general', 'membpress'); ?> </label>
-      <br>
-      <input type="url" name="membpress_settings_customize_login_backurl" id="membpress_settings_customize_login_backurl" value="<?php echo get_option('membpress_settings_customize_login_backurl', MEMBPRESS_LOGIN_BACKURL); ?>" class="membpress_span8">
-    </p>
-    <p>
-      <label for="membpress_settings_customize_login_backurl_title"> <?php echo _x('Specify the title for the login screen logo link:', 'general', 'membpress'); ?> </label>
-      <br>
-      <input type="text" name="membpress_settings_customize_login_backurl_title" id="membpress_settings_customize_login_backurl_title" value="<?php echo get_option('membpress_settings_customize_login_backurl_title', MEMBPRESS_LOGIN_BACKURL_TITLE); ?>" class="membpress_span8">
-    </p>
     <hr>
     <p>
       <input type="checkbox" value="1" name="membpress_settings_customize_login_page_flag" id="membpress_settings_customize_login_page_flag" class="membpress_settings_welcome_login_type" <?php if($membpress_settings_customize_login_page_flag): ?>checked<?php endif; ?>>
@@ -90,6 +80,17 @@ endif;
         <br>
         <input type="text" value="<?php echo $membpress_settings_customize_login_btn_border; ?>" name="membpress_settings_customize_login_btn_border" id="membpress_settings_customize_login_btn_border" class="membpress_settings_welcome_login_type color-field">
         <button type="button" class="button button-small reset-login-color" data-color-value="<?php echo MEMBPRESS_LOGIN_BTN_BORDER_COLOR; ?>" data-element-id="membpress_settings_customize_login_btn_border"><?php echo _x('Reset to default', 'general', 'membpress'); ?></button>
+      </p>
+      <div class="membpress_clear"></div>
+      <p>
+        <label for="membpress_settings_customize_login_backurl"> <?php echo _x('Specify the target URL for the login screen logo:', 'general', 'membpress'); ?> </label>
+        <br>
+        <input type="url" name="membpress_settings_customize_login_backurl" id="membpress_settings_customize_login_backurl" value="<?php echo get_option('membpress_settings_customize_login_backurl', MEMBPRESS_LOGIN_BACKURL); ?>" class="membpress_span8">
+      </p>
+      <p>
+        <label for="membpress_settings_customize_login_backurl_title"> <?php echo _x('Specify the title for the login screen logo link:', 'general', 'membpress'); ?> </label>
+        <br>
+        <input type="text" name="membpress_settings_customize_login_backurl_title" id="membpress_settings_customize_login_backurl_title" value="<?php echo get_option('membpress_settings_customize_login_backurl_title', MEMBPRESS_LOGIN_BACKURL_TITLE); ?>" class="membpress_span8">
       </p>
     </div>
     <div class="membpress_clear"></div>

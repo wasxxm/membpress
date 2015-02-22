@@ -91,6 +91,10 @@ $membpress_target_level_subs = array();
 if (isset($membpress_target_level['subscription_rates']) && is_array($membpress_target_level['subscription_rates']))
 {
     $membpress_target_level_subs = $membpress_target_level['subscription_rates'];
+	
+		  
+	$flag_duplicate_sub_rate_index = -1;
+	
     /**
 	Check if the request was for new subscription rate creation
 	*/
@@ -98,8 +102,6 @@ if (isset($membpress_target_level['subscription_rates']) && is_array($membpress_
     {
 	   // now check if there is any previous rate with exactly same settings
 	   // if yes, then a new rate must not be created to avoid conflict and confusion
-	  
-	   $flag_duplicate_sub_rate_index = -1;
 	   
 	   foreach ($membpress_target_level_subs as $membpress_target_level_sub_key => $membpress_target_level_sub)
 	   {
@@ -154,6 +156,72 @@ if (isset($membpress_target_level['subscription_rates']) && is_array($membpress_
 		  $notice_vars .= ',' . urlencode($flag_duplicate_sub_rate_index) . ',' . urlencode($membpress_subscription_rate_level);
 	   }
 	}
+	// request is for editing some subscription rate
+	else if (isset($_POST['membpress_edit_subscription_rate']))
+	{
+	   // now check if there is any other rate with exactly same settings
+	   // if yes, then the current rate must not be assigned the same settings to avoid confusion
+	   
+	   // get key of the current subscription rate
+	   $membpress_curr_subs_key = $_POST['membpress_subscription_rate_key'];
+	   
+	   foreach ($membpress_target_level_subs as $membpress_target_level_sub_key => $membpress_target_level_sub)
+	   {
+		   if (
+		      $membpress_target_level_sub['type'] == $temp_subs_rate_arr['type']
+		   && 
+		      (
+			     (
+			         $membpress_target_level_sub['trial_charge'] == $temp_subs_rate_arr['trial_charge']
+		             && $membpress_target_level_sub['trial_charge_duration_type'] == $temp_subs_rate_arr['trial_charge_duration_type']
+				  )
+				  || 
+				  (
+				     $temp_subs_rate_arr['trial_charge_duration'] == 0
+					 && $membpress_target_level_sub['trial_charge_duration'] == 0
+				  )
+			   )
+		   && $membpress_target_level_sub['trial_charge_duration'] == $temp_subs_rate_arr['trial_charge_duration']
+		   && $membpress_target_level_sub['normal_charge'] == $temp_subs_rate_arr['normal_charge']
+		   && 
+		      (
+			     (
+			        $membpress_target_level_sub['normal_charge_duration'] == $temp_subs_rate_arr['normal_charge_duration']
+		            && $membpress_target_level_sub['normal_charge_duration_type'] == $temp_subs_rate_arr['normal_charge_duration_type']
+				  )
+				  ||
+				  (
+				     $temp_subs_rate_arr['type'] == 'life_time'
+					 && $membpress_target_level_sub['type'] == 'life_time' 
+				  )
+			   )
+		   ) 
+		   {
+		       // only set the duplicate if it is not the current one
+			   if ($membpress_curr_subs_key != $membpress_target_level_sub_key)
+			   {
+			      $flag_duplicate_sub_rate_index = $membpress_target_level_sub_key; 
+			      break;
+			   }
+		   }
+	   }
+	   
+	   if ($flag_duplicate_sub_rate_index <= -1) // check if there wasn't any duplicate
+	   {
+	      $membpress_target_level_subs[$membpress_curr_subs_key] = $temp_subs_rate_arr;
+	   }
+	   else
+	   {
+		  // duplicate was found, flag holds the subscription rate index
+		  // for which duplicate was found
+		  // set flag error to true
+		  $membpress_error_flag = true; 
+		  // set notice number 8 - see membpress helper class for the notices array
+		  $membpress_error_id = 8;  
+		  // also save the subscription rate index to notice vars
+		  $notice_vars .= ',' . urlencode($flag_duplicate_sub_rate_index) . ',' . urlencode($membpress_subscription_rate_level);
+	   }   	
+	}
 }
 else
 {
@@ -174,6 +242,12 @@ $membpress_levels['membpress_level_'.$membpress_subscription_rate_level] = $memb
 
 // update membpress levels array option
 update_option('membpress_levels', $membpress_levels);
+
+if (isset($_POST['membpress_edit_subscription_rate']) && $flag_duplicate_sub_rate_index <= -1)
+{
+	$notice = 9;
+	$notice_vars = urlencode($membpress_subs_rate_name);
+}
 
 
 ?>
