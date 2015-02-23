@@ -1,3 +1,6 @@
+	
+var this_parent_subs_del;
+
 jQuery(document).ready(function( $ ) {
 	
     // remove the hand cursor over the separator in menu
@@ -344,6 +347,13 @@ jQuery(document).ready(function( $ ) {
 		$(this_parent).find('.mp_subs_canceledit_btn').show();
 		$(this).hide();
     });
+	
+	$('.mp_subs_delete_btn').click(function(e) {
+        this_parent_subs_del = $(this).parents('.membpress_subs_rates');
+		$(this_parent_subs_del).find('.membpress_subs_del_warning').show();
+		window.setTimeout("jQuery(this_parent_subs_del).find('.membpress_subs_del_warning').fadeOut(500);", 5000);
+    });
+	
 	$('.mp_subs_canceledit_btn').click(function(e) {
         $(this).parents('.membpress_subs_rates').find('.membpress_subs_rate_wrapper').hide();
 		$(this).parents('.membpress_subs_rates').find('.mp_subs_edit_btn').show();

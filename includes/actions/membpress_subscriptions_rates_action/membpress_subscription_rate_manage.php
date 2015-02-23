@@ -234,6 +234,26 @@ if (isset($membpress_target_level['subscription_rates']) && is_array($membpress_
 		  $notice_vars .= ',' . urlencode($flag_duplicate_sub_rate_index) . ',' . urlencode($membpress_subscription_rate_level);
 	   }   	
 	}
+	// request was for deleting a subscription rate
+	else if (isset($_POST['membpress_delete_subscription_rate']))
+	{
+	   // get key of the current subscription rate
+	   $membpress_curr_subs_key = $_POST['membpress_subscription_rate_key'];
+	   
+	   // we need to make sure no users are subscribed to this rate/plan
+	   if (($membpress_target_level_subs[$membpress_curr_subs_key]['users_subscribed_active'] + $membpress_target_level_subs[$membpress_curr_subs_key]['users_subscribed_expired']) <= 0)
+	   {
+		   $membpress_subs_rate_name = $membpress_target_level_subs[$membpress_curr_subs_key]['subscription_name'];
+		   
+		   // no user is subscribed to this subscription plan
+		   // unset this subscription plan
+		   unset($membpress_target_level_subs[$membpress_curr_subs_key]); 
+		   
+		   // display relevant notice about the deletion of this subscription rate
+		   $notice = 10;
+	       $notice_vars = urlencode($membpress_subs_rate_name);  
+	   }
+	}
 }
 else
 {
@@ -257,6 +277,7 @@ update_option('membpress_levels', $membpress_levels);
 
 if (isset($_POST['membpress_edit_subscription_rate']) && $flag_duplicate_sub_rate_index <= -1)
 {
+	// display the relevant notice for updation of subscription rate
 	$notice = 9;
 	$notice_vars = urlencode($membpress_subs_rate_name);
 }

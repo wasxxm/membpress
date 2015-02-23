@@ -122,6 +122,9 @@ Miscellaneous
 	padding:10px;
 	display:block;	
 }
+.membpress_inline {
+	display:inline;	
+}
 /*
 Fix the width of the post/page ID column in edit post screen
 */

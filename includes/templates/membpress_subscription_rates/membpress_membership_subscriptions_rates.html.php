@@ -54,11 +54,29 @@ endif;
 	  ?>
     <hr>
     <div class="membpress_subs_rates">
-      <p><strong> <?php echo $mp_curr_level_subs_rate['subscription_name']; ?> </strong>
-        <button type="button" class="button button-small mp_subs_edit_btn"><?php echo _x('Edit', 'general', 'membpress'); ?></button>
-        <button type="button" class="button button-small mp_subs_canceledit_btn" style="display:none"><?php echo _x('Cancel editing', 'general', 'membpress'); ?></button>
-        <button type="button" class="button button-small mp_subs_delete_btn"><?php echo _x('Delete', 'general', 'membpress'); ?></button>
-      </p>
+      <?php
+	  $total_subs = (int)($mp_curr_level_subs_rate['users_subscribed_active'] + $temp_subs_rate_arr['users_subscribed_expired']);
+	  ?>
+      <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_subscription_rates.action.php" enctype="multipart/form-data" class="membpress_inline">
+        <p><strong> <?php echo $mp_curr_level_subs_rate['subscription_name']; ?> </strong>
+          <button type="button" class="button button-small mp_subs_edit_btn"><?php echo _x('Edit', 'general', 'membpress'); ?></button>
+          <button type="button" class="button button-small mp_subs_canceledit_btn" style="display:none"><?php echo _x('Cancel editing', 'general', 'membpress'); ?></button>
+          <?php if ($total_subs > 0): ?>
+          <button type="button" class="button button-small mp_subs_delete_btn"><?php echo _x('Delete', 'general', 'membpress'); ?></button>
+          <?php else: ?>
+          <?php
+          // create the nonce field for this page
+          wp_nonce_field( 'membpress_subscription_rates_page', 'membpress_subscription_rates_page_nonce' );
+         ?>
+          <input type="hidden" name="membpress_subscription_rate_level" value="<?php echo $mp_level['level_no']; ?>">
+          <input type="hidden" name="membpress_subscription_rate_key" value="<?php echo $mp_curr_level_subs_rate_key; ?>">
+          <button type="submit" class="button button-small" name="membpress_delete_subscription_rate"><?php echo _x('Delete', 'general', 'membpress'); ?></button>
+          <?php endif; ?>
+        </p>
+      </form>
+      <?php if ($total_subs > 0): ?>
+      <p class="membpress_subs_active_warning membpress_subs_del_warning" style="display:none"> <?php echo _x('You cannot delete a subscription rate/plan to which users have subscribed.', 'subscriptions', 'membpress'); ?> </p>
+      <?php endif; ?>
       <p> - <?php echo _x('Subscription Type is', 'subscriptions', 'membpress'); ?> <strong><?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['type']); ?></strong> </p>
       <p>
         <?php if ($mp_curr_level_subs_rate['trial_charge_duration'] <= 0): // trial period is set to 0 ?>
@@ -81,7 +99,7 @@ endif;
       <?php endif; ?>
       <?php endif; ?>
       </p>
-      <p> - <?php echo _x('No. of subscribers are', 'subscriptions', 'membpress'); ?> <strong><?php echo $total_subs = (int)($mp_curr_level_subs_rate['users_subscribed_active'] + $temp_subs_rate_arr['users_subscribed_expired']); ?></strong> (<?php echo _x('Active', 'subscriptions', 'membpress'); ?>: <strong><?php echo (int)$mp_curr_level_subs_rate['users_subscribed_active']; ?></strong>, <?php echo _x('Expired', 'subscriptions', 'membpress'); ?>: <strong><?php echo (int)$mp_curr_level_subs_rate['users_subscribed_expired']; ?></strong>) </p>
+      <p> - <?php echo _x('No. of subscribers are', 'subscriptions', 'membpress'); ?> <strong><?php echo $total_subs; ?></strong> (<?php echo _x('Active', 'subscriptions', 'membpress'); ?>: <strong><?php echo (int)$mp_curr_level_subs_rate['users_subscribed_active']; ?></strong>, <?php echo _x('Expired', 'subscriptions', 'membpress'); ?>: <strong><?php echo (int)$mp_curr_level_subs_rate['users_subscribed_expired']; ?></strong>) </p>
       <!-- Edit form for the current subscription starts -->
       <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_subscription_rates.action.php" enctype="multipart/form-data">
         <?php
@@ -90,15 +108,19 @@ endif;
       ?>
         <span class="membpress_subs_rate_wrapper membpress_hidden">
         <?php if ($total_subs > 0): ?>
-        <p class="membpress_subs_active_warning">
-        <?php echo _x('You have users subscribed to this subscription rate. Modifying any of the following settings may affect their subscription for the coming cycle of payment.', 'subscriptions', 'membpress'); ?>
-        </p>
+        <p class="membpress_subs_active_warning"> <?php echo _x('You have users subscribed to this subscription rate. Modifying any of the following settings may affect their subscription for the coming cycle of payment.', 'subscriptions', 'membpress'); ?> </p>
         <?php endif; ?>
         <p> <?php echo _x('Subscription Type:', 'subscriptions', 'membpress'); ?>
           <select class="membpress_subs_type" name="membpress_subs_rate_type">
-          <?php if ($mp_curr_level_subs_rate['type'] == 'recurring'): ?><option value="recurring" selected><?php echo _x('Recurring', 'subscriptions', 'membpress'); ?></option><?php endif; ?>
-          <?php if ($mp_curr_level_subs_rate['type'] == 'one_time'): ?><option value="one_time" selected><?php echo _x('One Time', 'subscriptions', 'membpress'); ?></option><?php endif; ?>
-          <?php if ($mp_curr_level_subs_rate['type'] == 'life_time'): ?><option value="life_time" selected><?php echo _x('Life Time', 'subscriptions', 'membpress'); ?></option><?php endif; ?>
+            <?php if ($mp_curr_level_subs_rate['type'] == 'recurring'): ?>
+            <option value="recurring" selected><?php echo _x('Recurring', 'subscriptions', 'membpress'); ?></option>
+            <?php endif; ?>
+            <?php if ($mp_curr_level_subs_rate['type'] == 'one_time'): ?>
+            <option value="one_time" selected><?php echo _x('One Time', 'subscriptions', 'membpress'); ?></option>
+            <?php endif; ?>
+            <?php if ($mp_curr_level_subs_rate['type'] == 'life_time'): ?>
+            <option value="life_time" selected><?php echo _x('Life Time', 'subscriptions', 'membpress'); ?></option>
+            <?php endif; ?>
           </select>
         </p>
         <p> <?php echo _x('Charge $', 'subscriptions', 'membpress'); ?>
