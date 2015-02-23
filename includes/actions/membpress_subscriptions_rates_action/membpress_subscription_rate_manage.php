@@ -85,6 +85,13 @@ $temp_subs_rate_arr['normal_charge_duration_type'] = $membpress_subs_duration_ty
 
 $temp_subs_rate_arr['subscription_name'] = $membpress_subs_rate_name;
 
+// number of active users subscribed is zero
+$temp_subs_rate_arr['users_subscribed_active'] = 0;
+// number of users subscribed with expired subscriptions is zero
+$temp_subs_rate_arr['users_subscribed_expired'] = 0;
+// number of users subscribed but the users are suspended
+$temp_subs_rate_arr['users_subscribed_suspended'] = 0;
+
 $membpress_target_level_subs = array();
 
 // check if there is at least one subscription rate created before
@@ -208,7 +215,12 @@ if (isset($membpress_target_level['subscription_rates']) && is_array($membpress_
 	   
 	   if ($flag_duplicate_sub_rate_index <= -1) // check if there wasn't any duplicate
 	   {
-	      $membpress_target_level_subs[$membpress_curr_subs_key] = $temp_subs_rate_arr;
+	      // updade the subscription settings, but do not disturb the users' subscriptions count
+		  $temp_subs_rate_arr['users_subscribed_active'] = $membpress_target_level_subs[$membpress_curr_subs_key]['users_subscribed_active'];
+		  $temp_subs_rate_arr['users_subscribed_expired'] = $membpress_target_level_subs[$membpress_curr_subs_key]['users_subscribed_expired'];
+		  $temp_subs_rate_arr['users_subscribed_suspended'] = $membpress_target_level_subs[$membpress_curr_subs_key]['users_subscribed_suspended'];
+
+		  $membpress_target_level_subs[$membpress_curr_subs_key] = $temp_subs_rate_arr;
 	   }
 	   else
 	   {

@@ -116,6 +116,12 @@ Miscellaneous
 .membpress_subs_recurring_txt, .membpress_subs_onetime_txt, .membpress_subs_recurring_for, .membpress_subs_onetime_for, .membpress_subs_lifetime_txt, .membpress_subs_lifetime_for, .membpress_subs_duration {
 	display: none;
 }
+
+.membpress_subs_active_warning {
+	background-color:#F7F6AE;
+	padding:10px;
+	display:block;	
+}
 /*
 Fix the width of the post/page ID column in edit post screen
 */

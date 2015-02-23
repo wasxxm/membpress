@@ -59,28 +59,29 @@ endif;
         <button type="button" class="button button-small mp_subs_canceledit_btn" style="display:none"><?php echo _x('Cancel editing', 'general', 'membpress'); ?></button>
         <button type="button" class="button button-small mp_subs_delete_btn"><?php echo _x('Delete', 'general', 'membpress'); ?></button>
       </p>
-      <p> - Subscription Type is <strong><?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['type']); ?></strong> </p>
+      <p> - <?php echo _x('Subscription Type is', 'subscriptions', 'membpress'); ?> <strong><?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['type']); ?></strong> </p>
       <p>
         <?php if ($mp_curr_level_subs_rate['trial_charge_duration'] <= 0): // trial period is set to 0 ?>
-        - No trial/free period is set for this subscription
+        - <?php echo _x('No trial/free period is set for this subscription', 'subscriptions', 'membpress'); ?>
         <?php else: // trial period is more than 0 ?>
         <?php if ($mp_curr_level_subs_rate['trial_charge'] <= 0): // trial period charge is 0 ?>
-        - Free trial is set for <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
+        - <?php echo _x('Free trial is set for', 'subscriptions', 'membpress') ?> <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
         <?php else: // trial period charge is more than 0 ?>
-        - Trial charge of <strong>$<?php echo $mp_curr_level_subs_rate['trial_charge']; ?></strong> is set for <strong><?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']); ?></strong>
+        - <?php echo _x(sprintf('Trial charge of %s is set for %s %s', '<strong>$'.$mp_curr_level_subs_rate['trial_charge'].'</strong>', '<strong>'.$mp_curr_level_subs_rate['trial_charge_duration'].'</strong>', '<strong>'.$this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['trial_charge_duration_type']).'</strong>'), 'subscriptions', 'membpress'); ?>
         <?php endif; ?>
         <?php endif; ?>
         <?php if ($mp_curr_level_subs_rate['normal_charge_duration'] > 0 && $mp_curr_level_subs_rate['normal_charge'] > 0): 
 	  // normal rate charge and duration are both greater than 0 ?>
         <?php if ($mp_curr_level_subs_rate['type'] == 'recurring'): ?>
-      <p> - Normal charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set per <strong><?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']); ?></strong> </p>
+      <p> - <?php echo _x(sprintf('Normal charge of %s is set per %s %s', '<strong>$'.$mp_curr_level_subs_rate['normal_charge'].'</strong>', '<strong>'.$mp_curr_level_subs_rate['normal_charge_duration'].'</strong>', '<strong>'.$this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']).'</strong>'), 'subscriptions', 'membpress'); ?> </p>
       <?php elseif ($mp_curr_level_subs_rate['type'] == 'one_time'): ?>
-      <p> - One Time charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set for <strong><?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?> <?php echo $this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']); ?></strong> </p>
+      <p> - <?php echo _x(sprintf('One Time charge of %s is set for %s %s', '<strong>$'.$mp_curr_level_subs_rate['normal_charge'].'</strong>', '<strong>'.$mp_curr_level_subs_rate['normal_charge_duration'].'</strong>', '<strong>'.$this->membpress_get_subscription_rates_string($mp_curr_level_subs_rate['normal_charge_duration_type']).'</strong>'), 'subscriptions', 'membpress'); ?> </p>
       <?php elseif ($mp_curr_level_subs_rate['type'] == 'life_time'): ?>
-      <p> - Life Time charge of <strong>$<?php echo $mp_curr_level_subs_rate['normal_charge']; ?></strong> is set</p>
+      <p> - <?php echo _x(sprintf('Life Time charge of %s is set', '<strong>$'.$mp_curr_level_subs_rate['normal_charge'].'</strong>'), 'subscriptions', 'membpress'); ?> </p>
       <?php endif; ?>
       <?php endif; ?>
       </p>
+      <p> - <?php echo _x('No. of subscribers are', 'subscriptions', 'membpress'); ?> <strong><?php echo $total_subs = (int)($mp_curr_level_subs_rate['users_subscribed_active'] + $temp_subs_rate_arr['users_subscribed_expired']); ?></strong> (<?php echo _x('Active', 'subscriptions', 'membpress'); ?>: <strong><?php echo (int)$mp_curr_level_subs_rate['users_subscribed_active']; ?></strong>, <?php echo _x('Expired', 'subscriptions', 'membpress'); ?>: <strong><?php echo (int)$mp_curr_level_subs_rate['users_subscribed_expired']; ?></strong>) </p>
       <!-- Edit form for the current subscription starts -->
       <form method="post" action="<?php echo plugins_url(); ?>/membpress/includes/actions/membpress_subscription_rates.action.php" enctype="multipart/form-data">
         <?php
@@ -88,35 +89,40 @@ endif;
        wp_nonce_field( 'membpress_subscription_rates_page', 'membpress_subscription_rates_page_nonce' );
       ?>
         <span class="membpress_subs_rate_wrapper membpress_hidden">
-        <p> Subscription Type:
+        <?php if ($total_subs > 0): ?>
+        <p class="membpress_subs_active_warning">
+        <?php echo _x('You have users subscribed to this subscription rate. Modifying any of the following settings may affect their subscription for the coming cycle of payment.', 'subscriptions', 'membpress'); ?>
+        </p>
+        <?php endif; ?>
+        <p> <?php echo _x('Subscription Type:', 'subscriptions', 'membpress'); ?>
           <select class="membpress_subs_type" name="membpress_subs_rate_type">
-            <option value="recurring" <?php if ($mp_curr_level_subs_rate['type'] == 'recurring'): ?>selected<?php endif; ?>>Recurring</option>
-            <option value="one_time" <?php if ($mp_curr_level_subs_rate['type'] == 'one_time'): ?>selected<?php endif; ?>>One Time</option>
-            <option value="life_time" <?php if ($mp_curr_level_subs_rate['type'] == 'life_time'): ?>selected<?php endif; ?>>Life Time</option>
+          <?php if ($mp_curr_level_subs_rate['type'] == 'recurring'): ?><option value="recurring" selected><?php echo _x('Recurring', 'subscriptions', 'membpress'); ?></option><?php endif; ?>
+          <?php if ($mp_curr_level_subs_rate['type'] == 'one_time'): ?><option value="one_time" selected><?php echo _x('One Time', 'subscriptions', 'membpress'); ?></option><?php endif; ?>
+          <?php if ($mp_curr_level_subs_rate['type'] == 'life_time'): ?><option value="life_time" selected><?php echo _x('Life Time', 'subscriptions', 'membpress'); ?></option><?php endif; ?>
           </select>
         </p>
-        <p> Charge $
+        <p> <?php echo _x('Charge $', 'subscriptions', 'membpress'); ?>
           <input type="number" value="<?php echo $mp_curr_level_subs_rate['trial_charge']; ?>" class="membpress_span2" step="0.01" min="0.00" name="membpress_subs_trial_charge">
-          for the first
+          <?php echo _x('for the first', 'subscriptions', 'membpress'); ?>
           <input type="number" value="<?php echo $mp_curr_level_subs_rate['trial_charge_duration']; ?>" class="membpress_span2" min="0" max="9999" step="1" name="membpress_subs_trial_duration">
           <select name="membpress_subs_trial_duration_type">
-            <option value="hour" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'hour'): ?>selected<?php endif; ?>>Hour(s)</option>
-            <option value="day" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'day'): ?>selected<?php endif; ?>>Day(s)</option>
-            <option value="week" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'week'): ?>selected<?php endif; ?>>Week(s)</option>
-            <option value="month" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'month'): ?>selected<?php endif; ?>>Month(s)</option>
-            <option value="year" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'year'): ?>selected<?php endif; ?>>Year(s)</option>
+            <option value="hour" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'hour'): ?>selected<?php endif; ?>><?php echo _x('Hour(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="day" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'day'): ?>selected<?php endif; ?>><?php echo _x('Day(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="week" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'week'): ?>selected<?php endif; ?>><?php echo _x('Week(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="month" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'month'): ?>selected<?php endif; ?>><?php echo _x('Month(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="year" <?php if ($mp_curr_level_subs_rate['trial_charge_duration_type'] == 'year'): ?>selected<?php endif; ?>><?php echo _x('Year(s)', 'subscriptions', 'membpress'); ?></option>
           </select>
         </p>
-        <p> <span class="membpress_subs_recurring_txt">then start charging</span><span class="membpress_subs_onetime_txt">then charge</span><span class="membpress_subs_lifetime_txt">then charge</span> $
+        <p> <span class="membpress_subs_recurring_txt"><?php echo _x('then start charging', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_onetime_txt"><?php echo _x('then charge', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_lifetime_txt"><?php echo _x('then charge', 'subscriptions', 'membpress'); ?></span> $
           <input type="number" value="<?php echo $mp_curr_level_subs_rate['normal_charge']; ?>" class="membpress_span2" step="0.01" min="0.00" name="membpress_subs_charge">
-          <span class="membpress_subs_recurring_for">for every</span><span class="membpress_subs_onetime_for">for</span><span class="membpress_subs_lifetime_for">for life-time access</span> <span class="membpress_subs_duration">
+          <span class="membpress_subs_recurring_for"><?php echo _x('for every', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_onetime_for"><?php echo _x('for', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_lifetime_for"><?php echo _x('for life-time access', 'subscriptions', 'membpress'); ?></span> <span class="membpress_subs_duration">
           <input type="number" value="<?php echo $mp_curr_level_subs_rate['normal_charge_duration']; ?>" class="membpress_span2" min="0" max="9999" step="1" name="membpress_subs_duration">
           <select name="membpress_subs_duration_type">
-            <option value="hour" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'hour'): ?>selected<?php endif; ?>>Hour(s)</option>
-            <option value="day" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'day'): ?>selected<?php endif; ?>>Day(s)</option>
-            <option value="week" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'week'): ?>selected<?php endif; ?>>Week(s)</option>
-            <option value="month" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'month'): ?>selected<?php endif; ?>>Month(s)</option>
-            <option value="year" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'year'): ?>selected<?php endif; ?>>Year(s)</option>
+            <option value="hour" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'hour'): ?>selected<?php endif; ?>><?php echo _x('Hour(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="day" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'day'): ?>selected<?php endif; ?>><?php echo _x('Day(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="week" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'week'): ?>selected<?php endif; ?>><?php echo _x('Week(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="month" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'month'): ?>selected<?php endif; ?>><?php echo _x('Month(s)', 'subscriptions', 'membpress'); ?></option>
+            <option value="year" <?php if($mp_curr_level_subs_rate['normal_charge_duration_type'] == 'year'): ?>selected<?php endif; ?>><?php echo _x('Year(s)', 'subscriptions', 'membpress'); ?></option>
           </select>
           </span> </p>
         <p>
@@ -147,35 +153,35 @@ endif;
       ?>
       <span class="membpress_subs_rate_wrapper">
       <p> <strong><?php echo _x('Create a new subscription rate for this level', 'general', 'membpress');?></strong> </p>
-      <p> Subscription Type:
+      <p> <?php echo _x('Subscription Type:', 'subscriptions', 'membpress'); ?>
         <select class="membpress_subs_type" name="membpress_subs_rate_type">
-          <option value="recurring">Recurring</option>
-          <option value="one_time">One Time</option>
-          <option value="life_time">Life Time</option>
+          <option value="recurring"><?php echo _x('Recurring', 'subscriptions', 'membpress'); ?></option>
+          <option value="one_time"><?php echo _x('One Time', 'subscriptions', 'membpress'); ?></option>
+          <option value="life_time"><?php echo _x('Life Time', 'subscriptions', 'membpress'); ?></option>
         </select>
       </p>
-      <p> Charge $
+      <p> <?php echo _x('Charge $', 'subscriptions', 'membpress'); ?>
         <input type="number" value="0.00" class="membpress_span2" step="0.01" min="0.00" name="membpress_subs_trial_charge">
-        for the first
+        <?php echo _x('for the first', 'subscriptions', 'membpress'); ?>
         <input type="number" value="0" class="membpress_span2" min="0" max="9999" step="1" name="membpress_subs_trial_duration">
         <select name="membpress_subs_trial_duration_type">
-          <option value="hour">Hour(s)</option>
-          <option value="day">Day(s)</option>
-          <option value="week">Week(s)</option>
-          <option value="month">Month(s)</option>
-          <option value="year">Year(s)</option>
+          <option value="hour"><?php echo _x('Hour(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="day" selected><?php echo _x('Day(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="week"><?php echo _x('Week(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="month"><?php echo _x('Month(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="year"><?php echo _x('Year(s)', 'subscriptions', 'membpress'); ?></option>
         </select>
       </p>
-      <p> <span class="membpress_subs_recurring_txt">then start charging</span><span class="membpress_subs_onetime_txt">then charge</span><span class="membpress_subs_lifetime_txt">then charge</span> $
+      <p> <span class="membpress_subs_recurring_txt"><?php echo _x('then start charging', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_onetime_txt"><?php echo _x('then charge', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_lifetime_txt"><?php echo _x('then charge', 'subscriptions', 'membpress'); ?></span> $
         <input type="number" value="0.99" class="membpress_span2" step="0.01" min="0.00" name="membpress_subs_charge">
-        <span class="membpress_subs_recurring_for">for every</span><span class="membpress_subs_onetime_for">for</span><span class="membpress_subs_lifetime_for">for life-time access</span> <span class="membpress_subs_duration">
+        <span class="membpress_subs_recurring_for"><?php echo _x('for every', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_onetime_for"><?php echo _x('for', 'subscriptions', 'membpress'); ?></span><span class="membpress_subs_lifetime_for"><?php echo _x('for life-time access', 'subscriptions', 'membpress'); ?></span> <span class="membpress_subs_duration">
         <input type="number" value="1" class="membpress_span2" min="0" max="9999" step="1" name="membpress_subs_duration">
         <select name="membpress_subs_duration_type">
-          <option value="hour">Hour(s)</option>
-          <option value="day">Day(s)</option>
-          <option value="week">Week(s)</option>
-          <option value="month" selected>Month(s)</option>
-          <option value="year">Year(s)</option>
+          <option value="hour"><?php echo _x('Hour(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="day"><?php echo _x('Day(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="week"><?php echo _x('Week(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="month" selected><?php echo _x('Month(s)', 'subscriptions', 'membpress'); ?></option>
+          <option value="year"><?php echo _x('Year(s)', 'subscriptions', 'membpress'); ?></option>
         </select>
         </span> </p>
       <p>
