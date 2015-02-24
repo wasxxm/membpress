@@ -699,7 +699,7 @@ class MembPress_Helper
 	   
 	   foreach ($mp_levels as $mp_level)
 	   {
-	       // get the list of posts restricted by the current membership level
+		   // get the list of posts restricted by the current membership level
 		   $mp_restrict_posts_by_curr_level = (array)get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
 		   // if the post ID is present in the list of restricted posts for current level, then store it
 		   if (in_array($post_id, $mp_restrict_posts_by_curr_level))
@@ -1510,6 +1510,13 @@ class MembPress_Helper
 		   
 		   // get the posts restricted by this level
 		   $posts_restricted_curr_level = get_option('membpress_restrict_posts_level_' . $mp_level['level_no']);
+		   
+		   // if the current level has restrict all posts option assigned, then add the post_id to the list
+		   // of restricted posts by this level   
+	       if (get_option('membpress_restrict_allposts_level') != '' && (int)get_option('membpress_restrict_allposts_level') >= $mp_level['level_no'])
+		   {
+			   array_push($posts_restricted_curr_level, $post_id);       
+	       }
 		   
 		   // check if current post is present in the restricted posts of the current level
 		   if (in_array($post_id, $posts_restricted_curr_level))

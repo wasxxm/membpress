@@ -364,6 +364,58 @@ jQuery(document).ready(function( $ ) {
 		$(this).parents('.membpress_subs_rates').find('.mp_subs_edit_btn').show();
 		$(this).parents('.membpress_subs_rates').find('.mp_subs_canceledit_btn').hide(); 
     });
+	
+	
+	/**
+	Restrict all posts handler
+	*/
+	$('.membpress_restrict_all input[type=checkbox]').change(function(e) {
+        
+		var this_index = $(this).parents('.membpress_restrict_all').index();
+		this_index = (this_index / 3) - 1;
+		if ($(this).is(':checked'))
+		{
+			$('.membpress_restrict_all').each(function(index, element) {
+                 if (index <= this_index)
+				 {
+					$($('.membpress_restrict_all').get(index)).find('input[type=text]').attr('disabled', true);
+				 }
+            }); 
+		}
+		else
+		{
+			var checked = false;
+			
+			for (var i = this_index; i >= 0; i--)
+			{ 
+				if ($($('.membpress_restrict_all').get(i)).find('input[type=checkbox]').is(':checked'))
+				{
+					checked = true;
+				}
+				if (!checked)
+				{
+				   $($('.membpress_restrict_all').get(i)).find('input[type=text]').removeAttr('disabled');
+				}
+			}
+		}
+    });
+	
+	$('.membpress_restrict_all').each(function(index, element) {
+        if ($(element).find('input[type=checkbox]').is(':checked'))
+		{
+		   for (var i = 0; i <= index; i++)
+		   {
+			  $($('.membpress_restrict_all').get(i)).find('input[type=text]').attr('disabled', true); 
+		   }
+		}
+		else
+		{   
+		   for (var i = ($('.membpress_restrict_all').length - 1); i > index; i--)
+		   {
+			  $($('.membpress_restrict_all').get(i)).find('input[type=text]').removeAttr('disabled'); 
+		   }
+		}
+    });
 });
 
 /**

@@ -119,14 +119,24 @@ class Membpress_MetaBoxes extends Membpress_Helper
 		   It can be configured also at: Membpress -> Restriction Options -> Retrict Posts
 		   */
 		   
+		   // continue updating the post restriction by level if it is not restricted
+		   // by some higher level all post restriction option
+		   if (get_option('membpress_restrict_allposts_level') != '')
+		   {
+			  $mp_post_restricted_by_level = (int)get_option('membpress_restrict_allposts_level'); 
+			  if ($_POST['membpress_restrict_post_level'] != '')
+			  {
+				  if ($_POST['membpress_restrict_post_level'] <= $mp_post_restricted_by_level)
+				  {
+				     $_POST['membpress_restrict_post_level'] = '';
+				  }
+			  }
+		   }
+		   
 		   // clear any previous assignment of the current post to any membership level
 		   // get the current post resitricted level, this is before saving the new one
 		   $mp_post_prev_level = get_post_meta($post_id, 'membpress_post_restricted_by_level', true);
-		   // get the number of the above level
-		   $mp_post_prev_level = explode('_', $mp_post_prev_level);
-		   $mp_post_prev_level = $mp_post_prev_level[count($mp_post_prev_level) - 1];
-		   
-		   if ($mp_post_prev_level == 'subscriber') $mp_post_prev_level = 0;
+		   if ($mp_post_prev_level != '') $mp_post_prev_level = (int)$mp_post_prev_level;
 		   
 		   // the post ID can be in more than one membership level, so remove it from all levels
 		   // first get all membership levels
@@ -155,10 +165,9 @@ class Membpress_MetaBoxes extends Membpress_Helper
 		   */
 		   
 		   // get the post level number only currently submitted
-		   $mp_level_no = explode('_', $_POST['membpress_restrict_post_level']);
-		   $mp_level_no = $mp_level_no[count($mp_level_no) - 1];
+		   $mp_level_no = $_POST['membpress_restrict_post_level'];
 		   
-		   if ($mp_level_no == 'subscriber') $mp_level_no = 0;
+		   if ($mp_level_no != '') $mp_level_no = (int)$_POST['membpress_restrict_post_level'];
 		   
 		   // new level for this post
 		   $mp_restrict_posts_by_new_level = (array)get_option('membpress_restrict_posts_level_' . $mp_level_no);
@@ -562,8 +571,26 @@ class Membpress_MetaBoxes extends Membpress_Helper
 		   // get all the membpress membership levels
 		   $mp_get_membership_levels = $this->membpress_get_all_membership_levels();
 		   
-		   // get the current post restriction
 		   $mp_post_restricted_by_level = get_post_meta($post->ID, 'membpress_post_restricted_by_level', true);
+		   
+		   // check if the post is retricted by some membership level
+		   // using the all posts restrict option
+		   if (get_option('membpress_restrict_allposts_level') != '')
+		   {
+			  if ($mp_post_restricted_by_level != '' && $mp_post_restricted_by_level > (int)get_option('membpress_restrict_allposts_level'))
+			  {
+				  //
+			  }
+			  else
+			  {
+			     $mp_post_restricted_by_level = (int)get_option('membpress_restrict_allposts_level');
+			  }
+		   }
+		   else
+		   {
+		      // get the current post restriction
+		      $mp_post_restricted_by_level = get_post_meta($post->ID, 'membpress_post_restricted_by_level', true);
+		   }
 		   
 		   $no_restriction_selection =  (trim($mp_post_restricted_by_level) == '') ? "selected" : "";
 		   

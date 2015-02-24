@@ -396,7 +396,7 @@ class Membpress_CustomColumns extends Membpress_Helper
 	@ Function to manage the contents of the post info column
 	*/
 	public function membpress_manage_post_info_column($column_name, $post_id)
-	{
+	{ 
 	  if ('post_info' == $column_name)
 	  {  
 		  /** check if it is set as login welcome */
@@ -451,6 +451,21 @@ class Membpress_CustomColumns extends Membpress_Helper
 			  
 			  echo $ret;
 			  return; 
+		  }
+		  
+		  // check if the post is retricted by some membership level
+		  // using the all posts restrict option
+		  if (get_option('membpress_restrict_allposts_level') != '')
+		  {
+			  $mp_allposts_restrict_by = (int)get_option('membpress_restrict_allposts_level');
+			  
+			  $ret = ""._x('Restricted by', 'general', 'membpress')." <strong><em>".$this->membpress_get_membership_level_name($mp_allposts_restrict_by)."<em></strong>";
+			  
+			  // update post membpress info to be used in MembPress column sort
+			  update_post_meta($post_id, 'membpress_post_info', $ret);
+			  
+			  echo $ret;
+			  return;      
 		  }
 		  
 		  // post is not restricted directly by any means
